@@ -1,0 +1,27 @@
+{
+	"generalist_grass":{
+		"Name": "generalist_grass",
+        "Immature": {
+            "fox": {
+                "SeedKill": 0.1,
+                "PropResprout": 0.0,
+                "PropKilled": 0.0
+            },
+            "fire":{ 
+                "SeedKill": 0.0,
+                "PropResprout": 0.0,
+                "PropKilled": 1.0}
+        },
+        "Mature": {
+            "fox": {
+                "SeedKill": 0.1,
+                "PropResprout": 0.0,
+                "PropKilled": 0.0
+            },
+            "fire":{ 
+                "SeedKill": 0.0,
+                "PropResprout": 0.0,
+                "PropKilled": 1.0}
+        }
+    }
+}

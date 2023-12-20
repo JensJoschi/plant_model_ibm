@@ -1,0 +1,78 @@
+{
+    "COMMENT": "globalparameters used to be in a different file. Now we redirect to the same file as the simulation parameters so nothing in the code needs to change.",
+    "GlobSimulFile": "test.json",
+    "DATA": "test.json",
+
+    "COMMENT1": "----------------------------",
+    "COMMENT2": "global simulation parameters",
+    "COMMENT3": "----------------------------",
+
+    "SimulDuration": 5,
+    "DoSoilModel": true,
+    "DoPlantModel": true,
+    "DoAnimalModel": false,
+    "DoManagement": true,
+    "SaveYears": [1,2,4],
+
+
+    "COMMENT4": "----------------------------",
+    "COMMENT5": "DATA(Base)",
+    "COMMENT6": "----------------------------",
+
+    "InputDir": "999-test/",
+    "SaveDir": "test-RESULTS/",
+    "PlantInputs": "test.json",
+    "AnimalInputs": "test.json",
+    "SoilInputs": "test.json",
+    "listPlantFunctionalGroups": ["generalist_grass", "generalist_tree"],
+    "listAnimalFunctionalGroups":  ["SIZE_I-II", "SIZE_III", "SIZE_IV", "SIZE_V_1.1", "SIZE_V_1.2", "SIZE_V_2", "SIZE_V_3", "SIZE_VI", "SIZE_VII", "SIZE_VIII"],
+    "MaskFile": "mask.json",
+
+    "Management": "management.json",
+
+    "COMMENT8": "----------------------------",
+    "COMMENT9": "Global simulation parameters(Plants)",
+    "COMMENT10": "----------------------------",
+
+    "NoStrata": 4,
+    "PotentialFecundity": 1,
+    "MaxAbundLow": 1000,
+    "MaxAbundMedium": 1000,
+    "MaxAbundHigh": 5000,
+    "DoPlantDispersal": true,
+    "SeedingInput": 100,
+    "DoShadingPercentages": true,
+    "LightThresLow": 8000,
+    "LightThreshMedium": 5000,
+    "DoHabSuitability": true,
+    "DoSoilClass": true,
+    "DoSoilDepth": true,
+    "DoDisturbance": true, 
+    "LightAngle": 50,
+    "StrataHeight": [10,20,30,40],
+    "DoNeighbours": true, 
+
+
+    "COMMENT11": "----------------------------",
+    "COMMENT12": "DATA(Plants)",
+    "COMMENT13": "----------------------------",
+    "PFGDefsFile": "fullPFG.json",
+    "DisturbanceDefsFile": "disturbances.json",
+    "ShadingFile": ["nine.json", "SHADING"],
+    "DepthFile": ["nine.json", "DEPTH"],
+
+
+
+    "COMMENT14": "----------------------------",
+    "COMMENT15": "Global simulation parameters(Soil)",
+    "COMMENT16": "----------------------------",
+
+
+    "DoSoilFormation": true,
+
+    "COMMENT17": "----------------------------",
+    "COMMENT18": "DATA(Soil)",
+    "COMMENT19": "----------------------------",
+    "SCLDefsFile": "unchanging_soil.json",
+    "SoilFile": "ninesoil.json"
+}

@@ -1,0 +1,5462 @@
+{
+
+    "Lo_l_2": {
+
+        "Lo_l_2": 1
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "ClLo_l_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 1
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Cl_l_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 1
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Cl_l_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 1
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaClLo_l_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 1
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "ClLo_l_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 1
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaClLo_l_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 1
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaLo_l_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 1
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaClLo_l_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 1
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "LoSa_l_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 1
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Cl_l_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 1
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Cl_h_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 1
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaLo_h_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 1
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Lo_l_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 1
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "ClLo_h_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 1
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SiLo_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 1
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SiClLo_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 1
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SiClLo_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 1
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaClLo_h_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 1
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaLo_l_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 1
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SiLo_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 1
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Lo_h_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 1
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Lo_h_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 1
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Cl_h_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 1
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Lo_h_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 1
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SiClLo_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 1
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaLo_h_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 1
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "LoSa_l_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 1
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "ClLo_h_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 1
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "ClLo_l_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 1
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Cl_h_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 1
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "LoSa_l_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 1
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "Lo_l_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 1
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaLo_l_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 1
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SiLo_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 1
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaClLo_h_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 1
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaLo_h_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 1
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "LoSa_h_3": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 1
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "LoSa_h_2": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 1
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "LoSa_h_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 1
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "SaClLo_h_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 1
+,
+
+        "ClLo_h_1": 0
+
+    }
+,
+
+    "ClLo_h_1": {
+
+        "Lo_l_2": 0
+,
+
+        "ClLo_l_2": 0
+,
+
+        "Cl_l_2": 0
+,
+
+        "Cl_l_3": 0
+,
+
+        "SaClLo_l_3": 0
+,
+
+        "ClLo_l_3": 0
+,
+
+        "SaClLo_l_2": 0
+,
+
+        "SaLo_l_2": 0
+,
+
+        "SaClLo_l_1": 0
+,
+
+        "LoSa_l_2": 0
+,
+
+        "Cl_l_1": 0
+,
+
+        "Cl_h_3": 0
+,
+
+        "SaLo_h_3": 0
+,
+
+        "Lo_l_1": 0
+,
+
+        "ClLo_h_3": 0
+,
+
+        "SiLo_1": 0
+,
+
+        "SiClLo_1": 0
+,
+
+        "SiClLo_2": 0
+,
+
+        "SaClLo_h_2": 0
+,
+
+        "SaLo_l_1": 0
+,
+
+        "SiLo_2": 0
+,
+
+        "Lo_h_1": 0
+,
+
+        "Lo_h_2": 0
+,
+
+        "Cl_h_2": 0
+,
+
+        "Lo_h_3": 0
+,
+
+        "SiClLo_3": 0
+,
+
+        "SaLo_h_2": 0
+,
+
+        "LoSa_l_3": 0
+,
+
+        "ClLo_h_2": 0
+,
+
+        "ClLo_l_1": 0
+,
+
+        "Cl_h_1": 0
+,
+
+        "LoSa_l_1": 0
+,
+
+        "Lo_l_3": 0
+,
+
+        "SaLo_l_3": 0
+,
+
+        "SiLo_3": 0
+,
+
+        "SaClLo_h_3": 0
+,
+
+        "SaLo_h_1": 0
+,
+
+        "LoSa_h_3": 0
+,
+
+        "LoSa_h_2": 0
+,
+
+        "LoSa_h_1": 0
+,
+
+        "SaClLo_h_1": 0
+,
+
+        "ClLo_h_1": 1
+
+    }
+
+}
