@@ -14,7 +14,7 @@ root contains "maintest.cpp" with a main() function, and another CMake file whic
 
 # COPYRIGHT notice
 
-> **The current version of the model is for internal use only, and in contrast to the licensing statements in individual files, any distribution (propagating or conveying) is forbidden.**>
+> **The current version of the model is for internal use only, and in contrast to the licensing statements in individual files, any distribution (propagating or conveying) is forbidden.**
 
 I (Jens Joschinski) have not received clearance by the Project management board or any direct supervisor yet, thus any copyright I assume is contestable 
 and may lie with TU Munich or Studio Animal-Aided-Design. This would invalidate any license statements I made and restore the license to 
@@ -66,7 +66,8 @@ Fate - HD was not intended to predict plant abundances in absolute numbers, but 
 1. draw general correlations between geometry/environment and ecological functions. This allows creating general design rules, such as the (trivial) statment that "sloped surfaces do not support tree-dominated plant communities"; 
 2. evaluate a specific building design and return plant community information to the (architect) user. The user is expected to visualize and evaluate the results and draw conclusions (likely helped by computer programs and statistical / ML approaches), potentially using information from use case 1.
 
-**Throughout the remaining text, changes in comparison to FATE-HD are either highlighted in bold or placed in a blockquote**
+**Throughout the remaining text, changes in comparison to FATE-HD are either highlighted in italics or placed in a blockquote**
+
 >>> 
 Within ECOLOPES, the model is expected to deliver "good enough" predictions on how building geometry alters community structure, such that the model can be relied upon to provide suggestions for improving building designs. The output of the plant model is also used as input for an allometric animal home range formation, which requires "reasonably accurate" biomass inputs. Thus, the model is required to return absolute numbers. It is, however, expected that an experienced human user group (architects and ecologists) will evaluate any design suggestion provided by the ECOLOPES toolchain, so a certain margin of error that is currently expected from the models can be accommodated. Furthermore, the current main aim of the model is to suggest a novel way of design, and to create and demonstrate the general applicability of a model-informed design workflow. Hence, not the results, but the pipelines matter. Accordingly, the by far largest changes in the plant model regard the technical implementation, not the concepts or theory. The model architecture was revised to achieve stronger encapsulation (classes no longer access data that is outside of their scope), modularization and information management. Major changes were also done to the way inputs are read and stored (separate Inputs class, runtime environment, no more use of GDAL) and exchanged (new data container). The model further contains more assertions and modified error checks.
 
@@ -79,12 +80,12 @@ Major conceptual changes include connections to other models, including: shading
 
 FATE did not constrain spatial extent, temporal extent, or spatial resolution in any way, but was designed as a landscape scale model with annual time scale.
 
-**The Plant Model was originally built for use in urban environments, and it simulates community dynamics over the typical life time of a building envelope. We assume that the simulation time ranges from 10 to 200 years, the spatial extent is in the order of 100 x 100 x 10 m, and the resolution are voxel cells of 1 m3.**
+*The Plant Model was originally built for use in urban environments, and it simulates community dynamics over the typical life time of a building envelope. We assume that the simulation time ranges from 10 to 200 years, the spatial extent is in the order of 100 x 100 x 10 m, and the resolution are voxel cells of 1 m3.*
 | Dimension | Value range |
 | ---------- | ----------- |
-| Spatial extent | **~100 x 100 m** |
-| Temporal extent | **~25-100 years** | 
-| Spatial resolution | **1 m x 1 m** |
+| Spatial extent | *~100 x 100 m* |
+| Temporal extent | *~25-100 years* | 
+| Spatial resolution | *1 m x 1 m* |
 | Temporal resolution | 1 year |
 
 >>>
@@ -99,8 +100,8 @@ The model does not incorporate seasonality and does not include fine-scaled mode
 ## Entities
 | Entity | Description |
 | ---    | --- |
-| Environment | (urban) habitat containing grid cells, global simulation parameters **and regional model information** |
-| Grid cells | a 1x1 m cell with **a soil class, soil depth,** disturbances, and 4 layers. Each layer contains a different amount of light, and the abundances of different Plant Functional Groups. **Soil depth and soil class** impose constraints on which PFG can live here, and the disturbances can affect their growth. |
+| Environment | (urban) habitat containing grid cells, global simulation parameters *and regional model information* |
+| Grid cells | a 1x1 m cell with *a soil class, soil depth,* disturbances, and 4 layers. Each layer contains a different amount of light, and the abundances of different Plant Functional Groups. *Soil depth and soil class* impose constraints on which PFG can live here, and the disturbances can affect their growth. |
 | Functional Group definitions | ~600, a data input. Defines habitat suitability, growth, competition and disturbance attributes. |
 
 ### Individuals, grid cells, and functional groups 
@@ -140,11 +141,13 @@ Another feature of urban environments is the strong influence of human use and h
 FATE, from which the Plant Model is derived, combines phenomenological and process-based approaches: it first considers abiotic environmental filters 
 to determine where each agent can in principle live, and then simulates their growth and demographic structure, including competition among agents. 
 
-**The Plant Model adds flexibility to the phenomenological approach, and allows users to derive habitat suitabilities instead based on other (process-based) models. It further lets the processes be influenced by observable inputs. For example, competition outcomes are now influecned by the total amount of light/shade that is provided in a grid cell.**
+>>>
+The Plant Model adds flexibility to the phenomenological approach, and allows users to derive habitat suitabilities instead based on other (process-based) models. It further lets the processes be influenced by observable inputs. For example, competition outcomes are now influecned by the total amount of light/shade that is provided in a grid cell.
+>>>
 
 FATE is an agent-based model, but not implemented as a traditional ecological individual-based model. In agent-based models, simple rules are set up for individual entities (agents), and the interaction among agents causes complex behaviors to emerge. In Ecology the agents are usually individual cells or individuals of a population, which may for example grow, compete, reproduce and die. Individual agents are nested in habitats, populations or environments (multiple levels of nesting may occur), and the nesting is usually reflected in a Object-Oriented Programming (OOP) approach: individual instances are created (birth) or deleted (death), and may be reassigned to other instances of higher-order objects (dispersal). The modular structure of the OOP approach allows modification of agent rules easily. In FATE, however, the principal agent is the Plant Functional Group (similar to a plant species, see below), which is nested within a plant community of a grid cell, which in turn is nested in an environment. The Plant Functional Group is altered by the environment and changes its demographic composition according to simple rules, but the Plant Functional Group itself does neither move, nor be born or die. Accordingly, there is a single instance of each Functional Group  within each grid cell, which is constructed at initialization and only deleted at program termination. 
 
-This approach is computationally more feasible, but comes at the cost of model resolution and accuracy (only the community composition, but not individual plant development can be tracked). The biomass is hence not meant to represent an accurate absolute value, but shall be interpreted as a probability to find a certain plant (for relative comparisons among functional groups). **A future version of the plant model will implement Individuals, thus alleviating some of the current constraints and limitations (see issue #29).**
+This approach is computationally more feasible, but comes at the cost of model resolution and accuracy (only the community composition, but not individual plant development can be tracked). The biomass is hence not meant to represent an accurate absolute value, but shall be interpreted as a probability to find a certain plant (for relative comparisons among functional groups). *A **future** version of the plant model will implement Individuals, thus alleviating some of the current constraints and limitations (see issue #29).*
 
 ### Functional Groups
 
@@ -165,11 +168,11 @@ The Plant Model is specifically designed as a platform prototype that is planned
 
 ## Emergence and interaction 
 
-The key outcome of the simulation is the spatiotemporal change of community patterns, which emerges from the interaction of plant functional groups within each grid cell (particularly competition for light). On a landscape scale, abiotic factors (soil depth, soil class) impose a general community structure via habitat filtering, **and these abiotic factors may be static (inputs) or dynamically changing (passed on from another model). The abiotic factors (shading, in particular) further affect some competition outcomes, leading to the emergence of complex environment-community relationships, but we consider these indirect effects secondary and weaker than those imposed by habitat filtering.**
+The key outcome of the simulation is the spatiotemporal change of community patterns, which emerges from the interaction of plant functional groups within each grid cell (particularly competition for light). On a landscape scale, abiotic factors (soil depth, soil class) impose a general community structure via habitat filtering, *and these abiotic factors may be static (inputs) or dynamically changing (passed on from another model). The abiotic factors (shading, in particular) further affect some competition outcomes, leading to the emergence of complex environment-community relationships, but we consider these indirect effects secondary and weaker than those imposed by habitat filtering.*
 
 ## Adaptation 
 
-The plant model does not contain any direct objective-seeking mechanisms, i.e. the agents do not possess the ability to choose among two or more alternative behaviors e.g. via learning or condition-dependent rules (phenotypic plasticity). Two grid cells with initially equal biomasses of each PFG will always develop exactly the same community, if no new seeds land via dispersal (**Dispersal is also entirely random and uninformed**). The rules by which agents respond to the environment (the "genotypes" of the Functional Groups) are instead provided by the user (PFG Definitions).
+The plant model does not contain any direct objective-seeking mechanisms, i.e. the agents do not possess the ability to choose among two or more alternative behaviors e.g. via learning or condition-dependent rules (phenotypic plasticity). Two grid cells with initially equal biomasses of each PFG will always develop exactly the same community, if no new seeds land via dispersal (*Dispersal is also entirely random and uninformed*). The rules by which agents respond to the environment (the "genotypes" of the Functional Groups) are instead provided by the user (PFG Definitions).
 
 ## Objectives
 
@@ -241,7 +244,7 @@ Succession describes the growth processes that happen within a year inside a sin
 
 The processes largely describe processes affecting individuals, yet the model's smallest unit are Functional Groups, i.e. the processes work on a demographic level.
 
-**The implementation of succession was revised, but the general calculations have not changed (yet). See workflow diagrams for sequence of events. Long-term Seed dormancy is disabled, however.**
+*The implementation of succession was revised, but the general calculations have not changed (yet). See workflow diagrams for sequence of events. Long-term Seed dormancy is disabled, however.*
 
 ### Disturbance  
 
@@ -266,7 +269,7 @@ The description of the demography of the functional group is updated, according 
 
 ### calculation of current light resources
 
-Conceptually, the light is calculated for the uppermost stratum according to the biomass of the PFGs living in it. The light that is not consumed is passed on to the next stratum, being reduced in the same fashion until it reaches zero or arrives at ground level (stratum 0). Consumption of light depends on a shading factor **(not to be confused with the input “shading”)** that represents leaf and growth form, maturity of the plant, and on the biomass that the plant reaches (the maximum biomass that a plant can reach differs between small, medium and large plants, and the abundance class is another PFG attribute). The amount of light in each stratum is converted into a factor (low, medium and high light conditions). 
+Conceptually, the light is calculated for the uppermost stratum according to the biomass of the PFGs living in it. The light that is not consumed is passed on to the next stratum, being reduced in the same fashion until it reaches zero or arrives at ground level (stratum 0). Consumption of light depends on a shading factor *(not to be confused with the input “shading”)* that represents leaf and growth form, maturity of the plant, and on the biomass that the plant reaches (the maximum biomass that a plant can reach differs between small, medium and large plants, and the abundance class is another PFG attribute). The amount of light in each stratum is converted into a factor (low, medium and high light conditions). 
 
 Technically, a ray of shading passes through the cell. It collects any (leaf-form and maturity- corrected) plant abundance it encounters. In each level the shading ray is compared against a light threshold parameter, and if smaller than the "low" or "medium" threshold, the light resource declines to the according level
 
@@ -289,16 +292,20 @@ To do
 
 In Fate-HD the dispersal model was based on three parameters: d50 that is the maximum distance within which 50% of the seeds are dispersed, d99 is the maximum distance within which 99% of the seeds are found in total, and ldd is the maximum long-distance dispersal. Within each dispersal disc, the seeds could be distributed uniformly or decreasing exponentially with distance from the plant. 
 
-**Plant dispersal has been simplified in comparison to Fate: all seeds produced in a year are pooled, and then redistributed randomly across the site at the end of the year.**
+>>>
+Plant dispersal has been simplified in comparison to Fate: all seeds produced in a year are pooled, and then redistributed randomly across the site at the end of the year.
+>>>
 
 
 # 8. Implementation
 
 >>>
-Operating system | Portable to any common OS 
-Programming language | c++ 20 (or newer) 
-Precursors | FATE-HD, RFate. The model was previously developed in a joint ECOLOPES repository; as a result of joint development and intended interaction, 
-some components of the Plant Model (e.g. data containers) are shared with/inherited from the ECOLOPES joint model (written by the same author(s)).
+| concept | detail |
+| --- | --- |
+| Operating system | Portable to any common OS 
+| Programming language | c++ 20 (or newer) 
+| Precursors | FATE-HD, RFate. The model was previously developed in a joint ECOLOPES repository; as a result of joint development and intended interaction, 
+some components of the Plant Model (e.g. data containers) are shared with/inherited from the ECOLOPES joint model (written by the same author(s)). |
 >>>
 
 ## Dependencies and requirements
