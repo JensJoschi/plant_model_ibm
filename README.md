@@ -129,7 +129,7 @@ Another feature of urban environments is the strong influence of human use and h
 
 # 3. Process overview and scheduling
 
-! [Process overview and schduling] (doc/process_overview.png)  
+! [Process overview and schduling] (<doc/process_overview.png>)  
 *Process overview (draft). Notes: 1. the order doesn’t seem to make sense, but is copied from RFate; 2. processes match function names of code(see UML diagram). Or they should at least, I keep changing them.*
 
 # 4. Design concepts
@@ -226,7 +226,7 @@ During initialization, the plant model runs 5 iterations. Running the model for 
 # 7. Submodels
 
 
-**The modelling approach contains three main processes: habitat suitability, succession, and dispersal. (note that this description of processes contradicts FATE, which sees disturbance and light competition as separate modules.)**
+*The modelling approach contains three main processes: habitat suitability, succession, and dispersal. (note that this description of processes contradicts FATE, which sees disturbance and light competition as separate modules.)*
 
 ## Habitat suitability 
 
@@ -244,7 +244,7 @@ Succession describes the growth processes that happen within a year inside a sin
 
 The processes largely describe processes affecting individuals, yet the model's smallest unit are Functional Groups, i.e. the processes work on a demographic level.
 
-*The implementation of succession was revised, but the general calculations have not changed (yet). See workflow diagrams for sequence of events. Long-term Seed dormancy is disabled, however.*
+*The implementation of succession was revised, but the general calculations have not changed (yet). See figure "Process overview and scheduling, innermost box" for sequence of events. Long-term Seed dormancy is disabled, however.*
 
 ### Disturbance  
 
@@ -260,6 +260,8 @@ In the PFG definitions one can define the effect each kind of disturbance has on
 
 ### Death due to insufficient light
 
+! [Light competition] (<doc/light_competition.png>)
+
 This function works on the light conditions of the preceding year. Light is expressed as a vector of factors, classifying the light in each stratum as low, intermediate or high. It is tested for each PFG in each growth stage (seed, germinant, juveniles, matures)  whether the light tolerance matches the current light conditions (the 12 light tolerance parameters, I.e., low, med and high for each growth stage, are provided in the PFG definitions). Plant material that does not tolerate the current light conditions dies.
 
 ### Aging
@@ -268,6 +270,8 @@ The description of the demography of the functional group is updated, according 
 
 
 ### calculation of current light resources
+
+! [Light calculation] (<doc/light_calculation.png>)
 
 Conceptually, the light is calculated for the uppermost stratum according to the biomass of the PFGs living in it. The light that is not consumed is passed on to the next stratum, being reduced in the same fashion until it reaches zero or arrives at ground level (stratum 0). Consumption of light depends on a shading factor *(not to be confused with the input “shading”)* that represents leaf and growth form, maturity of the plant, and on the biomass that the plant reaches (the maximum biomass that a plant can reach differs between small, medium and large plants, and the abundance class is another PFG attribute). The amount of light in each stratum is converted into a factor (low, medium and high light conditions). 
 
@@ -281,10 +285,13 @@ The modelled grid cell is actually a box (voxel) that is stratified. Light will 
 
 ### germination and recruitment
 
+! [] (<doc/germ_and_recruit.png>)
+
 To do
 
 ### reproduction
 
+! [] (<doc/reproduciton.png>)
 To do
 
 
