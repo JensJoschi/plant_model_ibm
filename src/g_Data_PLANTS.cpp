@@ -105,8 +105,8 @@ if(gsp.doesSoilDepth){
 
 void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
     CLOG(INFO, "PLANTS") << "--Performing checks for plant model data.";
-
     //check if definitions are exactly equal with regional model, report if there is a mismatch
+    //mostly for debugging, issue warning only. Regional model is in fact sometimes a subset of PFGDefs
     std::vector<std::string> defs = PFGDefinitions.getNames();
     std::sort(defs.begin(), defs.end());
     std::vector<std::string> reg = listPlantFunctionalGroups;
@@ -123,16 +123,16 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
     }
 
     if (listPlantFunctionalGroups.size() < PFGDefinitions.size()) {
-      LOG(WARNING) << "Warning: Not all defined plants occur on the ecolope. Defined: " << 
-     PFGDefinitions.size() << "on the ecolope: "<<  listPlantFunctionalGroups.size();}
+      LOG(WARNING) << "Warning: Not all defined plants occur on site. Defined: " << 
+     PFGDefinitions.size() << "on site: "<<  listPlantFunctionalGroups.size();}
     if (listPlantFunctionalGroups.size() > PFGDefinitions.size()) {
-      LOG(FATAL)  << "not all plants on the ecolope have been defined. Defined: "<< 
-     PFGDefinitions.size()<< "on the ecolope: " << listPlantFunctionalGroups.size();}
+      LOG(FATAL)  << "not all plants on site have been defined. Defined: "<< 
+     PFGDefinitions.size()<< "on site: " << listPlantFunctionalGroups.size();}
     //temporary:
     if (listPlantFunctionalGroups.size() !=PFGDefinitions.size()){
       LOG(FATAL) << "regional model temporarily deactivated. "<<
       "Please make sure that the number of PFGs in main is the same as GSP::no_PFG. Defined: "<< 
-      PFGDefinitions.size()<< "on the ecolope: "<<  listPlantFunctionalGroups.size();
+      PFGDefinitions.size()<< "on site: "<<  listPlantFunctionalGroups.size();
     }
     
     //todo here: check PFGDefs against global params. currently PFGDefs 

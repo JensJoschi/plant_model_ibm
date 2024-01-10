@@ -47,17 +47,23 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \class Inputs
  * \brief contains plant-specific input
  * \details derives from Data_BASE and complements it by plant-specific input
- * This input is currently the PFG definitions,  shading and soil depth, soil depth is in cm and shading is a percentage
+ * This input is currently the PFG definitions,  shading and soil depth. Soil depth is in cm and shading is a percentage
 */
 class Data_PLANTS: public Data_BASE{
   public:
     explicit Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gsp);
     Data_PLANTS() = default;
-    PFGDefs PFGDefinitions;                    // plant functional group definition.
-    
-    Landscape<double> shading;                 // percentage of shade cover in each grid cell;Expected content: dbl, 0-1; 0 = sun-exposed, 1 = darkness.
+    PFGDefs PFGDefinitions;                    // plant functional group definition. Contains life history attributes (lifespan etc.)
+    Landscape<double> shading;                 // percentage of shade cover in each grid cell;Expected content: dbl, 0-1; 0.0 = sun-exposed, 1.0 = darkness.
     Landscape<int>    soilDepth;               // depth of soil in cm, integers only. Expected int, 0-100 cm
 
+    /**
+    * \brief check data coordinates for consistency
+    * 
+    * \param keys names of all cells in the landscape
+    * \param gsp Global Simulation Parameters, contains information which submodels run
+    * @return true if all coordinates are consistent, false otherwise
+    */
     virtual bool checkKeys(const std::vector<std::string>& keys, const GSP_PLANTS& gsp) const;
 
   private:
@@ -65,7 +71,14 @@ class Data_PLANTS: public Data_BASE{
    * \brief check plant-specific inputs
    * \details checks plant-specific inputs for errors. called by constructor. 
    * the base ctor has already checked the base inputs, so we only need to check the plant-specific inputs here.
+   * In particular, the function checks that all shading values are between 0.0 and 1.0, all depth values >= 0, and that 
+   * the PFG definitions are consistent with regional model information.
    * 
+   * PFG definitions may be a file with all plants that could theoretically occur; sometimes taken from
+   * a different project, or using a globally valid all-purpose file
+   * listPlantFunctionalGroups, on the other hand, is a subset (up to 100%) of the PFGDefinitions which occurs on site.
+   * Accordingly, PFGDefs may contain more PFGs than listPlantFunctionalGroups, but all PFGs in listPlantFunctionalGroups
+   * must be contained in PFGDefs.
    * \param gsp the GSP_PLANT version of global parameters. 
    */
     virtual void checkContent(const GSP_PLANTS& gsp) const;

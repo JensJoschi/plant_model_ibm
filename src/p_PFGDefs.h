@@ -65,10 +65,10 @@ class PFGDefs{
 //Constructors
 //==============================================================================
 	/*! 
-	* \brief Default constructor: default PFG definition constructed
+	* \brief Default constructor
 	* \details
 	This constructor creates a list of plant functional groups that has been provided by the developers. 
-	Currently this list contains only a few items for testing,later it may contain the whole set of PFGs that is provided by task 4.3. 
+	Currently this list contains only a few items for testing,later it may contain a whole set of standard PFGs.
 	*/
 	PFGDefs();
 
@@ -109,17 +109,15 @@ class PFGDefs{
 	std::vector<std::string> getNames() const;
 
 	/**
-	 * \brief get a all pfgs
+	 * \brief get all pfgs
 	 * \details useful for iterating over all PFGs 
-	 * auto it = PFGdefs.getPFGs().begin(); it != PFGdefs.getPFGs().end(); ++it
-	 * or
 	 * for (auto& pfg : PFGdefs.getPFGs())
 	 * @return const std::map<string, PFG>& 
 	 */
 	const std::map<std::string, PFG>& getPFGs() const;
 
 	/**
-	 * \brief get a all disturbances
+	 * \brief get all disturbances
 	 * \details useful for iterating 
 	 */
 	const std::map<std::string, PFGDisturbances>& getDisturbances() const;

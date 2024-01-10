@@ -51,29 +51,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 class PFG;
 class PFGDisturbances;
-//==============================================================================
-//Future version: should not have cohorts anymore. Instead a demography class, which has
-// class Demography{
-// 	vector<int> dem;
-// 	const int matAge;
-// 	const int LifeSpan;
-// 	void age();
-// 	void remove(minage, maxage, amount);
-// 	int getAbund ( minage, maxage) const;
-// 	int getMatures() const;
-// 	int getImmatures() const;
-// }
-//functions of the FuncGroup class should be:
-// + germinate (disturbance)
-// + recruit (envsuit)
-// + beDisturbed
-// + die(light)
-// + age()
-// + addResprout(r, light)
-// + makeSeeds
-// checkSoilTol()
 
-//==============================================================================
 /*!
  * \class FuncGroup
  * \brief Plant Functional Group Class

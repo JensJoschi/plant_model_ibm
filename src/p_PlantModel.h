@@ -76,7 +76,7 @@ class PlantModel{
 	public:
 	/**
 	 * \brief constructor
-      * \param inputs_plants pointer to the data source
+
 	 */
 	explicit PlantModel(const std::string& inputFile, const std::vector<std::string>& keys);
 
@@ -98,9 +98,9 @@ class PlantModel{
 	/**
 	 * \brief create inputs for plant model
 	 * \details Wrapper function to create habitat suitability and disturbance maps
-	 * Conceptually converts a Landscape<soils> and a landscape <animals> into a landscape<habitat suitability> and a landscape<animal disturbance>
+	 * Conceptually converts a Landscape<soils> and a landscape <effectsize> into a landscape<habitat suitability> and a landscape<disturbance>
 	 * \param soils soil class map
-	 * \param animals animal biomass map
+	 * \param disturbance map with the effect size of each disturbance (e.g. "mouse: 0.5, fire: 2")
 	 * \param init is this function used during initialization?
 	 */
 	void createInputMaps(const Landscape<std::string>& soils, 

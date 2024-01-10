@@ -39,7 +39,6 @@ PropPool::PropPool(int size, bool declining, int dTime) : m_Size(size), m_Declin
 
 void PropPool::PutSeedInPool(int Inp){
 	if (Inp < m_Size){return;}
-
 	m_Size = Inp;
 	m_Declining = false;
 	m_DTime = 0;

@@ -119,12 +119,6 @@ class Cell{
 	* \brief create  disturbance map
 	* \details this function creates a disturbance, simply by passing on the disturbances from PlantModel.
 	* \param animals biomass
-	\note  Problem: the animal disturbance 
-		// values should be between 0 and 1, but is a biomass in kg. there is no 
-		// conversion used yet. 
-		// as a mouse weighs only 0.2 kg max, it will currently kill 0.2 * 100% 
-		// of the plant abundances, so it effectively only eats 20% of available
-		// plant material. Right now every animal disturbs plants, so we can see something
 	*/
 	void CreateDisturbances(const std::map<std::string, double>& dists);
 
@@ -181,6 +175,7 @@ class Cell{
 	double UpdateEnvSuitRefVal();
 
 
+	public: // made these public for testing
 	/*!
 	 *	\brief Calculate light values based on FG abundances
 	 *  \details 
@@ -198,10 +193,14 @@ class Cell{
 	 * 	\param abundance vector of size noStrata, containing the plant density of the neighbouring cell
 	 * 	\param angle angle at which light falls on the cell; used to calculate how much light passes through the neighbour
 	 */
-	public: // made these public for testing
 	void updateLight(const std::vector<int>& abundance, const int angle);
 
-	void updateLight(); //for use without a neighbour/angle of 90°
+	 /**
+ 	 * \brief  Calculate light values based on FG abundances
+	 * \details
+	 * See overload for details. This function is used if the cell has no neighbour or light falls in at an angle of 90°
+ 	*/
+	void updateLight();
 
 	/**
 	 * \brief calculate the amount of light that passes through the neighbour's canopy

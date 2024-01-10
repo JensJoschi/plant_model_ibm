@@ -58,7 +58,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \details 
  * This object stores all the parameters characterizing a Plant Functional
  * Group. Parameters concern life history and propagule biology, 
- * light and soil requirements * 
+ * light and soil requirements
  * \note
  * Data is intentionally kept private, only accessible by the friend class FuncGroup.
  * Parameters are difficult to interpret, and FuncGroup will require some cleanup. 

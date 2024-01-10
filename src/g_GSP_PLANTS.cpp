@@ -47,7 +47,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 /* Constructors                                                                                    */
 /*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/
 
-//default constructor that places sensible defaluts
+
 GSP_PLANTS::GSP_PLANTS():GSP_BASE() { //calls base default ctor and then adds stuff
   // defaultBuild(); //leaving eveything false/zero for now
 }
