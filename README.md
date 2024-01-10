@@ -292,6 +292,7 @@ To do
 ### reproduction
 
 ![](<doc/reproduciton.png>)
+
 To do
 
 
@@ -309,16 +310,183 @@ Plant dispersal has been simplified in comparison to Fate: all seeds produced in
 >>>
 | concept | detail |
 | --- | --- |
-| Operating system | Portable to any common OS 
-| Programming language | c++ 20 (or newer) 
-| Precursors | FATE-HD, RFate. The model was previously developed in a joint ECOLOPES repository; as a result of joint development and intended interaction, 
-some components of the Plant Model (e.g. data containers) are shared with/inherited from the ECOLOPES joint model (written by the same author(s)). |
->>>
+| Operating system | Portable to any common OS |
+| Programming language | c++ 20 (or newer) |
+| Precursors | FATE-HD, RFate; some code (data containers, inputs) shared with joint ECOLOPES models |
+
+The *plant model* was developed as part of a joint ECOLOPES model(written by the same author(s)), and is usually meant to be used in that context. However, it is also able to be run on its own, or to be integrated into another program. The *joint ECOLOPES model* is usually meant to run as a grasshopper plugin- but it can be run on its own as well. In the latter case, the user is responsible for creating sensible input data. 
+
+Being developed as part of a joint model and partially derived and altered from FATE, the model contains code and concepts that are currently not required and better turned off (e.g. seed dormancy), and code which works but is clumsy, inefficient, or uses outdated programming paradigms. Special care is taken that the documentation is up to date, but some code comments or documentation sections may ocassionally be forgotten. 
+
+## Compiling as library or executable
+
+The model can be compiled as a library (.dll or .dylib), so that it can easily be #include'd into another program. This requires copying the library file and the header file "plantmodel.h" to the target directory (or its "include" folder) and linking against it. The folder src contains all plant model source files, as well a CMake file that helps building the library.  The CMake file in the root directory (together with the main in root) provide a demonstration (**to do**).
+
+Alternatively, one can compile the source files together with a main.cpp (in src folder, **not written yet**) to create a full executable. 
+
+Because this is work in progress, it currently only works on macOS, and the src/cmakelists.txt refers to local folders (to make it run, change the folder to Users/YOU/plantmodel...).
 
 ## Dependencies and requirements
 
-## Compiling as library or executable
+All dependencies are included in the /include folder (ECOLOPES joint model for data containers, nlohmann::json and easylogging). The model has no specific requirements to run (< 1 GB hard disc space, < 2GB RAM, any modern CPU), but compilation requires cmake and a c++20 compiler (it is tested llvm and MinGW's GNU compiler, but should also work on AppleClang). See USER_GUIDE.md for installation notes.
+
+**Please note that some further files from the joint ecolopes model (input classes) are included in src. They come with a different license and may not be used yet** 
+
+## Implementation overview
+
+PlantModel consists of individual Cell objects (10,000 for a 100x100 site). Each cell contains abiotic informaion (soil class, shading), as well as a plant community that consists of multiple FuncGroups (one per PFG). The FuncGroups store the demographic information of the PFG in the cell. PlantModel is also linked to various inputs, consisting chiefly of 1) general simulation parameters (GSP), 2) constant user inputs (e.g. shading, soil depth), and 3) constant PFG definition (containing e.g. Life span). The input classes are inherited from a base class, which all submodels of the ECOLOPES ecological model share. 
+
+![UML](<doc/uml.png>)
+
+*UML diagram of plant model. Notation follows standard UML notation. "EcolopesLand" refers to a class of the joint ECOLOPES ecological model, which may #include the plant model as a library and run it. The use of "Cohorts" inside the FuncGroup class, the FuncGroup class itself, and the PropPool class stem from FATE-HD and will be changed in a future version.* 
+
+The plant model will undergo major changes, as the funcGroup and lower classes pose significant challenges for further development. See limitations and constraints section.
+
+![UML](<doc/uml_new.png>)
+
+*UML diagram of a revised model (snippet of Cell and lower levels only). FuncGroup and related classes will in a future version be replaced by a plant-individual-based model. Drafts of the new files can already be found in the folder src but are not being used yet.*
 
 ## Warnings and limitations
 
 The model is not fully parametrized and not validated. Inputs are assumed to be coarse approximations or simplifcations, and the model accordingly only suggests relative differences among FGs. The model is not yet thoroughly tested and currently meant to be used only for academic purposes. 
+
+
+## Problems, bugs, inconsistencies
+
+Various of the issues listed here will be solvred with  a new individual-based model (issue #29)
+
+* Shading issues* (issues #20, #21, #23)
+
+The original plant model was built for a landscape-scale. The community of each cell was a stand of trees etc, containing multiple individuals that may shade each other. By reducing the spatial extent to a square/cube meter, we now may have only a single indivdidual of a PFG present. The highest stratum of the PFG shades the lower parts and causes them to die, which is no longer realistic when we talk about a single plant. 
+Additionally, plants that grow within the same stratum do not compete with each other for light, only plants reaching a higher stratum will compete with others.
+
+*Other conceptual issues* (issues #22)
+
+When the soil changes, it does not affect growing or mature plants, it only affects the seed recruitment process. One could also let it affect the fecundity of the plants. In the original RFate implementation this was possibly handled differently. If a habitat turned unsuitable, the FG would be treated like an immature, so the fecundity would be set to zero. It seems as if it was also treated in the light calculation like an immature (small) plant, yet it still aged normally. This might be a conceptional oversight of the original implementation.     
+
+
+
+
+*cohorts and legions* (issue #25)
+
+The plant model saves data as “cohort” objects. If a plant produces 20 offspring each year over 10 years, the data could be represented in a vector: 
+
+[20 
+
+20 
+
+20 
+
+20 
+
+…] 
+
+The plant model instead chooses to summarize the information to (0, 10, 20), I.e., (minAge, maxAge, amount). This way of storing information might save a bit of memory, but requires rather complex operations whenever a cohort passes over an age border. For example, a tree may reach its mature size at age 10. In year 9, we have a cohort of (0,9,20); in year 10 we need to age the cohort and get (1,10,20). Then we create an offspring cohort (0,0,20) and join the cohorts (0,10,20). If we want to apply a disturbance to immature plants only, we split at age 10 into (0,9,20) and (10,10,20). In year 11 we repeat all of those steps but add the split cohort (10,10,10) to the new (11,11,10) cohort. All the time we are dealing with a vector of cohorts (size 1-2 in this example). Resizing a vector or inserting something into the middle of a vector is costly, and maintaining/debugging this code was difficult. I doubt that the potential to save some memory warrants such computationally complex operations (increases processing time). 
+
+The way cohorts are split and put together is also suboptimal in my view. A for loop/while loop is used to loop over the cohorts, and whenever a cohort is split, the iterator needs to be adjusted. This results in a recursive-like function. There is an unwritten rule that one should not mess with loop iterators, although it is technically possible it can easily result in logical errors that are hard to debug.  
+
+The model code would in principle also allow for overlapping cohorts; for example, one could have 50 individuals each from age 0-10; 20 individuals aged 3-5, and 40 individuals aged 4-7. This notation is equivalent to 50 individuals aged 0-2; 70 individuals aged 3; 110 individuals aged 4-5; 90 individuals aged 5-7; and 50 individuals aged 7-10. I do not know whether this freedom to choose different cohorts for the same demography was intended, and whether it affects the calculations (it does seem to affect the age() function though). To make the code more maintainable (and enhance performance), I disassemble the cohort at each time step ((0,0,10), (1,1,10) etc) and put it back at the end, but I would vote for getting rid of this system entirely at some point. The disassembly has the side effect of removing cohort overlap. 
+
+
+*PropPool* (issue #26)
+
+The seed propagule pool is not well described in either the original paper or the user manual, so it is a bit difficult to infer the concepts and ideas behind it. Essentially it is a functionality that has long been abandoned. As I understand it, the amount of seeds produced every year depends on the abundance and fecundity of a PFG. Only a certain proportion of the seeds can germinate every year, so naturally a seed pool would build up in the soil (there is no carrying capacity or density dependence in the seed pool). This is counteracted by a constant seed mortality rate which diminishes the seed pool over time. However, if the user chooses a long “shelf life” of the seeds, one would still build up a considerable seed bank, and because recruitment is proportional to the seed bank, a considerable rejuvenation potential (potentially a conceptual oversight?).   
+
+The implementation of the PropPool class is a bit awkward to use and raised a few questions. The class consists of a seed set (“m_size”) that is meant to decline with a constant mortality rate, and this mortality rate is given by  
+
+size (n+1) = size (n) - size(n) * (1 / (pl + 1)),  
+
+where pl is is the pool life span. The decline happens whenever the member function “agepool1” is called. For instance, with a pool life span of 1 the seed set halves every time step, with a life span of 10 years it decreases by 10% per year. This means that the seeds diminish exponentially.  
+
+The pool life span is not a property of the class, but a PFG attribute, passed on as function argument whenever the pool ages. This means that the responsibility for the pool life span has been shifted away from the object and to the caller (who may e.g., decrease the seed pool by 50% in year 1, but by 10 % in year two), which is suboptimal. 
+
+The class also contains a private “DTime” variable, which is never used, and the declining of the seed set can be disabled (bool m_declining) which does not seem to make much sense. The class contains a public “emptyPool()” function which erases all content but does not properly delete the object.  
+
+Lastly, the class contains a “putseedsinPool” function, which replaces the seed set by a new one, if the new one is larger than the older (it does not add the seeds but replaces them). If the new seed set is smaller than the old one, the function does nothing. I do not understand why this approach was chosen. The age of the seeds is not tracked (or rather not used?), and mortality is independent of seed age anyway (it depends on life span, not age), so one could simply have added the seeds. I think this might be a bug. This bug seems to counteract the lack of a carrying capacity, as the seed pool is emptied and refilled (but only to a maximum value) every time step. 
+
+I suggest rewriting and making the mortality rate a const argument that cannot be changed after instantiating the object. The constructor should implement the linear equation based on pool life span, so this function is only called once per seed pool object. I would remove the m_declining variable, and also the emptyPool() function. The class FuncGroup should instead delete the pool and replace it by a different one if required. One could alternatively create a “addSeedsToPool” function. 
+
+It also seems that the function FuncGroup::agepool1(), which indirects to PropPool::agepool1() is not being used. I think it should be erased.  
+
+That said, seeds are somehow stored, and if not germinating they will age and die. The proportion killed every year is a bit difficult to figure out, but it works. Only the dormant seeds shouldn’t be touched. 
+
+*Enums and Fracts* (issue #27)
+
+The plant model contains various unscoped enumerations (enums), such as Abund (can contain the values “low”, “medium” or “high”) or LifeStage(“Propagule”, “Germinant”, “Immature”, “Mature”). These enums are internally stored as integers and can be implicitly converted (can be verified by hovering over an enum in vscode).  Standard enums are neither type safe nor strongly scoped, so  “Abund::low == LifeStage::Propagule” would be true but not sensible (or even “Mature – Immature == medium”). It is better to use scoped enumerations (enum class). 
+
+The plant model further uses enums to circumvent calculations based on floats. In general, calculations based on integers used to be faster than calculations on floats (“Fract” enums).  Because Enums are internally stored as integers, the float essentially is rounded to an integer. These enums have 10 levels (10, 20... 100) and their use reduces the precision but may in principle increase performance. I see two problems with the approach: 1) there is no performance gain between an enum of size 10 and an enum of size 100, so one could round to the nearest integer instead of the nearest decade; 2) CPUs are no longer limited by processing time but mostly by loading the memory. If speed is an issue, one may simply convert from double to single precision, which is still several orders more accurate than the fract conversion.  
+
+Multiple functions are required to convert between doubles and Fract’s, bloating the code and requiring additional function calls. I suggest removing the fracts in the future. 
+
+
+*Vector-map conversion* (issue #28)
+
+The model used to run on std::vectors. Most parts have been changed to std::maps to reduce the possibility of confusing inputs/assigning attributes to the wrong plant functional group. In light of the intended use(long-term development and maintenance), we opted for the slightly slower but safer std::maps approach. Some remnants of the old vector system still exists, and whenever we do a conversion there is a risk of breaking something (e.g. suddenly having to call a pfg “pfg 14” instead of its actual name). Proper tests with multiple PFGs are required (tedious), or, even better, the remaining vectors of the SuFate class need to be cleaned up. 
+
+
+*Major bugs* 
+- Light at the highest stratum is never reduced, even if the cell is 100% shaded. This causes unrealistic results in dark corners of a site.   
+
+
+## Ideas for the future 
+
+*Light calculation and 3D in the plant model* (issue #17, #15, #29, #31)
+
+The plant model is, strictly speaking, only correct when all cells are horizontal and light enters at a 90° angle. This is unrealistic, in reality light comes in at a variety of angles (changing over the course of the day), and the distribution of angles is latitude dependent. When the cell is tilted, the distribution of angles is strongly affected by the aspect (north/east/south/west) of the cell. When light enters at an angle, it does not pass through all strata of a cell, but partly through strata of a neighbouring cell. A first version of light passing through the immediate neighbour is implemented, but limited to a single light angle rather than a distribution, and limited to horizontal and immediately adjacent cells. 
+
+The above already allows for better 3D effects, causing e.g. vegetation on a building edge to receive more light than vegetation in the center. There are a few disadvantages though: 1) if light comes in at a sufficiently steep angle, it should pass through multiple cells. This is ignored in above version; 2) with this method we can only model light coming from the eastern/southern etc. Neighbour, but not light coming in from e.g. SSW. This is important when trying to simulate a natural distribution of light angles; 3) we would want to deal with sloped angles or even facades. The technique does not work very well in these cases (see fig.  below). Tilting voxel cells will cause them to overlap and make calculations impossible. We can, however, assume that plants of the lowest layer grow perpendicular to the ground (even if tilted), but larger plants will grow towards the sky (left figure). Tilting the lowest level will correctly change the angle of the sun and change the area covered by neighbouring light (compare ß1 and ß2 in left figure), but the neighbouring light may partially pass through the neighbour’s stratum of the same level (light blue). On a vertical cell (right figure) the light shouldn’t go at all through the neighbour’s layer (blue arrow shows what the model thinks) but through the upper layer of the same cell (dark green).  
+**figure missing**
+A solution to above problem is raytracing, I.e. following the sun rays and checking with which cells they collide. This technique is employed in any modern 3D video game (“shaders/shading”) but potentially would slow down the model considerably. Possibly code from the Unreal Engine or similar c++-based game engines/libraries could be used, but I do not know how feasible it is to employ. 
+
+The addition of shading through neighbours made it necessary to implement a voxel cell height variable. There are no checks yet that two stacked voxels do not overlap (issue #31)
+
+*Solving the shading issues*  (issue #29)
+
+To have proper competition of plants within a stratum, I think we need a new layer in the model, simulating individual plants (that extent over all strata). It doesn’t matter which parts of the plant get exposed to light, as long as the summed light amount across all layers is sufficient for the plant to survive. The plant may also have a certain shape, e.g. a large crown etc. Disturbance may affect a certain stratum, but we could give the plant the opportunity to redistribute its mass at the end of the year (using energy reserves from lower strata if the higher strata got attacked).  
+ndividual-based plant model 
+
+Most of the conceptual and technical issues highlighted above (competition with self, cohorts) relate to the lack of plant individuals in the model. A new model version could contain a plant community that is made up of individuals; the individual’s biomasses (distributed across strata) convert collected light into a resource and store it in a pool (root system); the resource is used for maintenance as well as to create new biomass and new seeds. Thus, shading on the lower parts of the plant  are compensated by the higher parts of the plant. Another major change in the new model is replacing any factors by integers. In the new model light , measured in lux, is converted into biomass, measured in kg. This allows correctly parametrizing the model with real-world data.  
+
+**Description of the new classes**
+
+*ResourceAlloc*
+
+This class holds information about the allocation of resources to growth and reproduction. Currently these are just some fixed attributes, stored as part of the PFG definition. Currently stored information:  
+
+- Light conversion efficiency 
+
+- maintenance costs 
+
+- resource allocation into reproduction 
+
+- resource allocation into biomass 
+
+- max annual biomassgrowth under ideal resource conditions 
+
+Reading of model papers is required to figure out exact variables and allometric relationships with other PFG attributes. 
+
+ 
+
+*PlantResource*
+
+This classs converts light into resources (carbon storage) and saves the resources for a plant. A carbon storage pool of potentially infinite size keeps track of the plant resources. This storage is independent of the plant's age or size. The class is a placeholder for a proper model 1. It contains only the following relationships: 
+
+- Light is converted into resources, according to a fixed conversion efficiency. 
+
+- The plant pays maintenance costs for existing biomass, reducing the resource pool accordingly. The maintenance costs are a fixed fraction of the existing biomass. 
+
+- if resources are available, the plant will invest in seeds and reproduction, according to a fixed allocation. 
+
+- if resources go to zero, the resources are considered critical (which may cause the plant to die) 
+
+The various parameters (conversion efficiency, allocation and maintenance costs) _should_ follow allometric relationships with other PFG attributes, or be otherwise derived from publications and data, but currently they are fixed PFG attributes and very simple linear equations. 
+
+1 placeholder means that it is a fully working class, the Individuals can alreaddy use the resource pool and the functions to tap it are  written. Only the internal logic (allometric relationships etc) are not correct yet. 
+
+ 
+
+*Individual* 
+
+An individual plant can collect light, grow and reproduce, thereby allocating some of its resources to new seeds and new biomass, and it can be disturbed. Because the individual has access to its PFG attributes, it can always tell in which strata it is growing. 
+
+>>>
