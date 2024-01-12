@@ -134,7 +134,7 @@ int main(int argc, char *argv[]){
                                 std::vector<std::string> keys  = inputs.data.keyList.getKeys(); //temporary
 
   CLOG(INFO, LOGGERS) << SECTIONBREAK << "CREATE PLANT MODEL";
-  PlantModel Plantmodel(WD+input_file, keys);
+  PlantModel Plantmodel(WD+input_file);
   int tplus1 = 0;
   int iterateOverSaveYears = 0; 
 

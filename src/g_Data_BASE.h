@@ -78,14 +78,12 @@ class Data_BASE{
     
   /**
    * \brief check if keys are consistent
-   * \details This function checks if the keys of all spatial data inputs are consistent with the keys provided. the provided keys may also be
-   * taken from one of the spatial data inputs (e.g. data_BASE.keylist; this would compare the keys from keylist against management).
-   * \param keys list of keys to check
+   * \details This function checks if the keys of all spatial data inputs are consistent . 
    * \param config global simulation parameters, used to check which model components are switched off
    * @return true all keys are consistent
    * @return false errors detected
    */
-   virtual bool checkKeys(const std::vector<std::string>& keys, const GSP_BASE& config) const; 
+   virtual bool checkKeys( const GSP_BASE& config) const; 
 
     /**
      * \brief Read a json value and return a Landscape object

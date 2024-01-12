@@ -56,7 +56,7 @@ INITIALIZE_EASYLOGGINGPP
 //==============================================================================
 //public
 
-PlantModel::PlantModel(const std::string& inputFile, const std::vector<std::string>& keys):
+PlantModel::PlantModel(const std::string& inputFile):
 	m_plantInputs_ptr(new Inputs_P(inputFile)){
 std::string WD = def_WD;
 el::Configurations plants_conf(WD + "/log_plants.conf"); 
@@ -66,8 +66,8 @@ el::Configurations plants_conf(WD + "/log_plants.conf");
   el::Loggers::addFlag(el::LoggingFlag::MultiLoggerSupport);
 
 	assert(m_plantInputs_ptr);
-	assert(keys.size() >0);
-	assert(m_plantInputs_ptr->checkKeys(keys));
+	std::vector<std::string> keys = m_plantInputs_ptr->data.keyList.getKeys();
+	assert(m_plantInputs_ptr->checkKeys());
 	assert(m_plantInputs_ptr->config.noStrata != 0); //checks that GSP wasn't default-constructed
 
 	CLOG(INFO, "PLANTS") << "Building Plant model";

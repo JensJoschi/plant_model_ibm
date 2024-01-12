@@ -78,7 +78,7 @@ class PlantModel{
 	 * \brief constructor
 
 	 */
-	explicit PlantModel(const std::string& inputFile, const std::vector<std::string>& keys);
+	explicit PlantModel(const std::string& inputFile);
 
 	/**
 	 * \brief Create stable starting community

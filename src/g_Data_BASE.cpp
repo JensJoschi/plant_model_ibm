@@ -96,11 +96,10 @@ void Data_BASE::checkContent(const GSP_BASE& gsp) const{
 }
 
 
-bool Data_BASE::checkKeys(const std::vector<std::string>& keys, const GSP_BASE& config) const{
-  if (keyList.getTotncell() != keys.size()) return false;
-  if (config.doesManagement && management.getTotncell() != keys.size()) return false;
+bool Data_BASE::checkKeys(const GSP_BASE& config) const{
+  if (config.doesManagement && management.getTotncell() != keyList.getKeys().size()) return false;
   else {
-    for (const auto& key : keys){
+    for (const auto& key : keyList.getKeys()){
       if (config.doesManagement && management.count(key) != 1) return false;
       if (keyList.count(key) != 1) return false;
     }

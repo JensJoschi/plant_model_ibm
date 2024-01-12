@@ -58,8 +58,8 @@ struct Inputs{
         assert(config.simulDuration > 0); //makes sure GSP was not default-constructed
          CLOG(DEBUG, LOGGERS) << "***Inputs created.";
     }
-    bool checkKeys(const std::vector<std::string>& keys) const{
-        return data.checkKeys(keys, config);
+    bool checkKeys() const{
+        return data.checkKeys(config);
     }
 };
 #endif //GSP_H

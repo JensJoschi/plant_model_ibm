@@ -28,8 +28,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "plants.h" //public API
 
 
-Plants::Plants(const std::string& inputFile, const std::vector<std::string>& keys){
-    pImpl = std::make_unique<PlantModel>(inputFile, keys);
+Plants::Plants(const std::string& inputFile){
+    pImpl = std::make_unique<PlantModel>(inputFile);
 }
 
 Plants::~Plants() = default;

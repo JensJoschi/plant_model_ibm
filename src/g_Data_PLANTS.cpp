@@ -159,12 +159,11 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
   CLOG(INFO, "PLANTS") << "***data checks for plant model done.";
 }
 
-bool Data_PLANTS::checkKeys(const std::vector<std::string>& keys, const GSP_PLANTS& gsp) const{
-  if (keyList.getTotncell() != keys.size()) return false;
-  if (gsp.doesShadingPercentages && (shading.getTotncell() != keys.size())) return false; 
-  if (gsp.doesSoilDepth && (soilDepth.getTotncell() != keys.size())) return false;
+bool Data_PLANTS::checkKeys(const GSP_PLANTS& gsp) const{
+  if (gsp.doesShadingPercentages && (shading.getTotncell() != keyList.getKeys().size())) return false; 
+  if (gsp.doesSoilDepth && (soilDepth.getTotncell() != keyList.getKeys().size())) return false;
 
-  for (const auto& key : keys){
+  for (const auto& key : keyList.getKeys()){
     if (keyList.count(key) != 1) return false;
     if (gsp.doesShadingPercentages && shading.count(key) != 1) return false;
     if (gsp.doesSoilDepth && soilDepth.count(key) != 1) return false;

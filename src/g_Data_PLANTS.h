@@ -64,7 +64,7 @@ class Data_PLANTS: public Data_BASE{
     * \param gsp Global Simulation Parameters, contains information which submodels run
     * @return true if all coordinates are consistent, false otherwise
     */
-    virtual bool checkKeys(const std::vector<std::string>& keys, const GSP_PLANTS& gsp) const;
+    virtual bool checkKeys(const GSP_PLANTS& gsp) const;
 
   private:
     /**
