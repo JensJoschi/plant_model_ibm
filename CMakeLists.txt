@@ -16,27 +16,35 @@
 #	Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen,
 #	Wilfried Thuiller
 
-cmake_minimum_required(VERSION 3.0)
+#Authors: Jens Joschinski
 
-project(PlantModel, VERSION 1.0)
+cmake_minimum_required(VERSION 3.0)
+project(plants VERSION 1.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#If(APPLE)
-#   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")  # has currently no effect though
-#endif()
 
-#work directory
-set(DEFAULT_WD ${CMAKE_CURRENT_SOURCE_DIR}) #if this approach doesnt work, try:
-add_definitions(-DDEFAULT_WD="${DEFAULT_WD}")
+set(WorkDir ${CMAKE_CURRENT_SOURCE_DIR})
+add_definitions(-DWorkDir="${WorkDir}")
 
-include_directories(include)
+#create variable SRC with all files from folder src:
+set (SRC "src/a_generalFunctions_vmvc.cpp"  "src/g_Data_BASE.cpp"   "src/g_Data_PLANTS.cpp" 
+         "src/g_FGUtils.cpp"                "src/g_GSP_BASE.cpp"    "src/g_GSP_PLANTS.cpp" 
+         "src/p_Cell.cpp"                   "src/p_FuncGroup.cpp"   "src/p_Individual.cpp" 
+         "src/p_PFG.cpp"                    "src/p_PFGDefs.cpp"     "src/p_PFGdisturbance.cpp"
+        "src/p_PlantModel.cpp"              "src/p_PlantResource.cpp" "src/p_PropPool.cpp" 
+        "src/p_ResourceAlloc.cpp" "src/rng.cpp")
 
-add_subdirectory(src)
+#library with all files from folder src:
+add_library(Plants SHARED ${SRC} src/plants.cpp include/easylogging++.cc)
 
-add_executable(main maintest.cpp /Users/jensjoschinski/plantmodel/include/easylogging++.cc)
-# this is a main that includes plant model as library. 
-target_link_libraries(main PUBLIC PlantLib)
+add_executable(Tests ${SRC} tests.cpp include/easylogging++.cc)
 
-target_include_directories(main PUBLIC
-                           /Users/jensjoschinski/plantmodel/include/
+target_include_directories(Plants PUBLIC
+                             "${PROJECT_SOURCE_DIR}/include"
+                             "${PROJECT_SOURCE_DIR}/src"
+                            )
+
+target_include_directories(Tests PUBLIC
+                            "${PROJECT_SOURCE_DIR}/include"
+                            "${PROJECT_SOURCE_DIR}/src"
                            )

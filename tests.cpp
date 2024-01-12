@@ -42,8 +42,6 @@ std::string defWD = WorkDir;
 
 int main(int argc, char *argv[]){
     std::string WD = defWD;
-  el::Configurations conf(WD + "/log_plants.conf"); 
-  el::Loggers::reconfigureAllLoggers(conf); 
 
   //............working directory............
   if(!std::filesystem::exists(WD)){
