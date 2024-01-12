@@ -34,7 +34,9 @@ set (SRC "src/a_generalFunctions_vmvc.cpp"  "src/g_Data_BASE.cpp"   "src/g_Data_
         "src/p_PlantModel.cpp"              "src/p_PlantResource.cpp" "src/p_PropPool.cpp" 
         "src/p_ResourceAlloc.cpp" "src/rng.cpp")
 
-#library with all files from folder src:
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/out)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/out)
+
 add_library(Plants SHARED ${SRC} src/plants.cpp include/easylogging++.cc)
 
 add_executable(Tests ${SRC} tests.cpp include/easylogging++.cc)
