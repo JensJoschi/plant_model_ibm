@@ -1,7 +1,7 @@
 {
     "COMMENT": "globalparameters used to be in a different file. Now we redirect to the same file as the simulation parameters so nothing in the code needs to change.",
-    "GlobSimulFile": "test.json",
-    "DATA": "test.json",
+    "GlobSimulFile": "tests/test.json",
+    "DATA": "tests/test.json",
 
     "COMMENT1": "----------------------------",
     "COMMENT2": "global simulation parameters",
@@ -19,11 +19,8 @@
     "COMMENT5": "DATA(Base)",
     "COMMENT6": "----------------------------",
 
-    "InputDir": "999-test/",
-    "SaveDir": "test-RESULTS/",
-    "PlantInputs": "test.json",
-    "AnimalInputs": "test.json",
-    "SoilInputs": "test.json",
+    "InputDir": "tests/",
+    "SaveDir": "tests/RESULTS/",
     "listPlantFunctionalGroups": ["generalist_grass", "generalist_tree"],
     "listAnimalFunctionalGroups":  ["SIZE_I-II", "SIZE_III", "SIZE_IV", "SIZE_V_1.1", "SIZE_V_1.2", "SIZE_V_2", "SIZE_V_3", "SIZE_VI", "SIZE_VII", "SIZE_VIII"],
     "MaskFile": "mask.json",
@@ -59,20 +56,5 @@
     "PFGDefsFile": "fullPFG.json",
     "DisturbanceDefsFile": "disturbances.json",
     "ShadingFile": ["nine.json", "SHADING"],
-    "DepthFile": ["nine.json", "DEPTH"],
-
-
-
-    "COMMENT14": "----------------------------",
-    "COMMENT15": "Global simulation parameters(Soil)",
-    "COMMENT16": "----------------------------",
-
-
-    "DoSoilFormation": true,
-
-    "COMMENT17": "----------------------------",
-    "COMMENT18": "DATA(Soil)",
-    "COMMENT19": "----------------------------",
-    "SCLDefsFile": "unchanging_soil.json",
-    "SoilFile": "ninesoil.json"
+    "DepthFile": ["nine.json", "DEPTH"]
 }

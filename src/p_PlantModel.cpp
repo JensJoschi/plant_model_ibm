@@ -48,9 +48,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 /** @endcond */
 
 #ifndef DEFAULT_WD
-std::string default_WD = "";
+std::string def_WD = "";
 #else
-std::string default_WD = DEFAULT_WD;
+std::string def_WD= DEFAULT_WD;
 #endif
 INITIALIZE_EASYLOGGINGPP
 //==============================================================================
@@ -58,7 +58,7 @@ INITIALIZE_EASYLOGGINGPP
 
 PlantModel::PlantModel(const std::string& inputFile, const std::vector<std::string>& keys):
 	m_plantInputs_ptr(new Inputs_P(inputFile)){
-std::string WD = default_WD;
+std::string WD = def_WD;
 el::Configurations plants_conf(WD + "/log_plants.conf"); 
   el::Loggers::getLogger("PLANTS");
   el::Loggers::reconfigureAllLoggers(plants_conf); 

@@ -33,10 +33,10 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include <cassert>
 
-#ifndef WorkDir
+#ifndef DEFAULT_WD
 std::string defWD = "";
 #else
-std::string defWD = WorkDir;
+std::string defWD = DEFAULT_WD;
 #endif
 
 

@@ -24,7 +24,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(WorkDir ${CMAKE_CURRENT_SOURCE_DIR})
-add_definitions(-DWorkDir="${WorkDir}")
+add_definitions(-DDEFAULT_WD="${WorkDir}")
 
 #create variable SRC with all files from folder src:
 set (SRC "src/a_generalFunctions_vmvc.cpp"  "src/g_Data_BASE.cpp"   "src/g_Data_PLANTS.cpp" 
@@ -41,12 +41,19 @@ add_library(Plants SHARED ${SRC} src/plants.cpp include/easylogging++.cc)
 
 add_executable(Tests ${SRC} tests.cpp include/easylogging++.cc)
 
+add_executable(Model ${SRC} main.cpp include/easylogging++.cc)
+
 target_include_directories(Plants PUBLIC
                              "${PROJECT_SOURCE_DIR}/include"
                              "${PROJECT_SOURCE_DIR}/src"
                             )
 
 target_include_directories(Tests PUBLIC
+                            "${PROJECT_SOURCE_DIR}/include"
+                            "${PROJECT_SOURCE_DIR}/src"
+                           )
+
+target_include_directories(Model PUBLIC
                             "${PROJECT_SOURCE_DIR}/include"
                             "${PROJECT_SOURCE_DIR}/src"
                            )
