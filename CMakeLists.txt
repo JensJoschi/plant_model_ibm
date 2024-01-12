@@ -38,8 +38,5 @@ add_executable(main maintest.cpp /Users/jensjoschinski/plantmodel/include/easylo
 target_link_libraries(main PUBLIC PlantLib)
 
 target_include_directories(main PUBLIC
-                           "${PROJECT_BINARY_DIR}"
-                           "${PROJECT_SOURCE_DIR}/src"
-                           "${PROJECT_SOURCE_DIR}/include"
                            /Users/jensjoschinski/plantmodel/include/
                            )

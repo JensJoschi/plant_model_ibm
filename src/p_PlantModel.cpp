@@ -52,7 +52,7 @@ std::string default_WD = "";
 #else
 std::string default_WD = DEFAULT_WD;
 #endif
-
+INITIALIZE_EASYLOGGINGPP
 //==============================================================================
 //public
 

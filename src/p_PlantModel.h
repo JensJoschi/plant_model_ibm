@@ -56,7 +56,7 @@ typedef Inputs<GSP_PLANTS, Data_PLANTS> Inputs_P;
 #include <map>
 /** @endcond */
 #include "easylogging++.h"
-INITIALIZE_EASYLOGGINGPP
+
 
 /*!
  * \class PlantModel

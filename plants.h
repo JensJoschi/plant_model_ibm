@@ -24,56 +24,26 @@ If not, see <https://www.gnu.org/licenses/>. */
 // Authors and contributors to this file:
 // Jens Joschinski
 // ----------------------------------------------------------------------------
+#ifndef PLANTS_H
+#define PLANTS_H
 
-//THIS FILE IS OBVIOUSLY A STUB AND REQUIRES EXPANSION. CURRENTLY ONLY USED TO TEST THE BUILD SYSTEM
+#include <memory>
+#include "Landscape.h"
 
-#include "easylogging++.h"
-#include "plants.h"
+class PlantModel;
 
-#ifndef DEFAULT_WD
-std::string default_WD = "";
-#else
-std::string default_WD = DEFAULT_WD;
-#endif
+class Plants {
+public:
+	explicit Plants(const std::string& inputFile, const std::vector<std::string>& keys);
+    ~Plants();
 
+    void initialize(int years);
+    void TPlusOne_JJ();
+    void createInputMaps(const Landscape<std::string>& soils, const Landscape<std::map<std::string, double>>& disturbance, bool init);
+    Landscape<double> getPFGabund(int PFG_id);
 
-int main(int argc, char *argv[]){
-    std::string WD = default_WD;
-  el::Configurations conf(WD + "/log.conf"); 
-  el::Loggers::reconfigureAllLoggers(conf); 
+private:
+    std::unique_ptr<PlantModel> pImpl; // pointer to the implementation
+};
 
-  //............working directory............
-  if(!std::filesystem::exists(WD)){
-    std::cerr << "Working directory \"" << WD << "\" does not exist. Please provide a valid path as first argument.";
-    return 1;
-  }
-  std::filesystem::current_path(WD);
-
-//create vector of keys
-std::vector<std::string> keys{
-    "(0, 0, 0)",
-    "(0, 0, 1)",
-    "(0, 1, 0)",
-    "(0, 1, 1)",
-    "(0, 2, 0)",
-    "(0, 2, 1)",
-    
-    "(1, 0, 0)",
-    "(1, 0, 1)",
-    "(1, 1, 0)",
-    "(1, 1, 1)",
-    "(1, 2, 0)",
-    "(1, 2, 1)",
-    
-    "(2, 0, 0)",
-    "(2, 0, 1)",
-    "(2, 1, 0)",
-    "(2, 1, 1)",
-    "(2, 2, 0)",
-    "(2, 2, 1)"};
-
-Plants P (WD + "/test.json", keys); //Plantmodel shouldnt include a "keys" vector anymore, to remove.
-P.initialize(2);
-LOG(INFO) << "foo";
-// P.getPFGabund();
-}
+#endif //PLANTS_H
