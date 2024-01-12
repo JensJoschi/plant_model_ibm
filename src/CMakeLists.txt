@@ -15,21 +15,22 @@
 # ECOLOPES PLANT MODEL is derived from FATE,https://github.com/leca-dev/RFate.git/ : 
 #	Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen,
 #	Wilfried Thuiller
-
+cmake_minimum_required(VERSION 3.0)
 project(plantlib VERSION 1.0)
-
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #work directory
 set(WorkDir ${CMAKE_CURRENT_SOURCE_DIR})
 add_definitions(-DWorkDir="${WorkDir}")
 
-include_directories(include)
+include_directories(/Users/jensjoschinski/plantmodel/include)
 add_library(PlantLib SHARED 
 a_generalFunctions_vmvc.cpp     p_Cell.cpp                      p_PlantModel.cpp
 g_Data_BASE.cpp                 p_FuncGroup.cpp                 p_PlantResource.cpp
 g_Data_PLANTS.cpp               p_Individual.cpp                p_PropPool.cpp
 g_FGUtils.cpp                   p_PFG.cpp                       p_ResourceAlloc.cpp
 g_GSP_BASE.cpp                  p_PFGDefs.cpp                   rng.cpp
-g_GSP_PLANTS.cpp                p_PFGdisturbance.cpp
+g_GSP_PLANTS.cpp                p_PFGdisturbance.cpp            plants.cpp
 /Users/jensjoschinski/plantmodel/include/easylogging++.cc)
 
 add_executable(Tests 
@@ -41,9 +42,7 @@ g_GSP_BASE.cpp                  p_PFGDefs.cpp                   rng.cpp
 g_GSP_PLANTS.cpp                p_PFGdisturbance.cpp
 /Users/jensjoschinski/plantmodel/include/easylogging++.cc       tests.cpp)
 
-target_include_directories(PlantLib PUBLIC
-                           "${PROJECT_BINARY_DIR}"
-                           "${PROJECT_SOURCE_DIR}/src"
-                           "${PROJECT_SOURCE_DIR}/include"
-                           /Users/jensjoschinski/plantmodel/include
-                           )
+# target_include_directories(PlantLib PUBLIC
+#                         #    "${PROJECT_SOURCE_DIR}/include"
+#                             /Users/jensjoschinski/plantmodel/include
+#                            )
