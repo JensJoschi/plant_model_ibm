@@ -30,7 +30,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "easylogging++.h"
 #include "p_ResourceAlloc.h"
 #include "p_PlantResource.h"  
-
+#include <filesystem>
 #include <cassert>
 
 #ifndef DEFAULT_WD

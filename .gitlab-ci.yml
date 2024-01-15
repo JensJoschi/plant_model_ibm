@@ -1,0 +1,53 @@
+
+build-linux:
+  stage: build
+  script:
+  - apt-get update --yes
+  - apt-get install --yes cmake
+  - cmake -B build
+  - cmake --build build 
+  - cd out
+  - ./Tests_Linux_0.5.0
+  - ./Model_Linux_0.5.0 -f  /tests/test.json
+  artifacts:
+    paths:
+      - out
+  when: on_success
+
+documentation:
+  image: alpine
+  stage: build
+  script:
+  - apk update && apk add doxygen graphviz ttf-freefont
+  - ls
+  - doxygen Doxyfile
+  - mv html/ public/
+  artifacts:
+    paths:
+    - public
+  when: on_success
+
+
+build-win:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
+    - when: never
+  tags: 
+    - windows
+  before_script:
+    - choco install -y cmake
+    - $env:Path += ';C:\Program Files\CMake\bin'
+    - choco install mingw -y --version=12.2.0
+    - $env:Path += ';C:\Program Files\MinGW-w64\bin'
+  stage: build
+  script:
+    - cmake --help
+    - cmake -B build -G "MinGW Makefiles"
+    - cmake --build build
+  # '& "out/Tests_Windows_0.5.0.exe" '
+  #  - '& "out/Model_Windows_0.5.0.exe" -f \tests\test.json'
+  artifacts:
+    paths:
+      - out
+  when: on_success
