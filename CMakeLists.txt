@@ -37,23 +37,18 @@ set (SRC "src/a_generalFunctions_vmvc.cpp"  "src/g_Data_BASE.cpp"   "src/g_Data_
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/out)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/out)
 
-add_library("Plants_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}" SHARED ${SRC} src/plants.cpp include/easylogging++.cc)
+add_subdirectory(tests)
+set(SUFFIX "${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}")
+add_library("Plants_${SUFFIX}" SHARED ${SRC} src/plants.cpp include/easylogging++.cc)
 
-add_executable("Tests_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}" ${SRC} tests.cpp include/easylogging++.cc)
+add_executable("Model_${SUFFIX}"  ${SRC} main.cpp include/easylogging++.cc)
 
-add_executable("Model_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}"  ${SRC} main.cpp include/easylogging++.cc)
-
-target_include_directories("Plants_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}" PUBLIC
+target_include_directories("Plants_${SUFFIX}" PUBLIC
                              "${PROJECT_SOURCE_DIR}/include"
                              "${PROJECT_SOURCE_DIR}/src"
                             )
 
-target_include_directories("Tests_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}" PUBLIC
-                            "${PROJECT_SOURCE_DIR}/include"
-                            "${PROJECT_SOURCE_DIR}/src"
-                           )
-
-target_include_directories("Model_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}" PUBLIC
+target_include_directories("Model_${SUFFIX}" PUBLIC
                             "${PROJECT_SOURCE_DIR}/include"
                             "${PROJECT_SOURCE_DIR}/src"
                            )

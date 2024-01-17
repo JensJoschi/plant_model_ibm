@@ -206,22 +206,7 @@ assert(sum = 270);
   };
   PFGDisturbances pfgd(j2);
 
-  LOG(INFO) << "---Create a PROPPOOL---";
-  // this class implements the seed pool. I think it needs a rewrite. See comments in propPool.h
-  PropPool p(100,true, 1); //creates a seed mass of 100, which declines over time due to mortality
-  assert(p.getSize() == 100);
-  p.AgePool1(1); //Aging the pool means calculating seed mortality.
-  //the value "1" describes something like the half-life of the seed mass, a value of 1 causes 50% mortality. 
-  //A value of 2 causes only 33% mortality, because seeds live on average 2 years (0.66*0.66 = 0.44).
-  //a value of 3 causes 25% mortality, because seeds live on average 3 years (0.75*0.75*0.75 = 0.42)
-  //the formula is not correct but close enough for now.... 
-  assert(p.getSize()==50); //50% have died with AgePool1(1)
-  p.PutSeedInPool(37);
-  assert(p.getSize()==50); //new seed pool is smaller, so it is not replaced
-  p.PutSeedInPool(137);
-  assert(p.getSize()==137); //new seed pool is larger, so it is replaced
-  //This is odd, i think it would make more sense if the results were 37 and 187 here.
-  //but it is consistent so i leave it as is for now.
+
 
 
   LOG(INFO) << "---Create a FUNCGROUP---";
