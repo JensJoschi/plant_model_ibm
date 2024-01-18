@@ -36,7 +36,7 @@ build-win:
   tags: 
     - windows
   before_script:
-    - choco install -y cmake
+#    - choco install -y cmake #already installed
     - $env:Path += ';C:\Program Files\CMake\bin'
     - choco install mingw -y --version=12.2.0
     - $env:Path += ';C:\Program Files\MinGW-w64\bin'

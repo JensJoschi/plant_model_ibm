@@ -18,7 +18,7 @@
 
 #Authors: Jens Joschinski
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.20)
 project(plants VERSION 0.5.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -26,29 +26,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(WorkDir ${CMAKE_CURRENT_SOURCE_DIR})
 add_definitions(-DDEFAULT_WD="${WorkDir}")
 
-#create variable SRC with all files from folder src:
-set (SRC "src/a_generalFunctions_vmvc.cpp"  "src/g_Data_BASE.cpp"   "src/g_Data_PLANTS.cpp" 
-         "src/g_FGUtils.cpp"                "src/g_GSP_BASE.cpp"    "src/g_GSP_PLANTS.cpp" 
-         "src/p_Cell.cpp"                   "src/p_FuncGroup.cpp"   "src/p_Individual.cpp" 
-         "src/p_PFG.cpp"                    "src/p_PFGDefs.cpp"     "src/p_PFGdisturbance.cpp"
-        "src/p_PlantModel.cpp"              "src/p_PlantResource.cpp" "src/p_PropPool.cpp" 
-        "src/p_ResourceAlloc.cpp" "src/rng.cpp")
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/out)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/out)
-
-add_subdirectory(tests)
 set(SUFFIX "${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}")
-add_library("Plants_${SUFFIX}" SHARED ${SRC} src/plants.cpp include/easylogging++.cc)
 
-add_executable("Model_${SUFFIX}"  ${SRC} main.cpp include/easylogging++.cc)
-
-target_include_directories("Plants_${SUFFIX}" PUBLIC
-                             "${PROJECT_SOURCE_DIR}/include"
-                             "${PROJECT_SOURCE_DIR}/src"
-                            )
-
-target_include_directories("Model_${SUFFIX}" PUBLIC
-                            "${PROJECT_SOURCE_DIR}/include"
-                            "${PROJECT_SOURCE_DIR}/src"
-                           )
+add_subdirectory(src)
+add_subdirectory(tests)

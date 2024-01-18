@@ -322,7 +322,8 @@ Being developed as part of a joint model and partially derived and altered from 
 
 The model can be compiled as a library (.dll or .dylib), so that it can easily be #include'd into another program. This requires copying the library file and the header file "plantmodel.h" to the target directory (or its "include" folder) and linking against it. The folder src contains all plant model source files, as well a CMake file that helps building the library.  The CMake file in the root directory (together with the main in root) provide a demonstration (**to do**).
 
-Alternatively, one can compile the source files together with a main.cpp (in src folder, **not written yet**) to create a full executable. 
+There is furthermore a "tests" subfolder, in which unit tests according to the GoogleTest framework are conducted. The test procedure is also included in the cmake files. 
+Alternatively, one can compile the source files together with a main.cpp (in src folder) to create a full executable. 
 
 Because this is work in progress, it currently only works on macOS, and the src/cmakelists.txt refers to local folders (to make it run, change the folder to Users/YOU/plantmodel...).
 

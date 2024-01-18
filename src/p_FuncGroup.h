@@ -74,7 +74,7 @@ class FuncGroup{
 
 //==============================================================================
 	public:
-	
+	FuncGroup();
 	/**
 	 * \brief construct a FuncGroup with Community build instructions
 	 * \param pfg pointer to a PFG object containing PFG definitions

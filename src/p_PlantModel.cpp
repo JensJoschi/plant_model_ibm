@@ -52,18 +52,13 @@ std::string def_WD = "";
 #else
 std::string def_WD= DEFAULT_WD;
 #endif
-INITIALIZE_EASYLOGGINGPP
+
 //==============================================================================
 //public
 
 PlantModel::PlantModel(const std::string& inputFile):
 	m_plantInputs_ptr(new Inputs_P(inputFile)){
 std::string WD = def_WD;
-el::Configurations plants_conf(WD + "/log_plants.conf"); 
-  el::Loggers::getLogger("PLANTS");
-  el::Loggers::reconfigureAllLoggers(plants_conf); 
-  el::Loggers::reconfigureLogger("PLANTS", plants_conf);
-  el::Loggers::addFlag(el::LoggingFlag::MultiLoggerSupport);
 
 	assert(m_plantInputs_ptr);
 	std::vector<std::string> keys = m_plantInputs_ptr->data.keyList.getKeys();

@@ -5,9 +5,6 @@ project(Tests VERSION 0.5.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-include_directories(${CMAKE_SOURCE_DIR}/src  # contains the private header files
-                    ${CMAKE_SOURCE_DIR}/include) 
-
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -18,22 +15,20 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 # list all tests here
-set(TEST_SOURCES ${CMAKE_SOURCE_DIR}/tests/PropPoolTest.cpp)
+set(TEST_SOURCES PropPoolTest.cpp
+                 FuncGroupTest.cpp
+                )
 
-# list all according files with the classes here
-set (SRC "${CMAKE_SOURCE_DIR}/src/p_PropPool.cpp" 
-)
 enable_testing()
 
-set(NAME "Tests_${CMAKE_SYSTEM_NAME}_${PROJECT_VERSION}")
-add_executable(${NAME}  ${TEST_SOURCES} ${SRC})
+add_executable("Tests_${SUFFIX}"  ${TEST_SOURCES})
 
 
-target_link_libraries(${NAME}  gtest_main)
-target_include_directories(${NAME}  PUBLIC
-                             "${PROJECT_SOURCE_DIR}/include"
-                             "${PROJECT_SOURCE_DIR}/src"
+target_link_libraries(Tests_${SUFFIX}  gtest_main "Plants_${SUFFIX}")
+target_include_directories(Tests_${SUFFIX}  PUBLIC
+                             "${CMAKE_SOURCE_DIR}/include"
+                             "${CMAKE_SOURCE_DIR}/src"
 )
 
 include(GoogleTest)
-gtest_discover_tests(${NAME} )
+gtest_discover_tests(Tests_${SUFFIX} )

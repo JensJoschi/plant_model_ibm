@@ -57,6 +57,8 @@ std::string default_WD = "";
 std::string default_WD = DEFAULT_WD;
 #endif
 
+
+INITIALIZE_EASYLOGGINGPP
 /**
  * @file main.cpp
  * @brief This file contains the main function that initializes the program and runs the model.
@@ -106,12 +108,12 @@ int main(int argc, char *argv[]){
   std::filesystem::current_path(WD);
 
   //............logging............
-  el::Configurations conf(WD + "/log.conf"); 
-  el::Configurations plants_conf(WD + "/log_plants.conf"); 
-  el::Loggers::getLogger("PLANTS");
-  el::Loggers::reconfigureAllLoggers(conf); 
-  el::Loggers::reconfigureLogger("PLANTS", plants_conf);
-  el::Loggers::addFlag(el::LoggingFlag::MultiLoggerSupport);
+  // el::Configurations conf(WD + "/log.conf"); 
+  // el::Configurations plants_conf(WD + "/log_plants.conf"); 
+  // el::Loggers::getLogger("PLANTS");
+  // el::Loggers::reconfigureAllLoggers(conf); 
+  // el::Loggers::reconfigureLogger("PLANTS", plants_conf);
+  // el::Loggers::addFlag(el::LoggingFlag::MultiLoggerSupport);
   //typical logger use is LOG(INFO) << "text";  to write into the default logger;
   //or CLOG(INFO, "PLANTS") << "text"; to write into one specific logger; 
   //or (CLOG, INFO, "PLANTS", "default") << "text"; to write into two or more loggers at once.

@@ -25,8 +25,10 @@ If not, see <https://www.gnu.org/licenses/>. */
 // Jens Joschinski
 // ----------------------------------------------------------------------------
 #include "p_PlantModel.h" //implementation
-#include "plants.h" //public API
+#include "plants/plants.h" //public API
+#include "easylogging++.h"
 
+INITIALIZE_EASYLOGGINGPP
 
 Plants::Plants(const std::string& inputFile){
     pImpl = std::make_unique<PlantModel>(inputFile);
