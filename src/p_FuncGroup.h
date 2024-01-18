@@ -75,6 +75,9 @@ class FuncGroup{
 //==============================================================================
 	public:
 	FuncGroup();
+
+	FuncGroup (const FuncGroup& other);
+
 	/**
 	 * \brief construct a FuncGroup with Community build instructions
 	 * \param pfg pointer to a PFG object containing PFG definitions
@@ -375,6 +378,6 @@ class FuncGroup{
 	std::vector<Cohort> m_cohorts; 	/*!< cohort list */
 	const PFG* m_FGparams_ptr; 	/*!< FG parameters */
 	const PFGDisturbances* m_FGdist_ptr; /*!< FG disturbance parameters */
-	const int m_abundLimit; /*!maximum abundance that this pfg can reach (determined by PFG:maxAbund class and GSP)*/
+	int m_abundLimit; /*!maximum abundance that this pfg can reach (determined by PFG:maxAbund class and GSP)*/
 };
 #endif //FUNCGROUP

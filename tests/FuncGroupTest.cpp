@@ -40,7 +40,7 @@ class FuncGroupTest : public ::testing::Test {
   protected:
   FuncGroup f;
 
-  void SetUp() override {
+  static void SetUpTestSuite() { //creates shared pfg Definitions for all tests
     std::cerr << "SETUP CALLED";
     nlohmann::json j = {
       {"Name", "test"}, 
@@ -58,7 +58,7 @@ class FuncGroupTest : public ::testing::Test {
       {"SoilTol", {"testsoil"}},
       {"DepthReq", 10}
     };
-    PFG pfg(j);
+    pfg = new PFG(j);
 
     nlohmann::json j2 = {
       {"Name", "test"},
@@ -87,38 +87,60 @@ class FuncGroupTest : public ::testing::Test {
         }}
       }}
     };
-    PFGDisturbances pfgd(j2);
+    pfgd = new PFGDisturbances(j2);
+  }
+
+  static void TearDownTestSuite() {
+    delete pfg;
+    pfg = nullptr;
+  }
+  
+  void SetUp() override {
     RNGs::mersenne = std::mt19937{2230}; //every test_f calls setup function, so they get the same seed
     const std::vector<int> csize{500, 0, 1, 1}; //5 individuals aged 0, 5 individuals aged 1. These are not actual individuals, but biomass units. I'll call them "individuals" nevertheless
- //  f =  FuncGroup (&pfg, &pfgd, csize, 100, 10, 20, 30); //#seeds in pool, max abundance that low/med/high can reach
-
-// WARNING CODE WONT WORK 
-// missing copy constructor for funcgroup
+    f =  FuncGroup (pfg, pfgd, csize, 100, 10, 20, 30); //#seeds in pool, max abundance that low/med/high can reach
   }
+  static PFG* pfg;
+  static PFGDisturbances* pfgd;
 };
+
+PFG* FuncGroupTest::pfg = nullptr;
+PFGDisturbances* FuncGroupTest::pfgd = nullptr;
 
 TEST_F(FuncGroupTest, InitialSizeIsCorrect) {
   EXPECT_EQ(f.getCount(), 724);
 }
 
-// TEST_F(FuncGroupTest, getCountWorks) {
-//   EXPECT_EQ(f.getCount(0,10), f.getCount());
-//   EXPECT_EQ(f.getCount(1,1), 362);
-// }
+TEST_F(FuncGroupTest, getCountWorks) {
+  EXPECT_EQ(f.getCount(0,10), f.getCount());
+  EXPECT_EQ(f.getCount(0,0), 362);
+  EXPECT_EQ(f.getCount(1,1), 362);
+}
+
+TEST_F(FuncGroupTest, stratAbundWorks){
+  EXPECT_EQ(f.getStratAbund(0), f.getCount()); //all individuals are in stratum 0 (see pfg)
+  EXPECT_EQ(f.getStratAbund(1), 0);
+  f.age(); //at age 2 they move to stratum 1 (see pfg)
+  EXPECT_EQ(f.getStratAbund(0), 362);
+  EXPECT_EQ(f.getStratAbund(1), 362);
+}
+
+TEST_F(FuncGroupTest, ageWorks){
+  EXPECT_EQ(f.getCount(0,0), 362);
+  EXPECT_EQ(f.getCount(1,1), 362);
+  EXPECT_EQ(f.getCount(2,2), 0);
+  f.age(); 
+  EXPECT_EQ(f.getCount(1,1), 362);
+  EXPECT_EQ(f.getCount(2,2), 362);
+  f.age();  //oldest have died.
+  EXPECT_EQ(f.getCount(1,1), 0);
+  EXPECT_EQ(f.getCount(2,2), 362);
+  f.age();
+  EXPECT_EQ(f.getCount(0,1), 0);
+  EXPECT_EQ(f.getCount(2,2), 0);
+}
 
 
-//   // getStratAbund
-//   assert (f.getStratAbund(0) == f.getCount()); //all individuals are in stratum 0 (see pfg)
-//   assert (f.getStratAbund(1) == 0);
-//   f.age(); //at age 2 they move to stratum 1 (see pfg)
-//   assert(f.getCount(1,2) == 724);
-//   assert(f.getStratAbund(0) == f.getCount(0,1));
-//   assert(f.getStratAbund(1) == 362);
-//   // age
-//   for (int i=0; i<3; i++) f.age();
-//   assert(f.getCount() == 724);
-//   f.age();
-//   assert(f.getCount() == 362); //oldest have died.
 //   //name
 //   assert(f.getName() == "test");
 //   //getFecund

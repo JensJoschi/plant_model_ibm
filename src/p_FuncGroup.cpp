@@ -50,6 +50,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 //public:
 FuncGroup::FuncGroup(): m_FGparams_ptr(nullptr), m_FGdist_ptr(nullptr), m_pools(std::vector<PropPool> { PropPool(0, false, 0), PropPool(0, true, 0)}), m_abundLimit(0){}
 
+FuncGroup::FuncGroup(const FuncGroup& other): 
+	m_FGparams_ptr(other.m_FGparams_ptr), m_FGdist_ptr(other.m_FGdist_ptr), m_pools(other.m_pools), m_cohorts(other.m_cohorts), m_abundLimit(other.m_abundLimit){}
+
 FuncGroup::FuncGroup(const PFG* pfg, const PFGDisturbances* disturbance, const std::vector<int>& cohortSize, const int poolSize,
 	const int low, const int med, const int high): //to do: pack these into a vector
 		m_FGparams_ptr(pfg), m_FGdist_ptr(disturbance),
