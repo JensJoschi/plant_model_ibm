@@ -97,7 +97,7 @@ class FuncGroupTest : public ::testing::Test {
   
   void SetUp() override {
     RNGs::mersenne = std::mt19937{2230}; //every test_f calls setup function, so they get the same seed
-    const std::vector<int> csize{500, 0, 1, 1}; //5 individuals aged 0, 5 individuals aged 1. These are not actual individuals, but biomass units. I'll call them "individuals" nevertheless
+    const std::vector<int> csize{500, 0, 1, 1}; //up to 500 "individuals" in each age class, age classes are from 0 to 1. 
     f =  FuncGroup (pfg, pfgd, csize, 100, 10, 20, 30); //#seeds in pool, max abundance that low/med/high can reach
   }
   static PFG* pfg;
@@ -108,33 +108,37 @@ PFG* FuncGroupTest::pfg = nullptr;
 PFGDisturbances* FuncGroupTest::pfgd = nullptr;
 
 TEST_F(FuncGroupTest, InitialSizeIsCorrect) {
-  EXPECT_EQ(f.getCount(), 724);
+  bool condition = (f.getCount() == 724) || (f.getCount() == 486);
+  EXPECT_TRUE(condition)<< "Initial size is not as expected ("<< f.getCount() << "). Mersenne Twister should work on any platform, but FuncGroup calls std::uniform_int_distribution, whose implementation is platform-specific.";
 }
 
 TEST_F(FuncGroupTest, getCountWorks) {
   EXPECT_EQ(f.getCount(0,10), f.getCount());
-  EXPECT_EQ(f.getCount(0,0), 362);
-  EXPECT_EQ(f.getCount(1,1), 362);
+  int size = f.getCount();
+  EXPECT_EQ(f.getCount(0,0), size/2); //using size/2 because initial size is platform-dependent (see test InitialSizeIsCorrect)
+  EXPECT_EQ(f.getCount(1,1), size/2);
 }
 
 TEST_F(FuncGroupTest, stratAbundWorks){
+  int size = f.getCount();
   EXPECT_EQ(f.getStratAbund(0), f.getCount()); //all individuals are in stratum 0 (see pfg)
   EXPECT_EQ(f.getStratAbund(1), 0);
   f.age(); //at age 2 they move to stratum 1 (see pfg)
-  EXPECT_EQ(f.getStratAbund(0), 362);
-  EXPECT_EQ(f.getStratAbund(1), 362);
+  EXPECT_EQ(f.getStratAbund(0), size/2);
+  EXPECT_EQ(f.getStratAbund(1), size/2);
 }
 
 TEST_F(FuncGroupTest, ageWorks){
-  EXPECT_EQ(f.getCount(0,0), 362);
-  EXPECT_EQ(f.getCount(1,1), 362);
+  int size = f.getCount();
+  EXPECT_EQ(f.getCount(0,0), size/2);
+  EXPECT_EQ(f.getCount(1,1), size/2);
   EXPECT_EQ(f.getCount(2,2), 0);
   f.age(); 
-  EXPECT_EQ(f.getCount(1,1), 362);
-  EXPECT_EQ(f.getCount(2,2), 362);
+  EXPECT_EQ(f.getCount(1,1), size/2);
+  EXPECT_EQ(f.getCount(2,2), size/2);
   f.age();  //oldest have died.
   EXPECT_EQ(f.getCount(1,1), 0);
-  EXPECT_EQ(f.getCount(2,2), 362);
+  EXPECT_EQ(f.getCount(2,2), size/2);
   f.age();
   EXPECT_EQ(f.getCount(0,1), 0);
   EXPECT_EQ(f.getCount(2,2), 0);
