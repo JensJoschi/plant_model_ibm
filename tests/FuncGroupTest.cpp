@@ -88,11 +88,17 @@ class FuncGroupTest : public ::testing::Test {
       }}
     };
     pfgd = new PFGDisturbances(j2);
+    gsp = new GSP_PLANTS();
+    gsp->defaultBuild();
   }
 
   static void TearDownTestSuite() {
     delete pfg;
     pfg = nullptr;
+    delete pfgd;
+    pfgd = nullptr;
+    delete gsp;
+    gsp = nullptr;
   }
   
   void SetUp() override {
@@ -102,15 +108,20 @@ class FuncGroupTest : public ::testing::Test {
   }
   static PFG* pfg;
   static PFGDisturbances* pfgd;
+  static GSP_PLANTS* gsp;
 };
 
 PFG* FuncGroupTest::pfg = nullptr;
 PFGDisturbances* FuncGroupTest::pfgd = nullptr;
+GSP_PLANTS* FuncGroupTest::gsp = nullptr;
 
 TEST_F(FuncGroupTest, InitialSizeIsCorrect) {
   bool condition = (f.getCount() == 724) || (f.getCount() == 486);
   EXPECT_TRUE(condition)<< "Initial size is not as expected ("<< f.getCount() << "). Mersenne Twister should work on any platform, but FuncGroup calls std::uniform_int_distribution, whose implementation is platform-specific.";
 }
+
+
+// *************** GETTERS *****************
 
 TEST_F(FuncGroupTest, getCountWorks) {
   EXPECT_EQ(f.getCount(0,10), f.getCount());
@@ -128,6 +139,33 @@ TEST_F(FuncGroupTest, stratAbundWorks){
   EXPECT_EQ(f.getStratAbund(1), size/2);
 }
 
+TEST_F(FuncGroupTest, getNameWorks){
+  EXPECT_EQ(f.getName(), "test");
+}
+
+TEST_F(FuncGroupTest, getFecundWorks){
+  EXPECT_EQ(f.getFecund(), 0);
+  int size = f.getCount();
+  f.age();
+  f.age();
+  EXPECT_EQ(f.getCount(2,2), size/2); //half of the individuals are mature
+  //FuncGroup was set up with AbundLimit of 10/20/30 depending on the PFGs Abund;
+
+  EXPECT_EQ(f.getFecund(), 40); //pfg::Abund = medium (->20); pfg::fecundity = 2 (->40)
+}
+
+TEST_F(FuncGroupTest, checkSoilClassWorks){ //pfg::SoilTol = "testsoil"
+  EXPECT_TRUE(f.checkSoilClass("testsoil"));
+  EXPECT_FALSE(f.checkSoilClass("othersoil"));
+}
+
+TEST_F(FuncGroupTest, checkSoilDepthWorks){ //pfg::Depthreq = 10
+  EXPECT_TRUE(f.checkSoilDepth(100));
+  EXPECT_FALSE(f.checkSoilDepth(2));
+}
+
+
+//*************** FUNCTIONS *****************
 TEST_F(FuncGroupTest, ageWorks){
   int size = f.getCount();
   EXPECT_EQ(f.getCount(0,0), size/2);
@@ -144,65 +182,48 @@ TEST_F(FuncGroupTest, ageWorks){
   EXPECT_EQ(f.getCount(2,2), 0);
 }
 
+TEST_F(FuncGroupTest, germinateWorks){
+  int size = f.getCount();
+  Resource R(RMedium);
+  f.germinateAndRecruit(gsp, 10, R,false); //funcGroup was setup with 100 seeds in pool, 10 new ones come in = 110
+  EXPECT_EQ(f.getCount(), size + 110);
+  //same as above but there are more seeds than gsp::MaxAbund, so only gsp::Maxabund germinate
+  f.germinateAndRecruit(gsp, 100000, R,false); 
+  EXPECT_EQ(f.getCount(), size + 110 + 2000); //includes the 110 from above
+  f.age();
+}
 
-//   //name
-//   assert(f.getName() == "test");
-//   //getFecund
-//   assert(f.getFecund() == 40);  //individuals are mature from age 2-5, and have fecundity 2 (see pfg). f.getCount(2,5) = 362, but Abundlimit = 20. 20 * fecundity = 40
-//   //to do: check that immatures lack fecundity
-//   //checkSoilTol
-//   assert(f.checkSoilClass("testsoil"));
-//   assert(!f.checkSoilClass("othersoil"));
-//   assert(f.checkSoilDepth(100));
-//   assert(!f.checkSoilDepth(2));
+TEST_F(FuncGroupTest, envKillsGerminants){
+  int size = f.getCount();
+  Resource R(RMedium);
+  f.germinateAndRecruit(gsp, 10, R,true); //they do not survive, because affected by env
+  EXPECT_EQ(f.getCount(), size);  //compare with germinateWorks
+  f.germinateAndRecruit(gsp, 100000, R,true); 
+  EXPECT_EQ(f.getCount(), size);
+}
 
-//  // germinate and recruit
-//   GSP_PLANTS gsp;
-//   gsp.defaultBuild();
-//   Resource R(RMedium);
-//   f.germinateAndRecruit(&gsp, 10, R,false);
-// // 10 new ones coming "in" + 100 old ones  = 110; 
-// // current abundance is << 2000, so there is enough space; and we have a 100% germination rate (lightActiveGerm >0.9).
-// // ==>110 seeds germinate
-// // light tolerance matches light conditions, so do recruitment:
-//     //this is a medium-abund pfg, according to gsp a medium abund can have 2000 individuals; so there is space
-//     // affected by env is false, so germination is not aborted
-//     // ==> create 2110 new individuals of age 0
-// // zero remaining seeds age
-//   assert(f.getCount() == 110+ f.getCount(1,10));
-//   f.age(); //kill oldest cohort, only the 110 1-year olds remain
-//   f.germinateAndRecruit(&gsp, 10, R,true); //this time the 10 new seeds (seed pool is empty) germinate but die.
-//   assert(f.getCount() == 0+ f.getCount(1,10));
-//   f.germinateAndRecruit(&gsp, 10, R,false); //this time the 10 new seeds survive.
-//   assert(f.getCount() == 10+ f.getCount(1,10));
-//   gsp.maxAbundMedium = 5;
-//   f.germinateAndRecruit(&gsp, 10, R,true);    //now can have max 5 germinants; these die. The remaining 5 seeds age (4 remaining)
-//   assert(f.getCount() == 10+ 0 +f.getCount(1,10));
-//   f.germinateAndRecruit(&gsp, 10, R,false);  //5 germinants, but there is not enough space in the cell (blocked by the 1-year olds). 
-//   assert(f.getCount() == 10+ 0 +f.getCount(1,10));
-//   f.age();
-//   f.age();
-//   assert(f.getStratAbund(0) == 0);
-//   f.germinateAndRecruit(&gsp, 10, R,false);   // this time there is enough space for 5 new seeds
-//   assert(f.getStratAbund(0) == 5);
+TEST_F (FuncGroupTest, disturbanceWorks){
+  //"bee" should kill 90% of the immatures and 20% of the matures (see pfgd), fox 0%
+  int size = f.getCount();
+  std::map<std::string, double> dist{ {"bee", 0.5}, {"fox", 0.5} };
+  f.beDisturbed(dist); 
+  int reduced = size - ceil(size * 0.5 * 0.9);
+  EXPECT_EQ(f.getCount(), reduced);
+  f.age(); //half of the individuals are mature now
+  f.beDisturbed(dist); 
+  int immaturePart = 0.5 * reduced - ceil(0.5 * reduced * 0.5 * 0.9); 
+  int maturePart =   0.5 * reduced - ceil(0.5 * reduced * 0.5 * 0.2);
+  EXPECT_EQ(f.getCount(), maturePart + immaturePart);
+}
 
-//   //disturbance
-//   LOG (DEBUG) << f.getCount(0,10);
-//   std::map<std::string, double> dist{ {"bee", 0.5}, {"fox", 0.5} };
-//   f.beDisturbed(dist); //5 immatures, 120 matures. 1 unit of bee kills 90% of the immatures, but there is only 0.5 bee, so 45% of the 5 immatures die. Bee kills also 20% matures * 0.5 bee.
-//   assert(f.getCount(0,0) == 2); //not a rounding error, calls ceil()
-//   assert(f.getCount(2,2) == 9);
-//   assert(f.getCount(3,3) == 99);
-//   f.age();
-  
-//   //die
-//   const std::vector<int> csize2{100, 0, 5, 1}; //5 individuals aged 0, 5 individuals aged 1
-//   FuncGroup fg{&pfg, &pfgd, csize2, 100, 10, 20, 30};
-//   assert(fg.getCount() == 246);
-//   fg.die({Resource(RHigh), Resource(RHigh), Resource(RHigh)}); 
-//   assert(fg.getCount() == 246); //unaffected by light, noone dies
-//   fg.die({Resource(RHigh), Resource(RHigh), Resource(RLow)}); 
-//   assert(fg.getCount() == 246); //doesnt live in highest stratum, noone dies. Note: highest stratum in reality always has highest resource, this here is for testing only
-//   fg.die({Resource(RHigh), Resource(RMedium), Resource(RLow)}); //0-1 olds are in lowest stratum and survive, older ones live in stratum 2 and die (survive neithr under low nor under medium light)
-//   assert(fg.getCount() == 82); 
-//   LOG(INFO) << "tests complete.";
+TEST_F(FuncGroupTest, dieWorks){
+  int size = f.getCount();
+  f.die({Resource(RHigh), Resource(RHigh), Resource(RHigh)});
+  EXPECT_EQ(f.getCount(), size); //unaffected by light, noone dies
+  f.die({Resource(RHigh), Resource(RHigh), Resource(RLow)});
+  EXPECT_EQ(f.getCount(), size); //doesnt live in highest stratum, noone dies.
+  //Note: highest stratum in reality always has highest resource, this here is for testing only
+  f.age(); //oldest individuals are in stratum 2
+  f.die({Resource(RHigh), Resource(RMedium), Resource(RHigh)}); //0-1 olds are in lowest stratum and survive, older ones live in stratum 2 and die (survive neithr under low nor under medium light)
+  EXPECT_EQ(f.getCount(), size/2);
+}
