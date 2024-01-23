@@ -32,7 +32,7 @@
 #define INPUTS_ALL_H
 
 #include "g_GSP_BASE.h"
-#include "Landscape.h"
+#include "jointModel/Landscape.h"
 
 
 /** @cond */

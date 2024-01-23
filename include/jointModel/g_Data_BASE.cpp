@@ -25,7 +25,7 @@
 
 
 #include "a_generalFunctions_vmvc.h"
-#include "Landscape.h"
+#include "jointModel/Landscape.h"
 
 Data_BASE::Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp):
   animalModelFile(paramSimulFile), plantModelFile(paramSimulFile), soilModelFile(paramSimulFile){
