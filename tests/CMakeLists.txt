@@ -17,6 +17,9 @@ FetchContent_MakeAvailable(googletest)
 # list all tests here
 set(TEST_SOURCES PropPoolTest.cpp
                  FuncGroupTest.cpp
+                 ResourceTest.cpp
+                 CellTest.cpp
+                 PlantModelTest.cpp
                 )
 
 enable_testing()

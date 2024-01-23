@@ -58,7 +58,8 @@ If not, see <https://www.gnu.org/licenses/>. */
  * The age of the last seeds put in the pool is never actually used and may be erased. 
  * The boolean is also probably unneccessary and could be removed. The seed pool life span, 
  * which determines how fast the seed pool declines, on the other hand, should be a 
- * property of the seed pool.
+ * property of the seed pool. The "life span" is close to the half-life of the seed pool,
+ * but not accurate (the actual Life span would be infinite but with lim->0)
  */
 class PropPool{
 

@@ -63,6 +63,7 @@ class ResourceAlloc{
     friend class PlantResource;
     public: 
     ResourceAlloc();
+    ResourceAlloc(float, float, float, float, float);
     ~ResourceAlloc();
     private:
     float conversionEfficiency;

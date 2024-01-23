@@ -33,4 +33,10 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "p_ResourceAlloc.h"
 
 ResourceAlloc::ResourceAlloc(): conversionEfficiency(1.0), seedAllocation(0.01), biomassAllocation(0.5), maintenanceCosts(0.1), maxInvestment(0.05){}
+ResourceAlloc::ResourceAlloc(float conversionEfficiency, float seedAllocation, float biomassAllocation, float maintenanceCosts, float maxInvestment): 
+    conversionEfficiency(conversionEfficiency), 
+    seedAllocation(seedAllocation), 
+    biomassAllocation(biomassAllocation), 
+    maintenanceCosts(maintenanceCosts), 
+    maxInvestment(maxInvestment){}
 ResourceAlloc::~ResourceAlloc(){}

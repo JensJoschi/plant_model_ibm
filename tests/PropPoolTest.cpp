@@ -49,8 +49,16 @@ TEST_F(PropPoolTest, InitialSizeIsCorrect) {
 TEST_F(PropPoolTest, AgePoolReducesSizeByHalf) {
     p.AgePool1(1);
   //the value "1" describes something like the half-life of the seed mass, a value of 1 causes 50% mortality. 
-  //the formula is not correct but close enough for now.... 
     EXPECT_EQ(p.getSize(), 50);
+}
+
+TEST_F(PropPoolTest, AgePoolL5) {
+    p.AgePool1(5); //half life is 5 years
+    EXPECT_EQ(p.getSize(), 83);
+    for(int i = 0; i<3; i++){
+        p.AgePool1(5);
+    }
+    EXPECT_EQ(p.getSize(), 47); //formula is not accurate. See PropPool.h
 }
 
 TEST_F(PropPoolTest, PutSeedInPoolDoesNotReplaceSmallerPool) {

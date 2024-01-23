@@ -6,9 +6,9 @@ build-linux:
   - apt-get install --yes cmake
   - cmake -B build
   - cmake --build build 
-  - cd out
-  - ./Tests_Linux_0.5.0
-  - ./Model_Linux_0.5.0 -f  /tests/test.json
+  - cp out/Tests_Linux_0.5.0 tests/runtest
+  - cd tests
+  - ./runtest
   artifacts:
     paths:
       - out

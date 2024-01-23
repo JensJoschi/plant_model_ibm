@@ -126,8 +126,10 @@ TEST_F(FuncGroupTest, InitialSizeIsCorrect) {
 TEST_F(FuncGroupTest, getCountWorks) {
   EXPECT_EQ(f.getCount(0,10), f.getCount());
   int size = f.getCount();
-  EXPECT_EQ(f.getCount(0,0), size/2); //using size/2 because initial size is platform-dependent (see test InitialSizeIsCorrect)
-  EXPECT_EQ(f.getCount(1,1), size/2);
+  EXPECT_GE(f.getCount(0,0), size/2 - 1);//using size/2 because initial size is platform-dependent (see test InitialSizeIsCorrect)
+  EXPECT_LE(f.getCount(0,0), size/2 + 1); //see issue 33 for rounding errors
+  EXPECT_GE(f.getCount(1,1), size/2 - 1);//using size/2 because initial size is platform-dependent (see test InitialSizeIsCorrect)
+  EXPECT_LE(f.getCount(1,1), size/2 + 1); //see issue 33 for rounding errors
 }
 
 TEST_F(FuncGroupTest, stratAbundWorks){
@@ -135,8 +137,11 @@ TEST_F(FuncGroupTest, stratAbundWorks){
   EXPECT_EQ(f.getStratAbund(0), f.getCount()); //all individuals are in stratum 0 (see pfg)
   EXPECT_EQ(f.getStratAbund(1), 0);
   f.age(); //at age 2 they move to stratum 1 (see pfg)
-  EXPECT_EQ(f.getStratAbund(0), size/2);
+  EXPECT_GE(f.getStratAbund(0), size/2 - 1);
+  EXPECT_LE(f.getStratAbund(0), size/2 + 1);
   EXPECT_EQ(f.getStratAbund(1), size/2);
+  EXPECT_GE(f.getStratAbund(1), size/2 - 1);
+  EXPECT_LE(f.getStratAbund(1), size/2 + 1);
 }
 
 TEST_F(FuncGroupTest, getNameWorks){
@@ -168,15 +173,20 @@ TEST_F(FuncGroupTest, checkSoilDepthWorks){ //pfg::Depthreq = 10
 //*************** FUNCTIONS *****************
 TEST_F(FuncGroupTest, ageWorks){
   int size = f.getCount();
-  EXPECT_EQ(f.getCount(0,0), size/2);
-  EXPECT_EQ(f.getCount(1,1), size/2);
+  EXPECT_GE(f.getCount(0,0), size/2 - 1);
+  EXPECT_LE(f.getCount(0,0), size/2 + 1);
+  EXPECT_GE(f.getCount(1,1), size/2 - 1);
+  EXPECT_LE(f.getCount(1,1), size/2 + 1);
   EXPECT_EQ(f.getCount(2,2), 0);
   f.age(); 
-  EXPECT_EQ(f.getCount(1,1), size/2);
-  EXPECT_EQ(f.getCount(2,2), size/2);
+  EXPECT_GE(f.getCount(1,1), size/2 - 1);
+  EXPECT_LE(f.getCount(1,1), size/2 + 1);
+  EXPECT_GE(f.getCount(2,2), size/2 - 1);
+  EXPECT_LE(f.getCount(2,2), size/2 + 1);
   f.age();  //oldest have died.
   EXPECT_EQ(f.getCount(1,1), 0);
-  EXPECT_EQ(f.getCount(2,2), size/2);
+  EXPECT_GE(f.getCount(2,2), size/2 - 1);
+  EXPECT_LE(f.getCount(2,2), size/2 + 1);
   f.age();
   EXPECT_EQ(f.getCount(0,1), 0);
   EXPECT_EQ(f.getCount(2,2), 0);
@@ -186,10 +196,12 @@ TEST_F(FuncGroupTest, germinateWorks){
   int size = f.getCount();
   Resource R(RMedium);
   f.germinateAndRecruit(gsp, 10, R,false); //funcGroup was setup with 100 seeds in pool, 10 new ones come in = 110
-  EXPECT_EQ(f.getCount(), size + 110);
+  EXPECT_GE(f.getCount(), size + 110 - 1);
+  EXPECT_LE(f.getCount(), size + 110 + 1);
   //same as above but there are more seeds than gsp::MaxAbund, so only gsp::Maxabund germinate
-  f.germinateAndRecruit(gsp, 100000, R,false); 
-  EXPECT_EQ(f.getCount(), size + 110 + 2000); //includes the 110 from above
+  f.germinateAndRecruit(gsp, 100000, R,false);
+  EXPECT_GE(f.getCount(), size + 110 + 2000 - 1); //includes the 110 from above
+  EXPECT_LE(f.getCount(), size + 110 + 2000 + 1);
   f.age();
 }
 
@@ -208,12 +220,14 @@ TEST_F (FuncGroupTest, disturbanceWorks){
   std::map<std::string, double> dist{ {"bee", 0.5}, {"fox", 0.5} };
   f.beDisturbed(dist); 
   int reduced = size - ceil(size * 0.5 * 0.9);
-  EXPECT_EQ(f.getCount(), reduced);
+  EXPECT_GE(f.getCount(), reduced - 2); //see issue 33 for rounding errors  
+  EXPECT_LE(f.getCount(), reduced + 2); //added additional leeway here because of multiple INT*DOUBLE operations
   f.age(); //half of the individuals are mature now
   f.beDisturbed(dist); 
   int immaturePart = 0.5 * reduced - ceil(0.5 * reduced * 0.5 * 0.9); 
   int maturePart =   0.5 * reduced - ceil(0.5 * reduced * 0.5 * 0.2);
-  EXPECT_EQ(f.getCount(), maturePart + immaturePart);
+  EXPECT_GE(f.getCount(),  maturePart + immaturePart - 2);
+  EXPECT_LE(f.getCount(),  maturePart + immaturePart + 2);
 }
 
 TEST_F(FuncGroupTest, dieWorks){
@@ -225,5 +239,6 @@ TEST_F(FuncGroupTest, dieWorks){
   //Note: highest stratum in reality always has highest resource, this here is for testing only
   f.age(); //oldest individuals are in stratum 2
   f.die({Resource(RHigh), Resource(RMedium), Resource(RHigh)}); //0-1 olds are in lowest stratum and survive, older ones live in stratum 2 and die (survive neithr under low nor under medium light)
-  EXPECT_EQ(f.getCount(), size/2);
+  EXPECT_GE(f.getCount(), size/2 - 1);
+  EXPECT_LE(f.getCount(), size/2 + 1);
 }

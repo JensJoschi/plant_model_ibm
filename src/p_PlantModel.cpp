@@ -58,7 +58,7 @@ std::string def_WD= DEFAULT_WD;
 
 PlantModel::PlantModel(const std::string& inputFile):
 	m_plantInputs_ptr(new Inputs_P(inputFile)){
-std::string WD = def_WD;
+	std::string WD = def_WD;
 
 	assert(m_plantInputs_ptr);
 	std::vector<std::string> keys = m_plantInputs_ptr->data.keyList.getKeys();

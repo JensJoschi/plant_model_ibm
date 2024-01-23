@@ -176,6 +176,7 @@ class Cell{
 
 
 	public: // made these public for testing
+	
 	/*!
 	 *	\brief Calculate light values based on FG abundances
 	 *  \details 
