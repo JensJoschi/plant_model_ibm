@@ -108,34 +108,25 @@ int main(int argc, char *argv[]){
   std::filesystem::current_path(WD);
 
   //............logging............
-  // el::Configurations conf(WD + "/log.conf"); 
-  // el::Configurations plants_conf(WD + "/log_plants.conf"); 
-  // el::Loggers::getLogger("PLANTS");
-  // el::Loggers::reconfigureAllLoggers(conf); 
-  // el::Loggers::reconfigureLogger("PLANTS", plants_conf);
-  // el::Loggers::addFlag(el::LoggingFlag::MultiLoggerSupport);
-  //typical logger use is LOG(INFO) << "text";  to write into the default logger;
-  //or CLOG(INFO, "PLANTS") << "text"; to write into one specific logger; 
-  //or (CLOG, INFO, "PLANTS", "default") << "text"; to write into two or more loggers at once.
-  //LOGGERS is a macro that expands to "PLANTS", "default" and is used in the last case.
-  //SECTIONBREAK is another macro that expands to "------------------------". Both are defined in easylogging.h, so they are automatically included everywhere.
-  CLOG(INFO, LOGGERS) << SECTIONBREAK << SECTIONBREAK << SECTIONBREAK;
-  CLOG(INFO, LOGGERS) << "Logger initialized.";
-  CLOG(INFO, LOGGERS) << "Working directory set to \"" << WD << "\".";
-  CLOG(INFO, LOGGERS) << "Input file set to \"" << WD+input_file << "\".";
+  el::Configurations conf(WD + "log.conf"); 
+  el::Loggers::reconfigureAllLoggers(conf); 
+  LOG(INFO) << SECTIONBREAK << SECTIONBREAK << SECTIONBREAK;
+  LOG(INFO) << "Logger initialized.";
+  LOG(INFO) << "Working directory set to \"" << WD << "\".";
+  LOG(INFO) << "Input file set to \"" << WD+input_file << "\".";
 
   //............random number generator............
   if (fix_RNG){
-    CLOG(INFO, LOGGERS) << "fix RNG with seed 2230";
+    LOG(INFO) << "fix RNG with seed 2230";
     RNGs::mersenne = std::mt19937{2230};
   }
 
 
   //............model............
-                                  const Inputs_P inputs (WD + input_file); //temporary
+                                  const Inputs_P inputs (WD  + input_file); //temporary
                                 std::vector<std::string> keys  = inputs.data.keyList.getKeys(); //temporary
 
-  CLOG(INFO, LOGGERS) << SECTIONBREAK << "CREATE PLANT MODEL";
+  LOG(INFO) << SECTIONBREAK << "CREATE PLANT MODEL";
   PlantModel Plantmodel(WD+input_file);
   int tplus1 = 0;
   int iterateOverSaveYears = 0; 
@@ -148,8 +139,8 @@ int main(int argc, char *argv[]){
     //createSummary(iterateOverSaveYears);
     ++iterateOverSaveYears;
   }
-  if (inputs.config.simulDuration == 0){ CLOG(INFO, LOGGERS) << "Warning: model only initialized, not running, because simulDuration == 0"; return 0; }
-  else CLOG(INFO, LOGGERS) << SECTIONBREAK << "RUN MODEL";
+  if (inputs.config.simulDuration == 0){ LOG(INFO) << "Warning: model only initialized, not running, because simulDuration == 0"; return 0; }
+  else LOG(INFO) << SECTIONBREAK << "RUN MODEL";
 
   for(tplus1=1; tplus1< inputs.config.simulDuration; ++tplus1){
     Plantmodel.TPlusOne_JJ();
@@ -168,5 +159,5 @@ int main(int argc, char *argv[]){
  //combine function required
 
   //............end............
-  CLOG(INFO, LOGGERS) << SECTIONBREAK << "*************Finished.************";
+  LOG(INFO) << SECTIONBREAK << "*************Finished.************";
 }

@@ -41,9 +41,7 @@ class PlantModelTest : public testing::Test {
         std::filesystem::current_path();
 
         el::Configurations conf("debuglog.conf"); //silences the loggers
-        el::Loggers::getLogger("PLANTS");
         el::Loggers::reconfigureAllLoggers(conf); 
-        el::Loggers::addFlag(el::LoggingFlag::MultiLoggerSupport);
 
         RNGs::mersenne = std::mt19937{2230};
         p = new PlantModel("test.json");

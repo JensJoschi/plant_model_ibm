@@ -34,7 +34,7 @@ class PlantModel;
 
 class Plants {
 public:
-	explicit Plants(const std::string& inputFile);
+	explicit Plants(const std::string& inputFile, const std::string& logConfig);
     ~Plants();
 
     void initialize(int years);

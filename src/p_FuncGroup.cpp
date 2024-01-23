@@ -306,9 +306,9 @@ std::string FuncGroup::getName() const{return(m_FGparams_ptr->name);}
 
 
 void FuncGroup::show() const{
-	CLOG(DEBUG, "PLANTS") << "FunctGroup :" << "\nFG = " << m_FGparams_ptr->name;
+	LOG(DEBUG) << "FunctGroup :" << "\nFG = " << m_FGparams_ptr->name;
 	for (unsigned i =0; i<m_cohorts.size(); i++){
-		CLOG(DEBUG, "PLANTS") << "SIZE: " << m_cohorts[i].CSize << "  AY: " << m_cohorts[i].Ay << " AO: " << m_cohorts[i].Ao;
+		LOG(DEBUG) << "SIZE: " << m_cohorts[i].CSize << "  AY: " << m_cohorts[i].Ay << " AO: " << m_cohorts[i].Ao;
 	}
 	for (unsigned i=0; i<m_pools.size();i++){
 		m_pools[i].show();

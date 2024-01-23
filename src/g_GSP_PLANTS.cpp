@@ -82,9 +82,9 @@ GSP_PLANTS::GSP_PLANTS(const std::string& configFile): GSP_BASE(configFile){
 
 void GSP_PLANTS::addSpecificParams(const std::string& configFile){
   nlohmann::json j = generalFunctions::readJsonFile(configFile);
-  CLOG(INFO, "PLANTS") << SUBSECTIONBREAK << "Adding plant-specific params";
+  LOG(INFO) << SUBSECTIONBREAK << "Adding plant-specific params";
 
-  CLOG(INFO, "PLANTS") << "--Parameters";
+  LOG(INFO) << "--Parameters";
   try{noStrata = j.at("NoStrata");}
   catch(nlohmann::json::out_of_range) { LOG(WARNING) << "json::NoStrata not found. Set to 1";       noStrata = 1;}
   catch(nlohmann::json::type_error)   { LOG(FATAL) << "json::NoStrata given but not integer.";}
@@ -169,7 +169,7 @@ catch(nlohmann::json::type_error)   { LOG(FATAL) << "json::DoDisturbance given b
 }
 
 void GSP_PLANTS::checkContent() const{
-  CLOG(INFO, "PLANTS") << "--Performing checks";
+  LOG(INFO) << "--Performing checks";
 
   if (noStrata <= 0)                LOG(FATAL) << "Error in GSP:  Parameter NO_STRATA must be superior to 0!";
   if (strataHeight.size() != noStrata) LOG(FATAL) << "Error in GSP:  Parameter STRATA_HEIGHT must have the same size as NO_STRATA!";
@@ -197,5 +197,5 @@ void GSP_PLANTS::checkContent() const{
 
   if(!doesManagement && !doesAnimals && doesDisturbance) LOG(FATAL) << "Error in GSP: Parameter DO_DISTURBANCE must be false if DO_MANAGEMENT and DO_ANIMALS are false!";
 
-  CLOG(INFO, "PLANTS") << "--all checks passed";
+  LOG(INFO) << "--all checks passed";
   }

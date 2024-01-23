@@ -6,7 +6,7 @@ build-linux:
   - apt-get install --yes cmake
   - cmake -B build
   - cmake --build build 
-  - cp out/Tests_Linux_0.5.0 tests/runtest
+  - cp out/Tests_Linux_0.5.1 tests/runtest
   - cd tests
   - ./runtest
   artifacts:
@@ -45,8 +45,8 @@ build-win:
     - cmake --help
     - cmake -B build -G "MinGW Makefiles"
     - cmake --build build
-  # '& "out/Tests_Windows_0.5.0.exe" '
-  #  - '& "out/Model_Windows_0.5.0.exe" -f \tests\test.json'
+  # '& "out/Tests_Windows_0.5.1.exe" '
+  #  - '& "out/Model_Windows_0.5.1.exe" -f \tests\test.json'
   artifacts:
     paths:
       - out

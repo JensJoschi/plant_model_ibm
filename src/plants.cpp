@@ -30,7 +30,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 INITIALIZE_EASYLOGGINGPP
 
-Plants::Plants(const std::string& inputFile){
+Plants::Plants(const std::string& inputFile, const std::string& logConfig){
+    el::Configurations conf(logConfig); 
+    el::Loggers::reconfigureAllLoggers(conf); 
     pImpl = std::make_unique<PlantModel>(inputFile);
 }
 

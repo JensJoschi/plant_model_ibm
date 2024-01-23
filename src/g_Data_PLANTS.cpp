@@ -52,7 +52,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gsp): 
   Data_BASE(paramSimulFile, gsp){ 
   LOG(INFO) << "Adding plant-specific data";
-  CLOG(INFO, "PLANTS") << SUBSECTIONBREAK << "Adding plant-specific data";
     
   assert (gsp.doesPlants);
   assert (paramSimulFile != "");
@@ -60,7 +59,7 @@ Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gs
   //base ctor has already filled in m_inputDir etc. Now we read the file again to fill the remaining members
   nlohmann::json j = generalFunctions::readJsonFile(paramSimulFile);
 
-  CLOG(INFO, "PLANTS") << "--Functional Group Definitions";
+  LOG(INFO) << "--Functional Group Definitions";
   //----------------------------------------------------------------------------------------
 
   PFGDefinitions = PFGDefs();
@@ -81,7 +80,7 @@ Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gs
     catch(...){LOG(FATAL) <<"uncaught exception in PFGDefs";}
 
   
-  CLOG(INFO, "PLANTS") << "--Input Data";
+  LOG(INFO) << "--Input Data";
   //----------------------------------------------------------------------------------------
 
 if (gsp.doesShadingPercentages){
@@ -104,7 +103,7 @@ if(gsp.doesSoilDepth){
 
 
 void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
-    CLOG(INFO, "PLANTS") << "--Performing checks for plant model data.";
+    LOG(INFO) << "--Performing checks for plant model data.";
     //check if definitions are exactly equal with regional model, report if there is a mismatch
     //mostly for debugging, issue warning only. Regional model is in fact sometimes a subset of PFGDefs
     std::vector<std::string> defs = PFGDefinitions.getNames();
@@ -114,10 +113,10 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
     for (int i = 0; i<defs.size(); i++){
       if (defs[i] ==reg[i]) continue;
       else {
-        CLOG(WARNING, "PLANTS") << "Mismatch between regional model and PFG definitions detected.";
-        CLOG(WARNING, "PLANTS") << "-----first mismatch in position : " << i << " ----";
-        CLOG(WARNING, "PLANTS") << "PFGDefs: " << defs[i];
-        CLOG(WARNING, "PLANTS") << "inALL: " << reg[i];
+        LOG(WARNING) << "Mismatch between regional model and PFG definitions detected.";
+        LOG(WARNING) << "-----first mismatch in position : " << i << " ----";
+        LOG(WARNING) << "PFGDefs: " << defs[i];
+        LOG(WARNING) << "inALL: " << reg[i];
         break;
       }
     }
@@ -139,7 +138,7 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
     //could have three strata, but global could indicate 4.
 
     if (gsp.doesShadingPercentages){
-      CLOG(DEBUG, "PLANTS") << "light";
+      LOG(DEBUG) << "light";
       if (shading.getTotncell()== 0){
         LOG(FATAL)  << "shading values: " << shading.getTotncell();
       }
@@ -149,14 +148,14 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
     }
 
     if (gsp.doesSoilDepth){ 
-      CLOG(DEBUG, "PLANTS") << "habsuit";
+      LOG(DEBUG) << "habsuit";
       if(soilDepth.getTotncell() == 0) LOG (WARNING) << "soil depth map contains" << soilDepth.getTotncell() << "elements. not used.";
       for (const auto& it : soilDepth){
         if (it.second < 0) { LOG(FATAL) << "Habsuit map contains values smaller than 0";}
       }
     }
 
-  CLOG(INFO, "PLANTS") << "***data checks for plant model done.";
+  LOG(INFO) << "***data checks for plant model done.";
 }
 
 bool Data_PLANTS::checkKeys(const GSP_PLANTS& gsp) const{

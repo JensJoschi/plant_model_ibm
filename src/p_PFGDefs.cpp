@@ -116,7 +116,7 @@ const PFGDisturbances& PFGDefs::getDisturbance(const std::string&  name) const {
 
 
 void PFGDefs::createPFGs(const string& pathtodefs){
-	CLOG(DEBUG, "PLANTS") << "reading PFG definitions from file";
+	LOG(DEBUG) << "reading PFG definitions from file";
 	std::ifstream ifs(pathtodefs);
 		if (!ifs.good()){
 		LOG(FATAL) << "error: PFGDefs file not found. Path was: " << pathtodefs;
@@ -134,7 +134,7 @@ void PFGDefs::createPFGs(const string& pathtodefs){
 }
 
 void PFGDefs::createDisturbances(const std::string& pathtodisturbances){
-	CLOG(DEBUG, "PLANTS") << "reading disturbance definitions from file";
+	LOG(DEBUG) << "reading disturbance definitions from file";
 	std::ifstream ifs2(pathtodisturbances);
 	if (!ifs2.good()){
 		LOG(FATAL) << "error: DisturbanceDefs file not found. Path was: " << pathtodisturbances;

@@ -65,14 +65,14 @@ PlantModel::PlantModel(const std::string& inputFile):
 	assert(m_plantInputs_ptr->checkKeys());
 	assert(m_plantInputs_ptr->config.noStrata != 0); //checks that GSP wasn't default-constructed
 
-	CLOG(INFO, "PLANTS") << "Building Plant model";
+	LOG(INFO) << "Building Plant model";
 
 	//-----------------------------------------------------------------------------
 	const std::vector<std::string>& RegionalModel= m_plantInputs_ptr->data.listPlantFunctionalGroups;
 	assert(RegionalModel.size()>0); 
 
-	CLOG(DEBUG, "PLANTS") << "no. plant FGs:" << RegionalModel.size();
-	CLOG(INFO, "PLANTS") << "--create data structures";
+	LOG(DEBUG) << "no. plant FGs:" << RegionalModel.size();
+	LOG(INFO) << "--create data structures";
 
 	// if submodels are switched on, their variables get zero-initialized. Otherwise they are default-intialized(empty, not 0).
 	if (m_plantInputs_ptr->config.doesPlantDispersal){
@@ -99,17 +99,17 @@ PlantModel::PlantModel(const std::string& inputFile):
 
 void PlantModel::initialize(int years){
 	assert(years>=0);
-	CLOG(INFO, "PLANTS") << "let the plants grow for " << years << " years ";
+	LOG(INFO) << "let the plants grow for " << years << " years ";
 	for (int i =0; i< years; i++){
-		CLOG(DEBUG, "PLANTS") << "year: " << i;
+		LOG(DEBUG) << "year: " << i;
 		TPlusOne_JJ();
 	}
-	CLOG(DEBUG, "PLANTS") << "done.";
+	LOG(DEBUG) << "done.";
 }
 
 
 void PlantModel::TPlusOne_JJ(){
-	CLOG(INFO, "PLANTS") << "--Succession";
+	LOG(INFO) << "--Succession";
 
 	if (!m_plantInputs_ptr->config.doesNeighbourinfluence) {
 		for (auto cell: m_cells) Dosuccession(cell.first);
@@ -137,7 +137,7 @@ void PlantModel::TPlusOne_JJ(){
 	// 		}
 	//parallelization does not seem to win any time here, probably because of the small number of cells. 
 	//Need to test again later with a larger sample
-	CLOG(INFO, "PLANTS") << "--Dispersal";
+	LOG(INFO) << "--Dispersal";
 	if ( m_plantInputs_ptr->config.doesPlantDispersal) {disperse();};
 }
 
@@ -145,7 +145,7 @@ void PlantModel::TPlusOne_JJ(){
 //--------------------------------------------------------------------------
 
 void PlantModel::createInputMaps(const Landscape<std::string>& soils, const Landscape<std::map<std::string, double>>& disturbance, bool init){
-	CLOG(INFO, "PLANTS") << "Creating habitat suitability";
+	LOG(INFO) << "Creating habitat suitability";
 	if (m_plantInputs_ptr->config.doesSoilClass) {
 		assert (soils.getTotncell() == m_cells.getTotncell()); //quick check. should probably better check all keys here.
 		for (auto cell: m_cells) {
@@ -156,7 +156,7 @@ void PlantModel::createInputMaps(const Landscape<std::string>& soils, const Land
 	}
 	if (m_plantInputs_ptr->config.doesDisturbance){
 		assert(disturbance.getTotncell() == m_cells.getTotncell());  //quick check. should probably better check all keys here.
-		CLOG(INFO, "PLANTS") << "Creating disturbance";
+		LOG(INFO) << "Creating disturbance";
 		for (auto cell: m_cells) {
 			cell.second->CreateDisturbances(disturbance.at(cell.first));};
 	}

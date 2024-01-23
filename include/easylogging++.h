@@ -10,7 +10,7 @@
 //  https://github.com/amrayn/easyloggingpp/blob/master/LICENSE
 //
 
-//ALTERED BY Jens Joschinski: added the two SECTIONBREAK macros and the LOGGERS macro
+//ALTERED BY Jens Joschinski: added the two SECTIONBREAK macros
 //usage: LOG(INFO) << SECTIONBREAK << "some text";
 
 #ifndef EASYLOGGINGPP_H
@@ -18,7 +18,6 @@
 
 #define SECTIONBREAK    "\n*****************************************************\n*****************************************************\n"
 #define SUBSECTIONBREAK "\n-----------------------------------------------------\n"
-#define LOGGERS "default", "PLANTS"
 
 // Compilers and C++0x/C++11 Evaluation
 #if __cplusplus >= 201103L

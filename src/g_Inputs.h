@@ -49,14 +49,14 @@ struct Inputs{
     data_T data;
 
     explicit Inputs(const std::string& inputsFile){
-         CLOG(DEBUG, LOGGERS) << "Create Inputs from file " << inputsFile << ".";
+         LOG(DEBUG) << "Create Inputs from file " << inputsFile << ".";
         nlohmann::json j = generalFunctions::readJsonFile(inputsFile);
-         CLOG(DEBUG, LOGGERS) << "--GSP";
+         LOG(DEBUG) << "--GSP";
         config  = gsp_T(j.at("GlobSimulFile"));
-         CLOG(DEBUG, LOGGERS) << "--DATA";
+         LOG(DEBUG) << "--DATA";
         data = data_T(j.at("DATA"), config);
         assert(config.simulDuration > 0); //makes sure GSP was not default-constructed
-         CLOG(DEBUG, LOGGERS) << "***Inputs created.";
+         LOG(DEBUG) << "***Inputs created.";
     }
     bool checkKeys() const{
         return data.checkKeys(config);
