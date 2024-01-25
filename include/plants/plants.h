@@ -41,6 +41,10 @@ public:
     void TPlusOne_JJ();
     void createInputMaps(const Landscape<std::string>& soils, const Landscape<std::map<std::string, double>>& disturbance, bool init);
     Landscape<double> getPFGabund(int PFG_id);
+    void savePFG(const std::string& pfg, int year, std::string fileName = "");
+    void savePFG(const std::string& pfg, std::string fileName = "");
+    void saveAll(std::string fileName = "");
+    void saveAll(int year, std::string fileName = "");
 
 private:
     std::unique_ptr<PlantModel> pImpl; // pointer to the implementation

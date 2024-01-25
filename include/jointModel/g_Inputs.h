@@ -58,6 +58,9 @@ struct Inputs{
         assert(config.simulDuration > 0); //makes sure GSP was not default-constructed
          LOG(DEBUG) << "***Inputs created.";
     }
+
+    explicit Inputs(const gsp_T& c, const data_T& d): config(c), data(d){}
+
     bool checkKeys() const{
         return data.checkKeys(config);
     }

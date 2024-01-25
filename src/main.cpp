@@ -47,8 +47,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "easylogging++.h"
 /** @endcond */
 
-                      typedef Inputs<GSP_BASE, Data_BASE> Inputs_G;  //temporary
-
 //a default working directory can be set during compilation, see also CmakeLists.txt.
 //this default WD can be overwritten by providing a command line argument to the executable.
 #ifndef DEFAULT_WD
@@ -62,23 +60,15 @@ INITIALIZE_EASYLOGGINGPP
 /**
  * @file main.cpp
  * @brief This file contains the main function that initializes the program and runs the model.
- * 
- * The main function reads command line arguments, sets the working directory, initializes logging, 
- * sets the random number generator, reads the input file, creates an EcolopesLand object, runs the model, 
- * saves the output files, combines the output files, and ends the program.
  */
 
 
 
-
-/*============================================================================
-Main-------------------------------------------------------------------------
----------------------------------------------------------------------------*/
 int main(int argc, char *argv[]){
 
   //............command line arguments............
   std::string WD = default_WD;
-  std::string input_file = "filenames.json";
+  std::string input_file = "test.json";
   bool fix_RNG = false;
   for (int i = 1; i < argc; i++) {
     std::string arg = argv[i];
@@ -121,37 +111,22 @@ int main(int argc, char *argv[]){
     RNGs::mersenne = std::mt19937{2230};
   }
 
-
   //............model............
-                                  const Inputs_P inputs (WD  + input_file); //temporary
-                                std::vector<std::string> keys  = inputs.data.keyList.getKeys(); //temporary
+  GSP_BASE config{WD+input_file};
 
   LOG(INFO) << SECTIONBREAK << "CREATE PLANT MODEL";
   PlantModel Plantmodel(WD+input_file);
-  int tplus1 = 0;
-  int iterateOverSaveYears = 0; 
 
-  Plantmodel.initialize(5);  
+  Plantmodel.initialize(5);
+  Plantmodel.saveAll(0);
 
-  if (inputs.config.m_saveYears[iterateOverSaveYears] == 0){
-    LOG(INFO) << "SAVING";
-    //save(iterateOverSaveYears);
-    //createSummary(iterateOverSaveYears);
-    ++iterateOverSaveYears;
-  }
-  if (inputs.config.simulDuration == 0){ LOG(INFO) << "Warning: model only initialized, not running, because simulDuration == 0"; return 0; }
+  if (config.simulDuration == 0){ LOG(INFO) << "Warning: model only initialized, not running, because simulDuration == 0"; return 0; }
   else LOG(INFO) << SECTIONBREAK << "RUN MODEL";
 
-  for(tplus1=1; tplus1< inputs.config.simulDuration; ++tplus1){
+  for(int tplus1=1; tplus1< config.simulDuration; ++tplus1){
     Plantmodel.TPlusOne_JJ();
-    if (inputs.config.m_saveYears[iterateOverSaveYears] == tplus1){
-      LOG(INFO) << "SAVING";
-      
-      //call getPFGabund here!
-
-      //save function required
-      ++iterateOverSaveYears;
-      }
+    LOG(INFO) << "SAVING";
+    Plantmodel.saveAll(tplus1);
   }
 
   //............outputs............

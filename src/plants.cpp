@@ -53,3 +53,19 @@ void Plants::createInputMaps(const Landscape<std::string>& soils, const Landscap
 Landscape<double> Plants::getPFGabund(int PFG_id) {
     return pImpl->getPFGabund(PFG_id);
 }
+
+void Plants::savePFG(const std::string& pfg, int year, std::string fileName) {
+    pImpl->savePFG(pfg, year, fileName);
+}
+
+void Plants::savePFG(const std::string& pfg, std::string fileName) {
+    pImpl->savePFG(pfg, fileName);
+}
+
+void Plants::saveAll(std::string fileName) {
+    pImpl->saveAll(fileName);
+}
+
+void Plants::saveAll(int year, std::string fileName) {
+    pImpl->saveAll(year, fileName);
+}

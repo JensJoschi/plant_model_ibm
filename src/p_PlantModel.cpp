@@ -56,8 +56,11 @@ std::string def_WD= DEFAULT_WD;
 //==============================================================================
 //public
 
-PlantModel::PlantModel(const std::string& inputFile):
-	m_plantInputs_ptr(new Inputs_P(inputFile)){
+PlantModel::PlantModel(const std::string& inputFile){
+	GSP_PLANTS config{inputFile};
+	Data_PLANTS data{inputFile, config};
+	m_plantInputs_ptr = new const Inputs_P(config, data);
+
 	std::string WD = def_WD;
 
 	assert(m_plantInputs_ptr);
