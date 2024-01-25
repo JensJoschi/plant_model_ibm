@@ -2,15 +2,20 @@
 
 # INTERNAL USE ONLY, NO PROPAGATION, CONVEYING OR DISTRIBUTION WITHOUT EXPLICIT PERMISSSION
 
+# Version
+
+This readme concerns Plant model version 0.5.1. Please make sure the documentation matches the version you would like to use. 
 # Overview
 
 This repository hosts the ECOLOPES Plant model. It is meant for use within the computational workflow (WP3) of ECOLOPES, but we may in the future publish it as stand-alone model for research use as well. 
 
-The folder /src contains all source files of the model; a "tests.cpp" that allows conducting unit tests (currently for testing the test strategy only); and a CMake file that compiles the model both as a library (.dylib/.dll) and as executable for unit tests. 
-The folder /include contains dependencies: nlohmann::json, easylogging++, and a few files from the ECOLOPES ECOLOGICAL MODEL
-The folder /999-test includes files to run a simple test case of the plant model. 
-
-root contains "maintest.cpp" with a main() function, and another CMake file which compiles maintest.cpp and links it with the compiled plant model library (currently for testing only). Root also contains a doxyfile for documentation of the code(click on the download button ->documentation, or go to CICD->pipelines and download there). Lastly, root contains test.json, a configuration file telling the plant model global simulation parameters and where to find which data. Root further contains this README file and a separrate USER GUIDE. 
+The folder /doc contains figures relevant for this documentation. 
+The folder /include contains dependencies: nlohmann::json, easylogging++, and a few files from the ECOLOPES ECOLOGICAL MODEL. It also includes the public header file of the plant model library (the output of this repo).
+The folder /out contains the binary files (including the library) constructed by this repo.
+The folder /rscripts contains a few rscripts to generate inputs or analyse outputs. More like scribbled notes than anything useful.
+The folder /src contains all source files of the model, and a CMake file that compiles the model as executable.  
+The folder /tests includes unit tests, a CMake file to build them, and all inputs for a test run
+root further contains a master CMake file that compiles the binaries (library, executable and tests), a doxyfile for documentation of the code(click on the download button ->documentation, or go to CICD->pipelines and download there) and a logger configuration file (see easylogging help). Root further contains this README file and a separrate USER GUIDE. 
 
 # COPYRIGHT notice
 
