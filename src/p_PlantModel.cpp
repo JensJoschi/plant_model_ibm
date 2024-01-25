@@ -162,6 +162,65 @@ void PlantModel::createInputMaps(const Landscape<std::string>& soils, const Land
 	}
 }
 
+void PlantModel::savePFG(int id, std::string fileName){
+	assert(id >= 0);
+	assert(id < m_plantInputs_ptr->data.listPlantFunctionalGroups.size());
+	if (fileName == "") fileName = m_plantInputs_ptr->data.listPlantFunctionalGroups.at(id) + ".json";
+	Landscape<double> abundances = getPFGabund(id);
+	abundances.write_json(m_plantInputs_ptr->data.savingDir + fileName);
+
+}
+
+void PlantModel::savePFG(const std::string& pfg, std::string fileName){
+	assert(pfg != "");
+	if (fileName == "") fileName = pfg + ".json";
+	const std::vector<std::string>& names = m_plantInputs_ptr->data.PFGDefinitions.getNames();
+	for (int i = 0; i < names.size(); i++){
+		if (names.at(i) == pfg){
+			savePFG(i, fileName);
+			return;
+		}
+	}
+	LOG(ERROR) << "Error when saving. PFG " << pfg << " not found";
+}
+
+void PlantModel::savePFG(const std::string& pfg, int year, std::string fileName){
+	if (fileName == "") fileName = pfg + "_" + std::to_string(year) + ".json";
+	auto& saveYears = m_plantInputs_ptr->config.m_saveYears;
+	if (std::find(saveYears.begin(), saveYears.end(), year) != saveYears.end()){
+		LOG(INFO) << "SAVING";
+		savePFG(pfg, fileName);
+	}
+	else {LOG(DEBUG) << "not saving";}
+}
+
+void PlantModel::saveAll(int year, std::string fileName){
+	auto& saveYears = m_plantInputs_ptr->config.m_saveYears;
+	if (std::find(saveYears.begin(), saveYears.end(), year) != saveYears.end()){
+		if (fileName == "") fileName = "biomass_" + std::to_string(year) + ".json";
+		LOG(INFO) << "SAVING";
+		saveAll(fileName);
+	}
+	else {LOG(DEBUG) << "not saving";}
+}
+
+void PlantModel::saveAll(std::string fileName){
+	if (fileName == "") fileName = "biomass.json";
+	Landscape<std::map<std::string,double>> biomass(m_plantInputs_ptr->data.keyList.getKeys());
+	// for (const auto& pfg: m_plantInputs_ptr->data.listPlantFunctionalGroups){
+		//for (auto cell){... getPFGabund(pfg);} //does not work yet because getPFGabund uses int
+	// }
+	//use int-based for loop instead:
+	int noPFGs = m_plantInputs_ptr->data.listPlantFunctionalGroups.size();
+	for (int i = 0; i < noPFGs; i++){
+		const std::string& pfgName = m_plantInputs_ptr->data.listPlantFunctionalGroups.at(i);
+		for (auto cell = m_cells.begin(); cell != m_cells.end(); ++cell){
+			biomass.insertValue(cell->first, pfgName, cell->second->getPFGabund(i));
+		}	
+	}
+	biomass.write_json(m_plantInputs_ptr->data.savingDir + fileName);	
+}
+
 //==============================================================================
 //private
 void PlantModel::Dosuccession(std::string cell){
@@ -233,8 +292,7 @@ std::map<std::string, Landscape<int>> PlantModel::DoDispersalPacket(const std::m
 Landscape<double> PlantModel::getPFGabund(int PFG_id){
 	std::map<std::string, double> abundances;
 	for (auto it : m_cells){
-		abundances[it.first] = (static_cast<double> (it.second->getPFGabund(PFG_id))) /10000;
+		abundances[it.first] = (static_cast<double> (it.second->getPFGabund(PFG_id)));
 	}
-	// includes temporary scaling factor to turn abundance into mockup biomass
 	return (Landscape<double>(abundances));
 }

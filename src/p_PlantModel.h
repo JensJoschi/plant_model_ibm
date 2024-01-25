@@ -118,12 +118,50 @@ class PlantModel{
 	 */
 	Landscape<double> getPFGabund(int PFG_id);
 
+	/**
+	 * \brief save abundance of one PFG. 
+	 * \details checks whether it is the right time to save the data(i.e., the year is part of config::saveYears), 
+	 * then saves the abundance map of the PFG to a json file.
+	 * \param PFG name of the PFG to save
+	 * \param year year to save
+	 * \param fileName name of the file to save to. defaults to "<PFG>_<year>.json"
+	*/
+	void savePFG(const std::string& pfg, int year, std::string fileName = "");
 
+	/**
+	 * \brief save abundance of one PFG. 
+	 * \details saves the abundance map of the PFG to a json file.
+	 * does not make use of config::saveYears; use overload savePFG(pfg_name, year) instead if required.
+	 * \note calls the private overload savePFG(int), which is awkward (see issue #28). 
+	 * In the future we should do without the int function.
+	 * \param pfg name of the PFG to save
+	 * \param fileName name of the file to save to. defaults to "<pfg>.json"
+	*/
+	void savePFG(const std::string& pfg, std::string fileName = "");
+
+
+	/**
+	 * \brief save abundance of all PFGs. 
+	 * \details saves the abundance of all PFGs in all cells to a json file. Output 
+	 * format is: {cell1: {PFG_1: 4, PFG_2: 3}, cell2: {PFG_1: 4, PFG_2: 3}, ...}
+	 * \param fileName name of the file to save to. defaults to "biomass.json"
+	*/
+	void saveAll(std::string fileName = "");
+
+	/**
+	 * \brief save abundance of all PFGs. 
+	 * \details checks whether it is the right time to save the data(i.e., the year is part of config::saveYears), 
+	 * then saves the abundance of all PFGs in all cells to a json file. Output 
+	 * format is: {cell1: {PFG_1: 4, PFG_2: 3}, cell2: {PFG_1: 4, PFG_2: 3}, ...}
+	 * \param year year to save
+	 * \param fileName name of the file to save to. defaults to "biomass_<year>.json"
+	*/
+	void saveAll(int year, std::string fileName = "");
 
 //==============================================================================
 	private:
 
-	const Inputs<GSP_PLANTS, Data_PLANTS>* const m_plantInputs_ptr;
+	const Inputs<GSP_PLANTS, Data_PLANTS>* m_plantInputs_ptr;
 	std::map<std::string, Landscape<int>> m_SeedMap;
 	Landscape <Cell*> m_cells;
 
@@ -159,6 +197,16 @@ class PlantModel{
  	* @return new seed distribution (same format as input)
  	*/
 	std::map<std::string, Landscape<int>> DoDispersalPacket(const std::map<std::string, Landscape<int>>& m_SeedMapIn, int regionalSeeds);
+	
+	/**
+	 * \brief save abundance of one PFG. 
+	 * \details saves the abundance map of the PFG to a json file.
+	 * \note calling a PFG by number is awkward and prone to errors (see issue #28).
+	 * \param id number of the PFG to fetch
+	 * \param fileName name of the file to save to. defaults to "<PFG>.json"; <PFG> is the name of the <id>th position in PFGDefs
+	 * (which is supposed to be sorted lexicographically)
+	*/
+	void savePFG(int id, std::string fileName = "");
 
 };
 

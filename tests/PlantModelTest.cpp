@@ -55,7 +55,7 @@ class PlantModelTest : public testing::Test {
 
 TEST_F(PlantModelTest, buildOK){
     Landscape<double> results_grass =  p->getPFGabund(0);
-    bool condition = (results_grass.at("(1, 0, 1)") == 68.0/10000 || results_grass.at("(1, 0, 1)") == 88.0/10000);
+    bool condition = (results_grass.at("(1, 0, 1)") == 68.0 || results_grass.at("(1, 0, 1)") == 88.0);
     EXPECT_TRUE(condition) << "Initial size is not as expected ("<< results_grass.at("(1, 0, 1)") << "). Mersenne Twister should work on any platform, but FuncGroup calls std::uniform_int_distribution, whose implementation is platform-specific.";
 }
 
@@ -64,7 +64,7 @@ TEST_F(PlantModelTest, InitializeOK){
     Landscape<double> initial =  p->getPFGabund(0);
     p->initialize(1);
     Landscape<double> results_grass =  p->getPFGabund(0);
-    EXPECT_EQ(results_grass.at("(1, 0, 1)"),initial.at("(1, 0, 1)")+10.0/10000); //10 seeds from seedpool
+    EXPECT_EQ(results_grass.at("(1, 0, 1)"),initial.at("(1, 0, 1)")+10.0); //10 seeds from seedpool
 }
 
 TEST_F(PlantModelTest, ExampleRun){
@@ -87,13 +87,64 @@ TEST_F(PlantModelTest, ExampleRun){
         p->TPlusOne_JJ();
     }
     Landscape<double> results_grass =  p->getPFGabund(0);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 0.1568) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 0.2101) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 0.1966) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 0.2529) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 0.1829) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 0.2377) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 0.1935) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 0.2392) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 0, 1)") - 0.1125) < 0.0001 || std::abs(results_grass.at("(1, 0, 1)") - 0.2467) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 1, 0)") - 0.0961) < 0.0001 || std::abs(results_grass.at("(1, 1, 0)") - 0.2528) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 2, 0)") - 0.116) < 0.0001 || std::abs(results_grass.at("(1, 2, 0)") - 0.2531) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 1568) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 101) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 1966) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 2529) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 1829) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 2377) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 1935) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 2392) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 0, 1)") - 1125) < 0.0001 || std::abs(results_grass.at("(1, 0, 1)") - 2467) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 1, 0)") - 961) < 0.0001 || std::abs(results_grass.at("(1, 1, 0)") - 2528) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 2, 0)") - 1160) < 0.0001 || std::abs(results_grass.at("(1, 2, 0)") - 2531) < 0.0001);
     EXPECT_FLOAT_EQ(results_grass.at("(2, 0, 0)"), 0.0);
     EXPECT_FLOAT_EQ(results_grass.at("(2, 2, 0)"), 0.0);
+}
+
+TEST_F(PlantModelTest, savePFG){
+    p->initialize(1);
+    Landscape<double> expected =  p->getPFGabund(1);
+    p->savePFG("generalist_tree");
+    std::ifstream i("RESULTS/generalist_tree.json");
+    nlohmann::json j = nlohmann::json::parse(i);
+    EXPECT_EQ(j.at("(0, 1, 1)"), expected.at("(0, 1, 1)"));
+    std::remove("RESULTS/generalist_tree.json");
+
+    p->savePFG("generalist_tree", "foo");
+    std::ifstream i2("RESULTS/foo");
+    nlohmann::json j2 = nlohmann::json::parse(i2);
+    EXPECT_EQ(j2.at("(0, 1, 1)"), expected.at("(0, 1, 1)"));
+    std::remove("RESULTS/foo");
+}
+
+TEST_F(PlantModelTest, savePFG_year){
+    p->initialize(1);
+    Landscape<double> expected =  p->getPFGabund(1);
+    p->savePFG("generalist_tree", 1);
+    std::ifstream i("RESULTS/generalist_tree_1.json");
+    nlohmann::json j = nlohmann::json::parse(i);
+    EXPECT_EQ(j.at("(0, 1, 1)"), expected.at("(0, 1, 1)"));
+    std::remove("RESULTS/generalist_tree_1.json");
+
+    p->savePFG("generalist_tree", 1, "goo" );
+    std::ifstream i2("RESULTS/goo");
+    nlohmann::json j2 = nlohmann::json::parse(i2);
+    EXPECT_EQ(j2.at("(0, 1, 1)"), expected.at("(0, 1, 1)"));
+    std::remove("RESULTS/goo");
+}
+
+TEST_F(PlantModelTest, saveAll){
+    p->initialize(1);
+    Landscape<double> expectedG =  p->getPFGabund(0);
+    Landscape<double> expectedT =  p->getPFGabund(1);
+    p->saveAll();
+    std::ifstream i("RESULTS/biomass.json");
+    nlohmann::json j = nlohmann::json::parse(i);
+    EXPECT_EQ(j.at("(0, 1, 1)").at("generalist_grass"), expectedG.at("(0, 1, 1)"));
+    EXPECT_EQ(j.at("(0, 1, 1)").at("generalist_tree"), expectedT.at("(0, 1, 1)"));
+    std::remove ("RESULTS/biomass.json");
+
+    p->saveAll("loo");
+    std::ifstream i2("RESULTS/loo");
+    nlohmann::json j2 = nlohmann::json::parse(i2);
+    EXPECT_EQ(j2.at("(0, 1, 1)").at("generalist_grass"), expectedG.at("(0, 1, 1)"));
+    EXPECT_EQ(j2.at("(0, 1, 1)").at("generalist_tree"), expectedT.at("(0, 1, 1)"));
+    std::remove ("RESULTS/loo");
 }
