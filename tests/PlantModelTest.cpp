@@ -87,7 +87,7 @@ TEST_F(PlantModelTest, ExampleRun){
         p->TPlusOne_JJ();
     }
     Landscape<double> results_grass =  p->getPFGabund(0);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 1568) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 101) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 1568) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 2101) < 0.0001);
     EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 1966) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 2529) < 0.0001);
     EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 1829) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 2377) < 0.0001);
     EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 1935) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 2392) < 0.0001);
