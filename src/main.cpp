@@ -45,6 +45,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "rng.h"
 #include <filesystem>
 #include "easylogging++.h"
+#include "config.h"
 /** @endcond */
 
 //a default working directory can be set during compilation, see also CmakeLists.txt.
@@ -65,7 +66,7 @@ INITIALIZE_EASYLOGGINGPP
 
 
 int main(int argc, char *argv[]){
-
+std::cout << "Plant model version " << VERSION << std::endl;
   //............command line arguments............
   std::string WD = default_WD;
   std::string input_file = "test.json";
@@ -100,11 +101,12 @@ int main(int argc, char *argv[]){
   //............logging............
   el::Configurations conf(WD + "log.conf"); 
   el::Loggers::reconfigureAllLoggers(conf); 
-  LOG(INFO) << SECTIONBREAK << SECTIONBREAK << SECTIONBREAK;
+
   LOG(INFO) << "Logger initialized.";
   LOG(INFO) << "Working directory set to \"" << WD << "\".";
   LOG(INFO) << "Input file set to \"" << WD+input_file << "\".";
-
+  LOG(INFO) << "Plant model version " << VERSION << ".";
+  LOG(INFO) << SECTIONBREAK << SECTIONBREAK << SECTIONBREAK;
   //............random number generator............
   if (fix_RNG){
     LOG(INFO) << "fix RNG with seed 2230";

@@ -19,12 +19,16 @@
 #Authors: Jens Joschinski
 
 cmake_minimum_required(VERSION 3.20)
-project(plants VERSION 0.5.1)
+project(plants VERSION 0.5.2)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(WorkDir ${CMAKE_CURRENT_SOURCE_DIR})
 add_definitions(-DDEFAULT_WD="${WorkDir}/tests/")
+configure_file(config.h.in ${PROJECT_SOURCE_DIR}/config.h)
+configure_file(Doxyfile.in ${PROJECT_SOURCE_DIR}/Doxyfile)
+configure_file(README.md.in ${PROJECT_SOURCE_DIR}/README.md)
+configure_file(USER_GUIDE.md.in ${PROJECT_SOURCE_DIR}/USER_GUIDE.md)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/out)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/out)

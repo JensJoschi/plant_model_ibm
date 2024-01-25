@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(Model VERSION 0.5.1)
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -26,9 +24,11 @@ add_executable("Model_${SUFFIX}"    ${SRC}
 target_include_directories("Plants_${SUFFIX}" PUBLIC
                             "${CMAKE_SOURCE_DIR}/include"
                             "${CMAKE_SOURCE_DIR}/include/jointModel"
+                            "${PROJECT_SOURCE_DIR}"
                            )
 
 target_include_directories("Model_${SUFFIX}" PUBLIC
                            "${CMAKE_SOURCE_DIR}/include"
                             "${CMAKE_SOURCE_DIR}/include/jointModel"
+                            "${PROJECT_SOURCE_DIR}"
                           )

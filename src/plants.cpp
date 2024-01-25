@@ -27,12 +27,15 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "p_PlantModel.h" //implementation
 #include "plants/plants.h" //public API
 #include "easylogging++.h"
+#include "config.h"
 
 INITIALIZE_EASYLOGGINGPP
 
 Plants::Plants(const std::string& inputFile, const std::string& logConfig){
     el::Configurations conf(logConfig); 
     el::Loggers::reconfigureAllLoggers(conf); 
+    std::cout << "Model version " << VERSION << "\n";
+    LOG(INFO) << "model version: " << VERSION;
     pImpl = std::make_unique<PlantModel>(inputFile);
 }
 
