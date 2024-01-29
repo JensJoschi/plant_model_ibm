@@ -8,6 +8,7 @@ build-linux:
   - apt-get install --yes cmake
   - cmake -B build
   - cmake --build build 
+  - g++ -o mock mockmain.cpp -Lout -lPlants_Linux_${VERSION} -Iinclude/plants -Iinclude/jointModel -Iinclude -std=c++20
   - cp out/Tests_Linux_${VERSION} tests/runtest
   - mv README.md out/README_${VERSION}.md
   - cd tests

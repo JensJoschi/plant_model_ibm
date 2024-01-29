@@ -28,7 +28,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #define PLANTS_H
 
 #include <memory>
-#include "jointModel/Landscape.h"
+#include "Landscape.h"
 
 class PlantModel;
 
