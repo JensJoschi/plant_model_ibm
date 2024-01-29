@@ -1,15 +1,32 @@
-//This file is not meant for sharing. If you have received the file in error, please email us immediately at info@ecolopes.org
+/* Copyright (C) 2023 - present ???
+ This file is part of the ECOLOPES JOINT MODEL.
 
-// --------------------------------------------------------------------------
-// TEMPORARY. PLANT MODEL SHOULD NOT INCLUDE JOINT MODEL CODE IN FOLDER SRC. 
-// --------------------------------------------------------------------------
+ ECOLOPES JOINT MODEL is free software: you can redistribute it and/or modify 
+ it under the terms of the GNU General Public License as published by the 
+ Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-// --------------------------------------------------------------------------
-// Authors and contributors to this file:
-// Jens Joschinski: initial class
-// Victoria Culshaw: split class into submodel classes
-// JJ: class inheritance and code restructuring
-// --------------------------------------------------------------------------
+ ECOLOPES JOINT MODEL is distributed in the hope that it will be useful, 
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with ECOLOPES PLANT MODEL. 
+ If not, see <https://www.gnu.org/licenses/>.
+
+ ECOLOPES JOINT MODEL is based on:
+ - the ECOLOPES PLANT MODEL, Copyright (C) 2023 ???
+ - the ECOLOPES ANIMAL MODEL, Copyright (C) 2023 ???
+ - and the ECOLOPES SOIL MODEL, Copyright (C) 2023 ???
+
+*/
+
+
+ // --------------------------------------------------------------------------
+ // Authors and contributors to this file:
+ // JJ: Code and most content of this base class (partially based on FATE but heavily altered)
+ // VC: splitting into general and submodel classes
+ // JJ: inheritance and rewrite
+ // --------------------------------------------------------------------------
+ 
 
 #include "g_Data_BASE.h"
 #include "g_GSP_BASE.h"
@@ -24,13 +41,12 @@
 /** @endcond */
 
 
-#include "a_generalFunctions_vmvc.h"
-#include "jointModel/Landscape.h"
+#include "generalFunctions.h"
+#include "Landscape.h"
 
-Data_BASE::Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp):
-  animalModelFile(paramSimulFile), plantModelFile(paramSimulFile), soilModelFile(paramSimulFile){
-  LOG(DEBUG) << SUBSECTIONBREAK << "Reading shared data from json file.";
-  LOG(INFO) << "Reading shared data from json file.";
+Data_BASE::Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp){
+  LOG(DEBUG) << SUBSECTIONBREAK << "Reading basic data from json file.";
+  LOG(INFO) << "Reading basic data from json file.";
 
   //----------------------------------------------------------------------------
   LOG(DEBUG) << "--Data sources";
@@ -40,13 +56,6 @@ Data_BASE::Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp):
     catch(nlohmann::json::out_of_range) { LOG(WARNING) << "InputDir not found. Set to 0-INPUT/"; inputDir = "0-INPUT/";}
   try{savingDir = j.at("SaveDir");}
     catch(nlohmann::json::out_of_range) {  LOG(WARNING) << "Saving dir not found. Using 0-RESULTS/"; savingDir = "0-RESULTS/";}
-
-  try{plantModelFile = j.at("PlantInputs");}
-    catch(nlohmann::json::out_of_range) {  LOG(WARNING) << "flag PlantInputs  not found, using default(" << plantModelFile << ")";}
-  try{animalModelFile = j.at("AnimalInputs");}
-    catch(nlohmann::json::out_of_range) {  LOG(WARNING) << "flag AnimalInputs not found, using default(" << animalModelFile << ")";}
-  try{soilModelFile = j.at("SoilInputs");}
-    catch(nlohmann::json::out_of_range) {  LOG(WARNING) << "flag SoilInputs   not found, using default(" << soilModelFile << ")";}
   
   //----------------------------------------------------------------------------
   LOG(DEBUG) << "--regional model information";
@@ -60,23 +69,12 @@ Data_BASE::Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp):
   
   std::sort(listPlantFunctionalGroups.begin(), listPlantFunctionalGroups.end());
   std::sort(listAnimalFunctionalGroups.begin(), listAnimalFunctionalGroups.end());
-
-
-
   //----------------------------------------------------------------------------------------
   LOG(DEBUG) << "--Input Data";
   try{keyList = readFile<double>(j, "MaskFile" , inputDir);}
   catch(nlohmann::json::out_of_range) {   
      LOG(FATAL) <<"MaskFile not found"; 
   }
-
-
-  slope = Landscape<double>();  //to do
-    if (gsp.doesManagement){
-    try{management = readFile<std::map<std::string, double>>(j, "Management", inputDir);}
-    catch(nlohmann::json::out_of_range) { LOG(FATAL) << "Management not found.";}
-    }
-
   checkContent(gsp);
 }
 
@@ -87,22 +85,10 @@ void Data_BASE::checkContent(const GSP_BASE& gsp) const{
   std::filesystem::create_directory(inputDir);  //will not create a new one if already present
   std::filesystem::create_directory(savingDir);
 
-  if(gsp.doesManagement){
-    LOG(DEBUG) << "Management";
-    if(management.getTotncell() == 0) LOG (ERROR) << "map of management wrong";
-  }
-
   LOG(DEBUG) << "--All checks done";
 }
 
 
 bool Data_BASE::checkKeys(const GSP_BASE& config) const{
-  if (config.doesManagement && management.getTotncell() != keyList.getKeys().size()) return false;
-  else {
-    for (const auto& key : keyList.getKeys()){
-      if (config.doesManagement && management.count(key) != 1) return false;
-      if (keyList.count(key) != 1) return false;
-    }
     return true;
-  }
 }

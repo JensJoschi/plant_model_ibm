@@ -9,7 +9,7 @@ set (SRC "g_Data_PLANTS.cpp"            "g_FGUtils.cpp"      "g_GSP_PLANTS.cpp"
          "p_PlantModel.cpp"             "p_PlantResource.cpp" "p_PropPool.cpp" 
          "p_ResourceAlloc.cpp"          "rng.cpp")
 
-set (JOINT "${CMAKE_SOURCE_DIR}/include/jointModel/a_generalFunctions_vmvc.cpp"  "${CMAKE_SOURCE_DIR}/include/jointModel/g_Data_BASE.cpp"    "${CMAKE_SOURCE_DIR}/include/jointModel/g_GSP_BASE.cpp")
+set (JOINT  "${CMAKE_SOURCE_DIR}/include/jointModel/g_Data_BASE.cpp"    "${CMAKE_SOURCE_DIR}/include/jointModel/g_GSP_BASE.cpp")
 
 add_library("Plants_${SUFFIX}" SHARED   ${SRC} 
                                         plants.cpp 

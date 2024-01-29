@@ -1,8 +1,23 @@
-//This file is not meant for sharing. If you have received the file in error, please email us immediately at info@ecolopes.org
+/* Copyright (C) 2023 - present ???
+ This file is part of the ECOLOPES JOINT MODEL.
 
-// --------------------------------------------------------------------------
-// TEMPORARY. PLANT MODEL SHOULD NOT INCLUDE JOINT MODEL CODE IN FOLDER SRC. 
-// --------------------------------------------------------------------------
+ ECOLOPES JOINT MODEL is free software: you can redistribute it and/or modify 
+ it under the terms of the GNU General Public License as published by the 
+ Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+ ECOLOPES JOINT MODEL is distributed in the hope that it will be useful, 
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along with ECOLOPES PLANT MODEL. 
+ If not, see <https://www.gnu.org/licenses/>.
+
+ ECOLOPES JOINT MODEL is based on:
+ - the ECOLOPES PLANT MODEL, Copyright (C) 2023 ???
+ - the ECOLOPES ANIMAL MODEL, Copyright (C) 2023 ???
+ - and the ECOLOPES SOIL MODEL, Copyright (C) 2023 ???
+
+*/
 
 
  // --------------------------------------------------------------------------
@@ -22,12 +37,13 @@
  * \date 2023
  */
 
-#ifndef GSPA_H
-#define GSPA_H
+#ifndef GSPB_H
+#define GSPB_H
 
 /** @cond */
 #include <nlohmann/json.hpp>
 #include <string>
+#include <vector>
 /** @endcond */
 
 
@@ -40,17 +56,10 @@ class GSP_BASE{
   public:
   explicit GSP_BASE(const std::string& configFile);
   GSP_BASE();
-  
-  int simulDuration;        /*!< number of iterations (annual time steps) */
 
-  //// Which submodels should we run?
-  bool doesSoil;         /*!< Switches off the soil model. Switches off soil formation as well*/
-  bool doesPlants;        /*!< If the Plant model is switched off, static plant resource maps need to be provided so the animal model can run  */
-  bool doesAnimals;       /*!< Switches the animal model off */
-  bool doesManagement;        /*!< if this is switched off,  management has no effect in any submodel*/
+  int simulDuration;        /*!< number of iterations (annual time steps) */
   std::vector<int> m_saveYears;   /*!< Save results in each of those years */
 
-  
   private: 
   /**
    * \brief check GSP entries for consistency

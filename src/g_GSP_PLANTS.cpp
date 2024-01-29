@@ -32,7 +32,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  #include "g_GSP_PLANTS.h"
  #include "g_GSP_BASE.h"
- #include "a_generalFunctions_vmvc.h"
+ #include "generalFunctions.h"
  /** @cond */
  #include <fstream>
  #include <string>
@@ -194,8 +194,6 @@ void GSP_PLANTS::checkContent() const{
   if(!doesHabSuitability && doesSoilClass) LOG(FATAL) << "Error in GSP: Parameter DO_SOIL_CLASS must be false if DO_HAB_SUITABILITY is false!";
   if(!doesHabSuitability && doesSoilDepth) LOG(FATAL) << "Error in GSP: Parameter DO_SOIL_DEPTH must be false if DO_HAB_SUITABILITY is false!";
   if (doesHabSuitability && !doesSoilClass & !doesSoilDepth) LOG(FATAL) << "Error in GSP: Parameter DO_SOIL_CLASS and/or DO_SOIL_DEPTH must be true if DO_HAB_SUITABILITY is true!";
-
-  if(!doesManagement && !doesAnimals && doesDisturbance) LOG(FATAL) << "Error in GSP: Parameter DO_DISTURBANCE must be false if DO_MANAGEMENT and DO_ANIMALS are false!";
 
   LOG(INFO) << "--all checks passed";
   }

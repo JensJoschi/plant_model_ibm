@@ -9,6 +9,7 @@ build-linux:
   - cmake -B build
   - cmake --build build 
   - cp out/Tests_Linux_${VERSION} tests/runtest
+  - mv README.md out/README_${VERSION}.md
   - cd tests
   - ./runtest
   artifacts:

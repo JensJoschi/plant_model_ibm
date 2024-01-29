@@ -36,7 +36,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "p_PFGDefs.h"
 
 #include "Landscape.h"
-#include "a_generalFunctions_vmvc.h"
+#include "generalFunctions.h"
 
 
 /** @cond */
@@ -52,8 +52,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gsp): 
   Data_BASE(paramSimulFile, gsp){ 
   LOG(INFO) << "Adding plant-specific data";
-    
-  assert (gsp.doesPlants);
   assert (paramSimulFile != "");
 
   //base ctor has already filled in m_inputDir etc. Now we read the file again to fill the remaining members

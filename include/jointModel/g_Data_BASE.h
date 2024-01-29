@@ -1,22 +1,34 @@
-//This file is not meant for sharing. If you have received the file in error, please email us immediately at info@ecolopes.org
+/* Copyright (C) 2023 - present ???
+ This file is part of the ECOLOPES JOINT MODEL.
 
-// --------------------------------------------------------------------------
-// TEMPORARY. PLANT MODEL SHOULD NOT INCLUDE JOINT MODEL CODE IN FOLDER SRC. 
-// --------------------------------------------------------------------------
+ ECOLOPES JOINT MODEL is free software: you can redistribute it and/or modify 
+ it under the terms of the GNU General Public License as published by the 
+ Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-// --------------------------------------------------------------------------
-// Authors and contributors to this file:
-// Jens Joschinski: initial class
-// Victoria Culshaw: split class into submodel classes
-// JJ: class inheritance and code restructuring
-// --------------------------------------------------------------------------
+ ECOLOPES JOINT MODEL is distributed in the hope that it will be useful, 
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
+ You should have received a copy of the GNU General Public License along with ECOLOPES PLANT MODEL. 
+ If not, see <https://www.gnu.org/licenses/>.
+
+ ECOLOPES JOINT MODEL is based on:
+ - the ECOLOPES PLANT MODEL, Copyright (C) 2023 ???
+ - the ECOLOPES ANIMAL MODEL, Copyright (C) 2023 ???
+ - and the ECOLOPES SOIL MODEL, Copyright (C) 2023 ???
+
+*/
+ // --------------------------------------------------------------------------
+ // Authors and contributors to this file:
+ // JJ: Code and most content of this base class (partially based on FATE but heavily altered)
+ // VC: splitting into general and submodel classes
+ // JJ: inheritance and rewrite
+ // --------------------------------------------------------------------------
+ 
 
 /*!
- * \file g_Inputs.h
- * \brief store all input data
- * \details This class is built with a string, indicating a file name of a json file. 
- * The json file (usually filenames.json) contains the names of all input files.
+ * \file Data_BASE.h
+ * \brief store input data
  * \note when the class is built, it reads in the information e.g. from the regional model
  * (listplantfunctionalgroups). This class can, however,not assert that the information is correct,
  * because it does not have access to the definitions yet. So, asking the inputs_all class for data
@@ -28,11 +40,11 @@
  * \author Jens Joschinski
  */
 
-#ifndef INPUTS_ALL_H
-#define INPUTS_ALL_H
+#ifndef INPUTS_B_H
+#define INPUTS_B_H
 
 #include "g_GSP_BASE.h"
-#include "jointModel/Landscape.h"
+#include "Landscape.h"
 
 
 /** @cond */
@@ -54,31 +66,23 @@ class Data_BASE{
     explicit Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp);
     Data_BASE() = default;
 
-    std::string inputDir;                         /*!< path to input files */
-    std::string savingDir;                         /*!< Saving directory path */
-
-    std::string animalModelFile;                  /*! path to the animal model file. May be the same as the file used to create *this class */
-    std::string plantModelFile;                   /*! path to the plant model file. May be the same as the file used to create *this class */
-    std::string soilModelFile;                    /*! path to the soil model file. May be the same as the file used to create *this class */  
-
+    std::string inputDir;        /*!< path to input files */
+    std::string savingDir;       /*!< Saving directory path */
 
     /* Regional model information */
+    //possibly move to Data_ECOLOPES
     std::vector<std::string> listPlantFunctionalGroups;  // list of the PFG that may be present on ecolopesLand.
     std::vector<std::string> listAnimalFunctionalGroups; // ... 
 
     /* Spatial data */
-    //the data is stored as maps whose key is usually a coordinate (string) and the values are the data (int, double, string, etc.)
-    //The landscape class is a wrapper around the map, but provides additional functionality
-    //(read/write, check spatial extent and completeness etc.)
-    Landscape<double> keyList;                  /*!< used only to extract the keys of the site (coordinates). Type double so it matches with the other inputs (you may use e.g. shading.json or similar)*/
-    Landscape<double> slope;                /*!< Slope, not used yet*/
-    Landscape<std::map<std::string, double>> management; /*!< management maps, content e.g. "(0,0)": {"mowing": 14, "fire": 0}, "(0,1)".... */
-    //to discuss whether this should be plant-specific or general information. I think it is general because e.g. mowing would simultaneously affect plants and animals
-    //even if not implemented in the animal model, we could already store at the correct position
+    //the data is stored as maps (Landscape class) whose key is 
+    //usually a coordinate (string) and the values are the data (int, double, string, etc.)
+    Landscape<double> keyList;    /*!< used only to extract the keys of the site (coordinates). */
     
   /**
    * \brief check if keys are consistent
    * \details This function checks if the keys of all spatial data inputs are consistent . 
+   * \note not very sensible yet because there is only one dataset; but inherited classes may have more
    * \param config global simulation parameters, used to check which model components are switched off
    * @return true all keys are consistent
    * @return false errors detected
@@ -90,6 +94,7 @@ class Data_BASE{
      * \details the json file (e.g. filenames.json, test.json) contains multiple filenames. Entries can be of form 
      * "ShadingFile": "shading.json", or "ShadingFile": ["inputs.json", "SHADING"]. In the latter case inputs.json contains 
      * information from various sources (e.g. shading, soil depth), and only SHADING is read from that file.
+     * \note not very sensible yet because there is only one dataset; but inherited classes may have more
      * 
      * \tparam T usually double or int
      * \param j the json object, containing s
@@ -124,4 +129,4 @@ class Data_BASE{
   virtual void checkContent(const GSP_BASE& gsp) const;
 };
 
-#endif // INPUTS_ALL_H
+#endif // INPUTS_B_H

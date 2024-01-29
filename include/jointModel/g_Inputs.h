@@ -28,7 +28,7 @@
 /** @cond */
 #include <nlohmann/json.hpp>
 #include <string>
-#include "a_generalFunctions_vmvc.h"
+#include "generalFunctions.h"
 #include "easylogging++.h"
 /** @endcond */
 
