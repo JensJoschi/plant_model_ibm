@@ -102,6 +102,13 @@ PlantModel::PlantModel(const std::string& inputFile){
 
 void PlantModel::initialize(int years){
 	assert(years>=0);
+
+	const Landscape<std::string>& HabSuitMap = m_plantInputs_ptr->config.doesSoilClass? 
+		m_plantInputs_ptr->data.soilClass : Landscape<std::string>(m_plantInputs_ptr->data.keyList.getKeys());
+    const Landscape<std::map<std::string, double>>& DisturbanceMap =  m_plantInputs_ptr->config.doesDisturbance?
+        m_plantInputs_ptr->data.management : Landscape<std::map<std::string, double>>(m_plantInputs_ptr->data.keyList.getKeys());
+	createInputMaps(HabSuitMap, DisturbanceMap, true);
+
 	LOG(INFO) << "let the plants grow for " << years << " years ";
 	for (int i =0; i< years; i++){
 		LOG(DEBUG) << "year: " << i;
@@ -119,14 +126,15 @@ void PlantModel::TPlusOne_JJ(){
 	} else{
 		std::vector<int> neighbour( m_plantInputs_ptr->config.noStrata, 0);  //for testing, a fake neighbouring cell
 		for (auto cell: m_cells){
-		std::string IDent = cell.first;
-		int x = std::stoi(IDent.substr(1, IDent.find(",")-1)) - 1;
-		std::string neighbourcell = "(" + std::to_string(x) + IDent.substr(IDent.find(","));
-		if (m_cells.contains(neighbourcell)){
-		neighbour = m_cells.at(neighbourcell)->calcAbundances();}
-		else {neighbour = std::vector<int>(m_plantInputs_ptr->config.noStrata, 0);}
+			std::string IDent = cell.first;
+			int x = std::stoi(IDent.substr(1, IDent.find(",")-1)) - 1;
+			std::string neighbourcell = "(" + std::to_string(x) + IDent.substr(IDent.find(","));
+			if (m_cells.contains(neighbourcell)){
+				neighbour = m_cells.at(neighbourcell)->calcAbundances();}
+			else {neighbour = std::vector<int>(m_plantInputs_ptr->config.noStrata, 0);}
 
-		 DoSuccession(cell.first, neighbour); }
+		 	DoSuccession(cell.first, neighbour); 
+		}
 	}
 	//this seems like an ideal place for parallelization. Instead of the lines above we could do:
 	// std::vector<std::string> cellnames;

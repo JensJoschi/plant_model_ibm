@@ -84,7 +84,8 @@ class PlantModel{
 	 * \brief Create stable starting community
 	 * \details
 	 * Wrapper function. Runs the pland model for "years" timesteps to initiate 
-	 * a community, doing only succession and dispersal
+	 * a community, doing only succession and dispersal     
+	  * Also loads disturbances and soil classes from file, if activated. 
 	 * \param years number of time steps to run
 	 */
 	void initialize(int years);

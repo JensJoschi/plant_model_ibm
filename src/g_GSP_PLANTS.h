@@ -72,7 +72,6 @@ class GSP_PLANTS: public GSP_BASE{
       bool doesSoilDepth;         /*!< if this is switched off, the attribute "soil depth" is ignored */
     bool doesPlantDispersal;    /*!< if this is switched off, the plants are unable to disperse */
     bool doesDisturbance;       /*!< if this is switched off, the plants are unable to react to disturbances */
-//currently the same as GSP_BASE::doesmanagement
 
     /*  global parameters*/
     int potentialFecundity; /*!< Potential Fecundity of mature plants (maximum value of seeds produced in optimal conditions) */

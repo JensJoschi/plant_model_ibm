@@ -56,6 +56,8 @@ class Data_PLANTS: public Data_BASE{
     PFGDefs PFGDefinitions;                    // plant functional group definition. Contains life history attributes (lifespan etc.)
     Landscape<double> shading;                 // percentage of shade cover in each grid cell;Expected content: dbl, 0-1; 0.0 = sun-exposed, 1.0 = darkness.
     Landscape<int>    soilDepth;               // depth of soil in cm, integers only. Expected int, 0-100 cm
+    Landscape<std::string> soilClass;          // soil class as string, describes what "kind" of soil is available in each cell (e.g. "sand", "unstructured_acidic_loam"). String must match PFGdefs soil requirements
+    Landscape<std::map<std::string, double>> management; // management information for each cell. Contains information on grazing, mowing, etc. as defined in the management file.
 
     /**
     * \brief check data coordinates for consistency

@@ -64,7 +64,7 @@ TEST_F(PlantModelTest, InitializeOK){
     Landscape<double> initial =  p->getPFGabund(0);
     p->initialize(1);
     Landscape<double> results_grass =  p->getPFGabund(0);
-    EXPECT_EQ(results_grass.at("(1, 0, 1)"),initial.at("(1, 0, 1)")+10.0); //10 seeds from seedpool
+    EXPECT_EQ(results_grass.at("(1, 0, 1)"),initial.at("(1, 0, 1)")*0.5+10.0); //10 seeds from seedpool; 50% died of fire
 }
 
 TEST_F(PlantModelTest, ExampleRun){
@@ -87,13 +87,14 @@ TEST_F(PlantModelTest, ExampleRun){
         p->TPlusOne_JJ();
     }
     Landscape<double> results_grass =  p->getPFGabund(0);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 1568) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 2101) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 1966) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 2529) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 1829) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 2377) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 1935) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 2392) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 0, 1)") - 1125) < 0.0001 || std::abs(results_grass.at("(1, 0, 1)") - 2467) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 1, 0)") - 961) < 0.0001 || std::abs(results_grass.at("(1, 1, 0)") - 2528) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 2, 0)") - 1160) < 0.0001 || std::abs(results_grass.at("(1, 2, 0)") - 2531) < 0.0001);
+    
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 946) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 1070) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 1053) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 1296) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 1003) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 1265) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 1041) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 1152) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 0, 1)") - 626) < 0.0001 || std::abs(results_grass.at("(1, 0, 1)") - 1252) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 1, 0)") - 966) < 0.0001 || std::abs(results_grass.at("(1, 1, 0)") - 1314) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 2, 0)") - 1118) < 0.0001 || std::abs(results_grass.at("(1, 2, 0)") - 1342) < 0.0001);
     EXPECT_FLOAT_EQ(results_grass.at("(2, 0, 0)"), 0.0);
     EXPECT_FLOAT_EQ(results_grass.at("(2, 2, 0)"), 0.0);
 }

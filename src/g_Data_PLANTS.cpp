@@ -81,20 +81,33 @@ Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gs
   LOG(INFO) << "--Input Data";
   //----------------------------------------------------------------------------------------
 
-if (gsp.doesShadingPercentages){
-  try{shading = readFile<double>(j, "ShadingFile", inputDir);}
-    catch(nlohmann::json::out_of_range) {
-      LOG(WARNING) << "ShadingFile not found"; 
-      shading = Landscape<double>();
+  if (gsp.doesShadingPercentages){
+    try{shading = readFile<double>(j, "ShadingFile", inputDir);}
+      catch(nlohmann::json::out_of_range) {
+        LOG(WARNING) << "ShadingFile not found"; 
+        shading = Landscape<double>();
+      }
+  }
+  if(gsp.doesSoilDepth){
+    try{soilDepth = readFile<int>(j, "DepthFile", inputDir);}
+      catch(nlohmann::json::out_of_range) { 
+        LOG(WARNING) <<"DepthFile not found";
+        soilDepth = Landscape<int>();
+      }
+  }
+
+  if(gsp.doesSoilClass){
+    try{soilClass = readFile<std::string>(j, "SoilClassFile", inputDir);}
+      catch(nlohmann::json::out_of_range) { 
+        LOG(WARNING) <<"SoilClassFile not found";
+        soilClass = Landscape<std::string>();
+      }
+  }
+
+  if (gsp.doesDisturbance){
+    try{management = readFile<std::map<std::string, double>>(j, "Management", inputDir);}
+    catch(nlohmann::json::out_of_range) { LOG(FATAL) << "Management not found.";}
     }
-}
-if(gsp.doesSoilDepth){
-  try{soilDepth = readFile<int>(j, "DepthFile", inputDir);}
-    catch(nlohmann::json::out_of_range) { 
-      LOG(WARNING) <<"DepthFile not found";
-      soilDepth = Landscape<int>();
-    }
-}
 
   checkContent(gsp);
 }
@@ -153,17 +166,34 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
       }
     }
 
+    if(gsp.doesSoilClass){
+      LOG(DEBUG) << "soil class";
+      if(soilClass.getTotncell() == 0) LOG (WARNING) << "soil class map contains" << soilClass.getTotncell() << "elements. not used.";
+      for (const auto& it : soilClass){
+        if (it.second == "") { LOG(FATAL) << "Soil class map contains empty strings";}
+      }
+    }
+
+    if(gsp.doesDisturbance){
+      LOG(DEBUG) << "Management";
+      if(management.getTotncell() == 0) LOG (ERROR) << "map of management wrong";
+    }
+
   LOG(INFO) << "***data checks for plant model done.";
 }
 
 bool Data_PLANTS::checkKeys(const GSP_PLANTS& gsp) const{
   if (gsp.doesShadingPercentages && (shading.getTotncell() != keyList.getKeys().size())) return false; 
   if (gsp.doesSoilDepth && (soilDepth.getTotncell() != keyList.getKeys().size())) return false;
+  if (gsp.doesSoilClass && (soilClass.getTotncell() != keyList.getKeys().size())) return false;
+  if (gsp.doesDisturbance && (management.getTotncell() != keyList.getKeys().size())) return false;
 
   for (const auto& key : keyList.getKeys()){
     if (keyList.count(key) != 1) return false;
     if (gsp.doesShadingPercentages && shading.count(key) != 1) return false;
     if (gsp.doesSoilDepth && soilDepth.count(key) != 1) return false;
+    if (gsp.doesSoilClass && soilClass.count(key) != 1) return false;
+    if (gsp.doesDisturbance && management.count(key) != 1) return false;
   }
 
   return true;
