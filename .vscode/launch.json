@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/out/Model_Darwin_0.5.2",
-            "args": [],
+            "args": ["-r"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",  
             "environment": [],

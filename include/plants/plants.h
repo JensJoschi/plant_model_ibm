@@ -34,7 +34,7 @@ class PlantModel;
 
 class Plants {
 public:
-	explicit Plants(const std::string& inputFile, const std::string& logConfig);
+	explicit Plants(const std::string& inputFile, const std::string& logConfig, bool FixRNG = false);
     ~Plants();
 
 	/**

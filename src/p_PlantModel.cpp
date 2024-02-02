@@ -56,7 +56,7 @@ std::string def_WD= DEFAULT_WD;
 //==============================================================================
 //public
 
-PlantModel::PlantModel(const std::string& inputFile){
+PlantModel::PlantModel(const std::string& inputFile, bool FixRNG){
 	GSP_PLANTS config{inputFile};
 	Data_PLANTS data{inputFile, config};
 	m_plantInputs_ptr = new const Inputs_P(config, data);
@@ -69,6 +69,11 @@ PlantModel::PlantModel(const std::string& inputFile){
 	assert(m_plantInputs_ptr->config.noStrata != 0); //checks that GSP wasn't default-constructed
 
 	LOG(INFO) << "Building Plant model";
+
+	if (FixRNG){
+    LOG(INFO) << "fix RNG with seed 2230";
+    RNGs::mersenne = std::mt19937{2230};
+  }
 
 	//-----------------------------------------------------------------------------
 	const std::vector<std::string>& RegionalModel= m_plantInputs_ptr->data.listPlantFunctionalGroups;

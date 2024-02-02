@@ -107,17 +107,12 @@ std::cout << "Plant model version " << VERSION << std::endl;
   LOG(INFO) << "Input file set to \"" << WD+input_file << "\".";
   LOG(INFO) << "Plant model version " << VERSION << ".";
   LOG(INFO) << SECTIONBREAK << SECTIONBREAK << SECTIONBREAK;
-  //............random number generator............
-  if (fix_RNG){
-    LOG(INFO) << "fix RNG with seed 2230";
-    RNGs::mersenne = std::mt19937{2230};
-  }
 
   //............model............
   GSP_BASE config{WD+input_file};
 
   LOG(INFO) << SECTIONBREAK << "CREATE PLANT MODEL";
-  PlantModel Plantmodel(WD+input_file);
+  PlantModel Plantmodel(WD+input_file, fix_RNG);
 
   Plantmodel.initialize(5);
   Plantmodel.saveAll(0);
