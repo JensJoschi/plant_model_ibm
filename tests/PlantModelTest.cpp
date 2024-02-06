@@ -69,32 +69,17 @@ TEST_F(PlantModelTest, InitializeOK){
 
 TEST_F(PlantModelTest, ExampleRun){
     p->initialize(1);
-    std::vector<std::string> keys{"(0, 0, 0)", "(0, 0, 1)", "(0, 1, 0)", 
-                                "(0, 1, 1)", "(0, 2, 0)", "(0, 2, 1)",
-                                "(1, 0, 0)", "(1, 0, 1)", "(1, 1, 0)",
-                                "(1, 1, 1)", "(1, 2, 0)", "(1, 2, 1)",
-                                "(2, 0, 0)", "(2, 0, 1)", "(2, 1, 0)",
-                                "(2, 1, 1)", "(2, 2, 0)", "(2, 2, 1)"};
-    Landscape<std::map<std::string, double>> testdisturbance(keys);
-    std::map<std::string, double> filler{{"fire", 0.0}};
-    std::map<std::string, double> filler2{{"fire", 0.2}};
-    testdisturbance.fillWith(filler);
-    testdisturbance.setValue("(0, 0, 0)", filler2);
-    Landscape<std::string> validSoils(keys);
-    validSoils.fillWith("SaLo_l_2");
-    p->createInputMaps(validSoils, testdisturbance, true);
     for (int i  = 0; i< 2; i++){
         p->TPlusOne_JJ();
     }
     Landscape<double> results_grass =  p->getPFGabund(0);
-    
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 946) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 1070) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 1053) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 1296) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 1003) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 1265) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 1041) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 1152) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 0, 1)") - 626) < 0.0001 || std::abs(results_grass.at("(1, 0, 1)") - 1252) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 1, 0)") - 966) < 0.0001 || std::abs(results_grass.at("(1, 1, 0)") - 1314) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 2, 0)") - 1118) < 0.0001 || std::abs(results_grass.at("(1, 2, 0)") - 1342) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 330) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 303) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 546) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 667) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 530) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 671) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 538) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 603) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 0, 1)") - 301) < 0.0001 || std::abs(results_grass.at("(1, 0, 1)") - 655) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 1, 0)") - 500) < 0.0001 || std::abs(results_grass.at("(1, 1, 0)") - 689) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 2, 0)") - 589) < 0.0001 || std::abs(results_grass.at("(1, 2, 0)") - 702) < 0.0001);
     EXPECT_FLOAT_EQ(results_grass.at("(2, 0, 0)"), 0.0);
     EXPECT_FLOAT_EQ(results_grass.at("(2, 2, 0)"), 0.0);
 }

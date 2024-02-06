@@ -244,7 +244,7 @@ void PlantModel::Dosuccession(std::string cell){
 	DoSuccession(cell, unused);
 }
 void PlantModel::DoSuccession(std::string cell, const std::vector<int>& neighbour){
-		assert(m_SeedMap.size() == m_plantInputs_ptr->data.listPlantFunctionalGroups.size());
+		if (m_plantInputs_ptr->config.doesPlantDispersal) {assert(m_SeedMap.size() == m_plantInputs_ptr->data.listPlantFunctionalGroups.size());}
 		assert(cell != "");
 		assert(neighbour.size() == m_plantInputs_ptr->config.noStrata);
 		// seedMap format: {PFG1: {(0,0,0): 5, (0,0,1): 10...}, PFG2: {(0,0,0): 8, (0,0,1): 9...}, ...}

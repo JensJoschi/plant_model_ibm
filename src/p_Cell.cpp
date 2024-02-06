@@ -80,7 +80,13 @@ void Cell::CreateHabSuit(bool killExisting, std::string_view soil){
 
 void Cell::CreateDisturbances(const std::map<std::string, double>& dists){
 	assert(dists.size()>0);
-	m_disturbances = dists;
+	if (m_disturbances.size() == 0){
+		m_disturbances = dists;
+	} else {
+		for (auto it = dists.begin(); it != dists.end(); ++it){
+			m_disturbances[it->first] = it->second;
+		}
+	}
 }
 
 std::map<std::string, int> Cell::DoSuccession(const std::map<std::string, int>& seeds_in){

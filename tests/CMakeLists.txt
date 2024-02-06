@@ -19,6 +19,7 @@ set(TEST_SOURCES PropPoolTest.cpp
                  ResourceTest.cpp
                  CellTest.cpp
                  PlantModelTest.cpp
+                 PlantModelTestNoDisp.cpp
                 )
 
 enable_testing()
