@@ -112,7 +112,7 @@ std::cout << "Plant model version " << VERSION << std::endl;
   GSP_BASE config{WD+input_file};
 
   LOG(INFO) << SECTIONBREAK << "CREATE PLANT MODEL";
-  PlantModel Plantmodel(WD+input_file, fix_RNG);
+  PlantModel Plantmodel(WD+input_file, "", fix_RNG);
 
   Plantmodel.initialize(5);
   Plantmodel.saveAll(0);

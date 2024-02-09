@@ -53,6 +53,8 @@ class Data_PLANTS: public Data_BASE{
   public:
     explicit Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gsp);
     Data_PLANTS() = default;
+
+    std::string logger = "plantlog.conf";       // name of the logger configuration file
     PFGDefs PFGDefinitions;                    // plant functional group definition. Contains life history attributes (lifespan etc.)
     Landscape<double> shading;                 // percentage of shade cover in each grid cell;Expected content: dbl, 0-1; 0.0 = sun-exposed, 1.0 = darkness.
     Landscape<int>    soilDepth;               // depth of soil in cm, integers only. Expected int, 0-100 cm

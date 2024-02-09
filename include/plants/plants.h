@@ -30,11 +30,14 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <memory>
 #include "Landscape.h"
 
+#include <string>
+#include <map>
+
 class PlantModel;
 
 class Plants {
 public:
-	explicit Plants(const std::string& inputFile, const std::string& logConfig, bool FixRNG = false);
+	explicit Plants(const std::string& inputFile, const std::string& logConfig = "", bool FixRNG = false);
     ~Plants();
 
 	/**

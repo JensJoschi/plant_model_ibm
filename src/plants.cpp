@@ -32,11 +32,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 INITIALIZE_EASYLOGGINGPP
 
 Plants::Plants(const std::string& inputFile, const std::string& logConfig, bool FixRNG){
-    el::Configurations conf(logConfig); 
-    el::Loggers::reconfigureAllLoggers(conf); 
-    std::cout << "Model version " << VERSION << "\n";
-    LOG(INFO) << "model version: " << VERSION;
-    pImpl = std::make_unique<PlantModel>(inputFile, FixRNG);
+    pImpl = std::make_unique<PlantModel>(inputFile, logConfig, FixRNG);
 }
 
 Plants::~Plants() = default;

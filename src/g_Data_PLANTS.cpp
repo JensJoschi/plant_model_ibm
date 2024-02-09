@@ -51,11 +51,16 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gsp): 
   Data_BASE(paramSimulFile, gsp){ 
+    assert(gsp.simulDuration > 0);
+
   LOG(INFO) << "Adding plant-specific data";
   assert (paramSimulFile != "");
 
   //base ctor has already filled in m_inputDir etc. Now we read the file again to fill the remaining members
   nlohmann::json j = generalFunctions::readJsonFile(paramSimulFile);
+  try{logger = j.at("PlantLogger");}
+  catch(nlohmann::json::out_of_range) {logger = "plantlog.conf";}
+  catch(...){LOG(FATAL) << "uncaught exception in logger";}
 
   LOG(INFO) << "--Functional Group Definitions";
   //----------------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 
 # Version
 
-This readme concerns Plant model version 0.5.5. Please make sure the documentation matches the version you would like to use. 
+This readme concerns Plant model version 0.5.6. Please make sure the documentation matches the version you would like to use. 
 # Overview
 
 This repository hosts the ECOLOPES Plant model. It is meant for use within the computational workflow (WP3) of ECOLOPES, but we may in the future publish it as stand-alone model for research use as well. 

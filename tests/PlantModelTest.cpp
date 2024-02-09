@@ -38,13 +38,9 @@ class PlantModelTest : public testing::Test {
     PlantModel* p;
 
     void SetUp() override {
-        std::filesystem::current_path();
-
         el::Configurations conf("debuglog.conf"); //silences the loggers
         el::Loggers::reconfigureAllLoggers(conf); 
-
-        RNGs::mersenne = std::mt19937{2230};
-        p = new PlantModel("test.json");
+        p = new PlantModel("test.json", "debuglog.conf", true);
     }
 
 //     void TearDownTestSuite() {

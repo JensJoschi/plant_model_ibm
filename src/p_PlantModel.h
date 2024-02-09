@@ -78,7 +78,7 @@ class PlantModel{
 	 * \brief constructor
 
 	 */
-	explicit PlantModel(const std::string& inputFile, bool FixRNG = false);
+	explicit PlantModel(const std::string& inputFile, const std::string& logConfig = "", bool FixRNG = false);
 
 	/**
 	 * \brief Create stable starting community

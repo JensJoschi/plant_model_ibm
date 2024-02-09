@@ -36,6 +36,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "g_GSP_PLANTS.h"
 #include "g_Data_PLANTS.h"
 #include "rng.h"
+#include "config.h"
 
 
 #include "p_PFG.h"
@@ -56,10 +57,17 @@ std::string def_WD= DEFAULT_WD;
 //==============================================================================
 //public
 
-PlantModel::PlantModel(const std::string& inputFile, bool FixRNG){
+PlantModel::PlantModel(const std::string& inputFile, const std::string& logConfig, bool FixRNG){
 	GSP_PLANTS config{inputFile};
 	Data_PLANTS data{inputFile, config};
 	m_plantInputs_ptr = new const Inputs_P(config, data);
+
+    el::Configurations conf;
+	conf  =  logConfig.empty()? el::Configurations(data.logger) : el::Configurations(logConfig);
+    el::Loggers::reconfigureAllLoggers(conf); 
+    std::cout << "Model version " << VERSION << "\n";
+    LOG(INFO) << "model version: " << VERSION;
+
 
 	std::string WD = def_WD;
 

@@ -38,13 +38,9 @@ class PlantModelTestNoDisp : public testing::Test {
     PlantModel* p;
 
     void SetUp() override {
-        std::filesystem::current_path();
-
         el::Configurations conf("debuglog.conf"); //silences the loggers
         el::Loggers::reconfigureAllLoggers(conf); 
-
-        RNGs::mersenne = std::mt19937{2230};
-        p = new PlantModel("test_noDisp.json");
+        p = new PlantModel("test_noDisp.json", "debuglog.conf", true);
     }
 
 };
@@ -104,7 +100,7 @@ TEST_F(PlantModelTestNoDisp, testDisturbance){
     testdisturbance.setValue("(0, 1, 1)", alsoNoFrog);
     Landscape<std::string> validSoils(keys);
     validSoils.fillWith("SaLo_l_2");
-   p->createInputMaps(validSoils, testdisturbance, true);
+    p->createInputMaps(validSoils, testdisturbance, true);
       for (int i  = 0; i< 2; i++){
         p->TPlusOne_JJ();
     }

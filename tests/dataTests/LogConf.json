@@ -47,11 +47,11 @@
     "COMMENT11": "----------------------------",
     "COMMENT12": "DATA(Plants)",
     "COMMENT13": "----------------------------",
+    "PlantLogger": "foo.conf",
     "PFGDefsFile": "fullPFG.json",
     "DisturbanceDefsFile": "disturbances.json",
     "ShadingFile": ["nine.json", "SHADING"],
     "DepthFile": ["nine.json", "DEPTH"],
     "SoilClassFile": "soilclass.json",
-    "Management": "management.json",
-    "PlantLogger": "log.conf"
+    "Management": "management.json"
 }

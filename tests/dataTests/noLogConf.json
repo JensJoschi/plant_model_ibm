@@ -52,6 +52,5 @@
     "ShadingFile": ["nine.json", "SHADING"],
     "DepthFile": ["nine.json", "DEPTH"],
     "SoilClassFile": "soilclass.json",
-    "Management": "management.json",
-    "PlantLogger": "log.conf"
+    "Management": "management.json"
 }
