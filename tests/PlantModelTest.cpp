@@ -69,13 +69,13 @@ TEST_F(PlantModelTest, ExampleRun){
         p->TPlusOne_JJ();
     }
     Landscape<double> results_grass =  p->getPFGabund(0);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 330) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 303) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 546) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 667) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 530) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 671) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 538) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 603) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 0, 1)") - 301) < 0.0001 || std::abs(results_grass.at("(1, 0, 1)") - 655) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 1, 0)") - 500) < 0.0001 || std::abs(results_grass.at("(1, 1, 0)") - 689) < 0.0001);
-    EXPECT_TRUE(std::abs(results_grass.at("(1, 2, 0)") - 589) < 0.0001 || std::abs(results_grass.at("(1, 2, 0)") - 702) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 0)") - 277) < 0.0001 || std::abs(results_grass.at("(0, 0, 0)") - 323) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 0, 1)") - 535) < 0.0001 || std::abs(results_grass.at("(0, 0, 1)") - 701) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 1, 1)") - 537) < 0.0001 || std::abs(results_grass.at("(0, 1, 1)") - 648) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(0, 2, 1)") - 535) < 0.0001 || std::abs(results_grass.at("(0, 2, 1)") - 653) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 0, 1)") - 583) < 0.0001 || std::abs(results_grass.at("(1, 0, 1)") - 710) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 1, 0)") - 553) < 0.0001 || std::abs(results_grass.at("(1, 1, 0)") - 635) < 0.0001);
+    EXPECT_TRUE(std::abs(results_grass.at("(1, 2, 0)") - 568) < 0.0001 || std::abs(results_grass.at("(1, 2, 0)") - 681) < 0.0001);
     EXPECT_FLOAT_EQ(results_grass.at("(2, 0, 0)"), 0.0);
     EXPECT_FLOAT_EQ(results_grass.at("(2, 2, 0)"), 0.0);
 }

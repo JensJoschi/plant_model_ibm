@@ -64,11 +64,7 @@ Data_BASE::Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp){
   try{listPlantFunctionalGroups = j.at("listPlantFunctionalGroups");}
     catch(nlohmann::json::out_of_range) {  LOG(FATAL) << "listPlantFunctionalGroups not found";}
   
-  try{listAnimalFunctionalGroups = j.at("listAnimalFunctionalGroups");}
-    catch(nlohmann::json::out_of_range) {  LOG(FATAL) << "listAnimalFunctionalGroups not found";}
-  
   std::sort(listPlantFunctionalGroups.begin(), listPlantFunctionalGroups.end());
-  std::sort(listAnimalFunctionalGroups.begin(), listAnimalFunctionalGroups.end());
   //----------------------------------------------------------------------------------------
   LOG(DEBUG) << "--Input Data";
   try{keyList = readFile<double>(j, "MaskFile" , inputDir);}

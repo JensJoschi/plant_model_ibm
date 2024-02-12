@@ -2,29 +2,14 @@
     "GlobSimulFile": "test.json",
     "DATA": "test.json",
 
-    "COMMENT1": "----------------------------",
-    "COMMENT2": "global simulation parameters",
-    "COMMENT3": "----------------------------",
-
     "SimulDuration": 5,
     "SaveYears": [1,2,4],
-
-
-    "COMMENT4": "----------------------------",
-    "COMMENT5": "DATA(Base)",
-    "COMMENT6": "----------------------------",
 
     "InputDir": "IN/",
     "SaveDir": "RESULTS/",
     "listPlantFunctionalGroups": ["generalist_grass", "generalist_tree"],
-    "listAnimalFunctionalGroups":  ["SIZE_I-II", "SIZE_III", "SIZE_IV", "SIZE_V_1.1", "SIZE_V_1.2", "SIZE_V_2", "SIZE_V_3", "SIZE_VI", "SIZE_VII", "SIZE_VIII"],
     "MaskFile": "mask.json",
 
-
-
-    "COMMENT8": "----------------------------",
-    "COMMENT9": "Global simulation parameters(Plants)",
-    "COMMENT10": "----------------------------",
     "NoStrata": 4,
     "PotentialFecundity": 1,
     "MaxAbundLow": 1000,
@@ -43,10 +28,6 @@
     "StrataHeight": [10,20,30,40],
     "DoNeighbours": true, 
 
-
-    "COMMENT11": "----------------------------",
-    "COMMENT12": "DATA(Plants)",
-    "COMMENT13": "----------------------------",
     "PFGDefsFile": "fullPFG.json",
     "DisturbanceDefsFile": "disturbances.json",
     "ShadingFile": ["nine.json", "SHADING"],

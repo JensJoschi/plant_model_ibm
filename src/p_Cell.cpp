@@ -67,8 +67,8 @@ void Cell::CreateHabSuit(bool killExisting, std::string_view soil){
 	assert(m_funcGroups.size()>0);
 	m_EnvSuitRefVal = UpdateEnvSuitRefVal();
 	for (auto i = 0; i< m_funcGroups.size(); ++i){
-		bool suitable = !m_gsp_ptr->doesSoilDepth || m_funcGroups[i].checkSoilDepth(m_depth) &&
-			!m_gsp_ptr->doesSoilClass || m_funcGroups[i].checkSoilClass(soil);
+		bool suitable = (!m_gsp_ptr->doesSoilDepth || m_funcGroups[i].checkSoilDepth(m_depth)) &&
+			(!m_gsp_ptr->doesSoilClass || m_funcGroups[i].checkSoilClass(soil));
 		m_EnvUnsuitability[i] = !suitable;
 
 		if(killExisting && !suitable){

@@ -69,16 +69,16 @@ TEST_F(PlantModelTestNoDisp, ExampleRun){
     Landscape<double> results_grass =  p->getPFGabund(0);
     Landscape<double> results_tree =  p->getPFGabund(1);
     EXPECT_FLOAT_EQ(results_grass.at("(0, 0, 0)"), 0.0); //killed by 1.0 fire
-    EXPECT_FLOAT_EQ(results_tree.at ("(0, 0, 0)"), initialTree.at ("(0, 0, 0)")); //not affected by fire, only older
+    EXPECT_FLOAT_EQ(results_tree.at ("(0, 0, 0)"), 0.0); //not affected by fire, but soil not deep enough
 
     EXPECT_NEAR(results_grass.at("(0, 0, 1)"), initialGrass.at("(0, 0, 1)")/8, 2.0f); //halved in each step due to 0.5 fire
-    EXPECT_FLOAT_EQ(results_tree.at ("(0, 0, 1)"), initialTree.at ("(0, 0, 1)")); 
+    EXPECT_FLOAT_EQ(results_tree.at ("(0, 0, 1)"), initialTree.at ("(0, 0, 1)"));   //not affected by fire, soil deep enough
     EXPECT_NEAR(results_grass.at("(0, 1, 1)"), initialGrass.at("(0, 1, 1)")/8, 2.0f); 
-    EXPECT_FLOAT_EQ(results_tree.at ("(0, 1, 1)"), initialTree.at ("(0, 1, 1)")); 
+    EXPECT_FLOAT_EQ(results_tree.at ("(0, 1, 1)"), 0.0);
     EXPECT_NEAR(results_grass.at("(0, 2, 0)"), initialGrass.at("(0, 2, 0)")/8, 2.0f);
-    EXPECT_FLOAT_EQ(results_tree.at ("(0, 2, 0)"), initialTree.at ("(0, 2, 0)")); 
+    EXPECT_FLOAT_EQ(results_tree.at ("(0, 2, 0)"), 0.0); 
     EXPECT_FLOAT_EQ(results_grass.at("(2, 2, 0)"), 0.0);
-    EXPECT_FLOAT_EQ(results_tree.at ("(2, 2, 0)"), initialTree.at ("(2, 2, 0)")); 
+    EXPECT_FLOAT_EQ(results_tree.at ("(2, 2, 0)"), 0.0); 
 }
 
 TEST_F(PlantModelTestNoDisp, testDisturbance){
@@ -108,13 +108,13 @@ TEST_F(PlantModelTestNoDisp, testDisturbance){
     Landscape<double> results_tree =  p->getPFGabund(1);
     //these are same as exampleRun:
     EXPECT_FLOAT_EQ(results_grass.at("(0, 0, 0)"), 0.0); //killed by fire
-    EXPECT_FLOAT_EQ(results_tree.at ("(0, 0, 0)"), initialTree.at ("(0, 0, 0)"));
+    EXPECT_FLOAT_EQ(results_tree.at ("(0, 0, 0)"), 0.0);
     EXPECT_NEAR(results_grass.at("(0, 1, 1)"), initialGrass.at("(0, 1, 1)")/8, 2.0f); //not a frog (disturbance does not exist)
-    EXPECT_FLOAT_EQ(results_tree.at ("(0, 1, 1)"), initialTree.at ("(0, 1, 1)"));
+    EXPECT_FLOAT_EQ(results_tree.at ("(0, 1, 1)"), 0.0);
     EXPECT_NEAR(results_grass.at("(0, 2, 0)"), initialGrass.at("(0, 2, 0)")/8, 2.0f);
-    EXPECT_FLOAT_EQ(results_tree.at ("(0, 2, 0)"), initialTree.at ("(0, 2, 0)")); 
+    EXPECT_FLOAT_EQ(results_tree.at ("(0, 2, 0)"), 0.0); 
     EXPECT_FLOAT_EQ(results_grass.at("(2, 2, 0)"), 0.0);
-    EXPECT_FLOAT_EQ(results_tree.at ("(2, 2, 0)"), initialTree.at ("(2, 2, 0)")); 
+    EXPECT_FLOAT_EQ(results_tree.at ("(2, 2, 0)"), 0.0); 
     //only this is different:
     EXPECT_NEAR(results_grass.at("(0, 0, 1)"), initialGrass.at("(0, 0, 1)")*0.054872, 2.0f); //0.5 fire + 0.8 frog with 0.3 effect: 1 -(0.8*0.3) = 0.76; 0.5*0.76 = 0.38; 0.38^3 = 0.054872
     EXPECT_FLOAT_EQ(results_tree.at ("(0, 0, 1)"), initialTree.at ("(0, 0, 1)")); //not affected by disturbances

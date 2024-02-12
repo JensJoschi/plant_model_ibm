@@ -72,7 +72,6 @@ class Data_BASE{
     /* Regional model information */
     //possibly move to Data_ECOLOPES
     std::vector<std::string> listPlantFunctionalGroups;  // list of the PFG that may be present on ecolopesLand.
-    std::vector<std::string> listAnimalFunctionalGroups; // ... 
 
     /* Spatial data */
     //the data is stored as maps (Landscape class) whose key is 
