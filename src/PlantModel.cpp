@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -29,18 +29,18 @@ If not, see <https://www.gnu.org/licenses/>. */
  // VMVC: functions to exchange data with other models
  // ----------------------------------------------------------------------------
 
-#include "p_PlantModel.h"
+#include "PlantModel.h"
 
 #include "Landscape.h"
 #include "g_Inputs.h"
-#include "g_GSP_PLANTS.h"
-#include "g_Data_PLANTS.h"
+#include "GSP_PLANTS.h"
+#include "Data_PLANTS.h"
 #include "rng.h"
 #include "config.h"
 
 
-#include "p_PFG.h"
-#include "p_Cell.h"
+#include "PFG.h"
+#include "Cell.h"
 /** @cond */
 #include <vector>
 #include <string>

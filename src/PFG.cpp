@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -26,8 +26,8 @@ If not, see <https://www.gnu.org/licenses/>. */
  // JJ: partial reimplementation, addition of some new variables
  // --------------------------------------------------------------------------
 
-#include "p_PFG.h"
-#include "g_FGUtils.h"
+#include "PFG.h"
+#include "FGUtils.h"
 
 
 /** @cond */
@@ -106,7 +106,7 @@ PFG::PFG(const nlohmann::json& pfg){
 	//----------------done.-----------------------
 	check();
 
-	allocation = ResourceAlloc();//testing only
+	// allocation = ResourceAlloc();//testing only
 }
 
 void PFG::check(){

@@ -1,13 +1,34 @@
+# Copyright (C)  2022 - present  Studio Animal-Aided Design
+
+# This file is part of the ECOLOPES PLANT MODEL.
+
+# ECOLOPES PLANT MODEL is free software: you can redistribute it and/or modify 
+# it under the terms of the GNU General Public License as published by the 
+# Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+# ECOLOPES PLANT MODEL is distributed in the hope that it will be useful, 
+# but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+# or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License along with ECOLOPES PLANT MODEL. 
+# If not, see <https://www.gnu.org/licenses/>. */
+
+# ECOLOPES PLANT MODEL is derived from FATE,https://github.com/leca-dev/RFate.git/ : 
+#	Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen,
+#	Wilfried Thuiller
+
+#Authors: Jens Joschinski
+
 cmake_minimum_required(VERSION 3.20)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set (SRC "g_Data_PLANTS.cpp"            "g_FGUtils.cpp"      "g_GSP_PLANTS.cpp" 
-         "p_Cell.cpp"                   "p_FuncGroup.cpp"   "p_Individual.cpp" 
-         "p_PFG.cpp"                    "p_PFGDefs.cpp"     "p_PFGdisturbance.cpp"
-         "p_PlantModel.cpp"             "p_PlantResource.cpp" "p_PropPool.cpp" 
-         "p_ResourceAlloc.cpp"          "rng.cpp")
+set (SRC "Data_PLANTS.cpp"            "FGUtils.cpp"      "GSP_PLANTS.cpp" 
+         "Cell.cpp"                   "FuncGroup.cpp"  
+         "PFG.cpp"                    "PFGDefs.cpp"     "PFGdisturbance.cpp"
+         "PlantModel.cpp"             "PropPool.cpp" 
+         "rng.cpp")
 
 set (JOINT  "${CMAKE_SOURCE_DIR}/include/jointModel/g_Data_BASE.cpp"    "${CMAKE_SOURCE_DIR}/include/jointModel/g_GSP_BASE.cpp")
 

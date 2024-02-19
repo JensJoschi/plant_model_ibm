@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -30,13 +30,40 @@ If not, see <https://www.gnu.org/licenses/>. */
  // ----------------------------------------------------------------------------
 
 
-#include "p_ResourceAlloc.h"
+#include "PlantResource.h"
+#include "ResourceAlloc.h"
 
-ResourceAlloc::ResourceAlloc(): conversionEfficiency(1.0), seedAllocation(0.01), biomassAllocation(0.5), maintenanceCosts(0.1), maxInvestment(0.05){}
-ResourceAlloc::ResourceAlloc(float conversionEfficiency, float seedAllocation, float biomassAllocation, float maintenanceCosts, float maxInvestment): 
-    conversionEfficiency(conversionEfficiency), 
-    seedAllocation(seedAllocation), 
-    biomassAllocation(biomassAllocation), 
-    maintenanceCosts(maintenanceCosts), 
-    maxInvestment(maxInvestment){}
-ResourceAlloc::~ResourceAlloc(){}
+/** @cond */
+#include <cassert>
+/** @endcond */
+
+PlantResource::PlantResource(const ResourceAlloc* const resAlloc_ptr): m_resAlloc_ptr(resAlloc_ptr), resources(0){}
+PlantResource::~PlantResource(){}
+
+int PlantResource::updateResource(const int light){
+    assert (light >= 0);
+    resources += light * m_resAlloc_ptr->conversionEfficiency;
+    return resources;
+}
+
+bool PlantResource::isResourceCritical() const{
+    return resources <= 0;
+}
+
+Allocations PlantResource::allocateResources(int biomass){
+    assert(biomass * m_resAlloc_ptr->maxInvestment >= 1); // plant growth rate. 1 * 0.05 would make 0.05 new biomass, but because biomass is type int, this would be rounded to 0.
+    assert(m_resAlloc_ptr != nullptr);
+    assert(m_resAlloc_ptr->seedAllocation >= 0 && m_resAlloc_ptr->seedAllocation <= 1);
+    assert(m_resAlloc_ptr->biomassAllocation >= 0 && m_resAlloc_ptr->biomassAllocation <= 1);
+
+    Allocations alloc;
+    alloc.seeds = 0;
+    alloc.biomass = 0;
+    resources -= static_cast<int> (biomass * m_resAlloc_ptr->maintenanceCosts);
+    if (resources >0){
+        alloc.seeds = static_cast<int> (resources * m_resAlloc_ptr->seedAllocation);
+        alloc.biomass = static_cast<int> (std::min(resources * m_resAlloc_ptr->biomassAllocation , biomass * m_resAlloc_ptr->maxInvestment));
+        resources -= (alloc.seeds + alloc.biomass);
+    }
+    return alloc;
+}

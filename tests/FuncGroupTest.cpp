@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -25,13 +25,13 @@ If not, see <https://www.gnu.org/licenses/>. */
  // Jens Joschinski
  // --------------------------------------------------------------------------
 
-#include "p_FuncGroup.h"
+#include "FuncGroup.h"
 #include "gtest/gtest.h"
-#include "p_PropPool.h"
-#include "p_PFG.h"
+#include "PropPool.h"
+#include "PFG.h"
 #include "nlohmann/json.hpp"
 #include "rng.h"
-#include "p_PFGdisturbance.h"
+#include "PFGdisturbance.h"
 
 // This file includes unit tests for the class FuncGroup. See tests/CMake file 
 // and google test documentation.

@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -21,30 +21,55 @@ If not, see <https://www.gnu.org/licenses/>. */
 // --------------------------------------------------------------------------
 
  // ----------------------------------------------------------------------------
- // Authors and contributors to this file: 
- // RFate team: original idea
- // JJ: complete reimplementation
+ // Authors and contributors to this file:
+ // Jens Joschinski
  // ----------------------------------------------------------------------------
 
-/*!
- * \file p_dist.h
- * \brief Disturbance definition
- * \details defines by how much a disturbance affects a plant functional group
- * The disturbance can kill individuals, or destroy their seeds. The plant may resprout, however.
- * \author Jens Joschinski
- * \date 2023/03/29
+ // ----------------------------------------------------------------------------
+//THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
+ // ----------------------------------------------------------------------------
  
+/*!
+ * \file p_Individual.h
+ * \brief single plant individual
+ * \details 
+ * \author Jens Joschinski
+ * \version 1.0
  */
 
-#ifndef P_DIST_H
-#define P_DIST_H
+#ifndef INDIVIDUAL_H
+#define INDIVIDUAL_H
+
+#include "PFG.h"
+#include "PlantResource.h"
+/** @cond */
+#include <vector>
+#include <string>
+/** @endcond */
+
+class Individual{
+    public:
+    Individual(const PFG* pfg);
+    ~Individual();
+
+    void feed(const int light, bool soilIsSuitable);
+    void disturb(std::vector<int> amounts);
+    int useResources();
+    bool doesItDie() const;
+
+    int getTotalBiomass() const;
+    std::vector<int> getBiomassPerAge() const;
+    std::vector<int> stratumToAges(int stratum) const;
 
 
-struct Dist{
-
-    double seedKill; /*!< proportion of seeds killed */
-    double propResprout; /*!< proportion of biomass allowed to resprout */
-    double propKilled;  /*!< proportion of biomass removed */
+    private:
+    const PFG* const m_pfg_ptr;
+    PlantResource* const m_resPool_ptr;
+    int m_age;
+    int m_biomass; //should biomass have an age distribution? Or single int?
+    std::string m_identity;
+    std::vector<int> m_resprouting;
 };
 
-#endif
+#endif //INDIVIDUAL_H
+

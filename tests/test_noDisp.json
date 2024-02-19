@@ -17,8 +17,6 @@
     "InputDir": "IN/",
     "SaveDir": "RESULTS/",
     "listPlantFunctionalGroups": ["generalist_grass", "generalist_tree"],
-    "listAnimalFunctionalGroups":  ["SIZE_I-II", "SIZE_III", "SIZE_IV", "SIZE_V_1.1", "SIZE_V_1.2", "SIZE_V_2", "SIZE_V_3", "SIZE_VI", "SIZE_VII", "SIZE_VIII"],
-    "MaskFile": "mask.json",
 
 
 
@@ -52,5 +50,6 @@
     "ShadingFile": ["nine.json", "SHADING"],
     "DepthFile": ["nine.json", "DEPTH"],
     "SoilClassFile": "soilclass.json",
-    "Management": "management.json"
+    "Management": "management.json",
+    "MaskFile": "mask.json"
 }

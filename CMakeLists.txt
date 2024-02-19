@@ -1,4 +1,5 @@
-# Copyright (C) 2023 - present Jens Joschinski
+#Copyright (C)  2022 - present  Studio Animal-Aided Design
+
 # This file is part of the ECOLOPES PLANT MODEL.
 
 # ECOLOPES PLANT MODEL is free software: you can redistribute it and/or modify 
@@ -19,7 +20,7 @@
 #Authors: Jens Joschinski
 
 cmake_minimum_required(VERSION 3.20)
-project(plants VERSION 0.5.7)
+project(plants VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

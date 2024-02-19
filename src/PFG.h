@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -42,9 +42,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 #ifndef PFG_H
 #define PFG_H
 
-#include "g_FGUtils.h"
+#include "FGUtils.h"
 #include "nlohmann/json.hpp"
-#include "p_ResourceAlloc.h"
+#include "ResourceAlloc.h"
 
 /** @cond */
 #include <vector>
@@ -111,7 +111,7 @@ class PFG{
 
 	void check(); //used during construction to check that all parameters are set correctly
 
-	ResourceAlloc allocation; /*!< Describes how light is converted to resources, and how resources are allocated to growth and reproduction*/
+	// ResourceAlloc allocation; /*!< Describes how light is converted to resources, and how resources are allocated to growth and reproduction*/
 };
 
 #endif // PFG_H

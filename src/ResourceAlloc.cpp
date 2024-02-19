@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -26,52 +26,17 @@ If not, see <https://www.gnu.org/licenses/>. */
  // ----------------------------------------------------------------------------
 
  // ----------------------------------------------------------------------------
-//THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
+ //THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
  // ----------------------------------------------------------------------------
 
-/*!
- * \file p_Individual.cpp
- * \brief single plant individual
- * \details 
- * \author Jens Joschinski
- * \version 1.0
- */
 
+#include "ResourceAlloc.h"
 
-#include "p_Individual.h"
-#include "p_PFG.h"
-#include "p_ResourceAlloc.h"
-/** @cond */
-#include <vector>
-#include <string>
-/** @endcond */
-
-
-
-Individual::Individual(const PFG* pfg): m_pfg_ptr(pfg), m_age(0), m_biomass(pfg->L), 
-                        m_identity(pfg->name), m_resprouting(pfg->L), 
-                        m_resPool_ptr(new PlantResource(&(pfg->allocation))){
-}
-
-Individual::~Individual(){
-    delete m_resPool_ptr;//make unique
-}
-
-void Individual::feed(const int light, bool soilIsSuitable){
-    m_resPool_ptr->updateResource(light);
-};
-
-bool Individual::doesItDie() const{
-    return (m_age > m_pfg_ptr->L || m_resPool_ptr->isResourceCritical());
-}
-
-int Individual::useResources(){   
-    Allocations toDistribute = m_resPool_ptr->allocateResources(getTotalBiomass());
-    m_biomass += toDistribute.biomass;
-    m_age++;
-    return toDistribute.seeds;
-}
-
-int Individual::getTotalBiomass() const{
-    return m_biomass;
-}
+ResourceAlloc::ResourceAlloc(): conversionEfficiency(1.0), seedAllocation(0.01), biomassAllocation(0.5), maintenanceCosts(0.1), maxInvestment(0.05){}
+ResourceAlloc::ResourceAlloc(float conversionEfficiency, float seedAllocation, float biomassAllocation, float maintenanceCosts, float maxInvestment): 
+    conversionEfficiency(conversionEfficiency), 
+    seedAllocation(seedAllocation), 
+    biomassAllocation(biomassAllocation), 
+    maintenanceCosts(maintenanceCosts), 
+    maxInvestment(maxInvestment){}
+ResourceAlloc::~ResourceAlloc(){}

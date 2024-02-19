@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -37,7 +37,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "g_Inputs.h"
 #include "g_Data_BASE.h"
 #include "g_GSP_BASE.h"
-#include "p_PlantModel.h"
+#include "PlantModel.h"
 
 /** @cond */
 #include <string>

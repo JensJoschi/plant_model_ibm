@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -40,7 +40,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #ifndef PLANTRESOURCE_H
 #define PLANTRESOURCE_H
 
-#include "p_ResourceAlloc.h"
+#include "ResourceAlloc.h"
 /** @cond */
 #include <vector>
 /** @endcond */

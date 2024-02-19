@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -30,7 +30,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  // JJ: inheritance and rewrite
  // --------------------------------------------------------------------------
 
- #include "g_GSP_PLANTS.h"
+ #include "GSP_PLANTS.h"
  #include "g_GSP_BASE.h"
  #include "generalFunctions.h"
  /** @cond */

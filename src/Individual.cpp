@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -26,50 +26,52 @@ If not, see <https://www.gnu.org/licenses/>. */
  // ----------------------------------------------------------------------------
 
  // ----------------------------------------------------------------------------
- //THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
+//THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
  // ----------------------------------------------------------------------------
 
 /*!
- * \file p_rsourcePool.h
- * \brief plant resources
+ * \file p_Individual.cpp
+ * \brief single plant individual
  * \details 
  * \author Jens Joschinski
  * \version 1.0
  */
 
-#ifndef RESOURCEALLOC_H
-#define RESOURCEALLOC_H
+
+#include "Individual.h"
+#include "PFG.h"
+#include "ResourceAlloc.h"
+/** @cond */
+#include <vector>
+#include <string>
+/** @endcond */
 
 
-/**
- * \brief Resource allocation information
- * \details
- * This class holds information about the allocation of resources to growth and reproduction. Currently these are just some fixed attributes, 
- *  but ultimately the class may consist of the following information:
- * - allocation to growth vs to seeds vs to storage (this replaces the potFecundity variable in PFG attributes)
- * - size of storage system (roots)
- * - maintenance costs of existing biomass 
- * - minimal yearly investment(even if no resource is available, plants need to keep growing)
- * - max yearly investment (if light is abundant, plants can still not grow infinitely fast)
- * - light conversion efficiency (how much light is needed to produce 1 biomass unit)
- 
- * Further notes: 
- *  max yearly investment and allocation together determine growth rate;
- *  replaces immSize and potFecundity in PFG attributes;
- *  immature plants shouldalways allocate 100% to growth.
- *  reading of model papers required to figure out exact variables and allometric relationships with other PFG attributes
- */
-class ResourceAlloc{
-    friend class PlantResource;
-    public: 
-    ResourceAlloc();
-    ResourceAlloc(float, float, float, float, float);
-    ~ResourceAlloc();
-    private:
-    float conversionEfficiency;
-    float maintenanceCosts;
-    float seedAllocation;
-    float biomassAllocation;
-    float maxInvestment;
+
+Individual::Individual(const PFG* pfg): m_pfg_ptr(pfg), m_age(0), m_biomass(pfg->L), 
+                        m_identity(pfg->name), m_resprouting(pfg->L), 
+                        m_resPool_ptr(new PlantResource(&(pfg->allocation))){
+}
+
+Individual::~Individual(){
+    delete m_resPool_ptr;//make unique
+}
+
+void Individual::feed(const int light, bool soilIsSuitable){
+    m_resPool_ptr->updateResource(light);
 };
-#endif //RESOURCEALLOC_H
+
+bool Individual::doesItDie() const{
+    return (m_age > m_pfg_ptr->L || m_resPool_ptr->isResourceCritical());
+}
+
+int Individual::useResources(){   
+    Allocations toDistribute = m_resPool_ptr->allocateResources(getTotalBiomass());
+    m_biomass += toDistribute.biomass;
+    m_age++;
+    return toDistribute.seeds;
+}
+
+int Individual::getTotalBiomass() const{
+    return m_biomass;
+}

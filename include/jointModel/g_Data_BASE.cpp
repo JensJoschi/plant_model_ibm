@@ -1,4 +1,4 @@
-/* Copyright (C) 2023 - present ???
+/* Copyright (C) 2022 - present Studio Animal-Aided Design and TU Munich
  This file is part of the ECOLOPES JOINT MODEL.
 
  ECOLOPES JOINT MODEL is free software: you can redistribute it and/or modify 
@@ -13,9 +13,9 @@
  If not, see <https://www.gnu.org/licenses/>.
 
  ECOLOPES JOINT MODEL is based on:
- - the ECOLOPES PLANT MODEL, Copyright (C) 2023 ???
- - the ECOLOPES ANIMAL MODEL, Copyright (C) 2023 ???
- - and the ECOLOPES SOIL MODEL, Copyright (C) 2023 ???
+ - the ECOLOPES PLANT MODEL, 2022 - present  Studio Animal-Aided Design
+ - the ECOLOPES ANIMAL MODEL, Copyright (C) 2022 - present TU Munich
+ - and the ECOLOPES SOIL MODEL,2022 - present  Studio Animal-Aided Design
 
 */
 

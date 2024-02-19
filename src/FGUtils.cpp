@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -26,7 +26,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  // JJ: removed GDAL and boost related things. 
  // --------------------------------------------------------------------------
 
-#include "g_FGUtils.h"
+#include "FGUtils.h"
 
 
 /*-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-*/

@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -29,41 +29,47 @@ If not, see <https://www.gnu.org/licenses/>. */
  //THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
  // ----------------------------------------------------------------------------
 
+/*!
+ * \file p_rsourcePool.h
+ * \brief plant resources
+ * \details 
+ * \author Jens Joschinski
+ * \version 1.0
+ */
 
-#include "p_PlantResource.h"
-#include "p_ResourceAlloc.h"
+#ifndef RESOURCEALLOC_H
+#define RESOURCEALLOC_H
 
-/** @cond */
-#include <cassert>
-/** @endcond */
 
-PlantResource::PlantResource(const ResourceAlloc* const resAlloc_ptr): m_resAlloc_ptr(resAlloc_ptr), resources(0){}
-PlantResource::~PlantResource(){}
-
-int PlantResource::updateResource(const int light){
-    assert (light >= 0);
-    resources += light * m_resAlloc_ptr->conversionEfficiency;
-    return resources;
-}
-
-bool PlantResource::isResourceCritical() const{
-    return resources <= 0;
-}
-
-Allocations PlantResource::allocateResources(int biomass){
-    assert(biomass * m_resAlloc_ptr->maxInvestment >= 1); // plant growth rate. 1 * 0.05 would make 0.05 new biomass, but because biomass is type int, this would be rounded to 0.
-    assert(m_resAlloc_ptr != nullptr);
-    assert(m_resAlloc_ptr->seedAllocation >= 0 && m_resAlloc_ptr->seedAllocation <= 1);
-    assert(m_resAlloc_ptr->biomassAllocation >= 0 && m_resAlloc_ptr->biomassAllocation <= 1);
-
-    Allocations alloc;
-    alloc.seeds = 0;
-    alloc.biomass = 0;
-    resources -= static_cast<int> (biomass * m_resAlloc_ptr->maintenanceCosts);
-    if (resources >0){
-        alloc.seeds = static_cast<int> (resources * m_resAlloc_ptr->seedAllocation);
-        alloc.biomass = static_cast<int> (std::min(resources * m_resAlloc_ptr->biomassAllocation , biomass * m_resAlloc_ptr->maxInvestment));
-        resources -= (alloc.seeds + alloc.biomass);
-    }
-    return alloc;
-}
+/**
+ * \brief Resource allocation information
+ * \details
+ * This class holds information about the allocation of resources to growth and reproduction. Currently these are just some fixed attributes, 
+ *  but ultimately the class may consist of the following information:
+ * - allocation to growth vs to seeds vs to storage (this replaces the potFecundity variable in PFG attributes)
+ * - size of storage system (roots)
+ * - maintenance costs of existing biomass 
+ * - minimal yearly investment(even if no resource is available, plants need to keep growing)
+ * - max yearly investment (if light is abundant, plants can still not grow infinitely fast)
+ * - light conversion efficiency (how much light is needed to produce 1 biomass unit)
+ 
+ * Further notes: 
+ *  max yearly investment and allocation together determine growth rate;
+ *  replaces immSize and potFecundity in PFG attributes;
+ *  immature plants shouldalways allocate 100% to growth.
+ *  reading of model papers required to figure out exact variables and allometric relationships with other PFG attributes
+ */
+class ResourceAlloc{
+    friend class PlantResource;
+    public: 
+    ResourceAlloc();
+    ResourceAlloc(float, float, float, float, float);
+    ~ResourceAlloc();
+    private:
+    float conversionEfficiency;
+    float maintenanceCosts;
+    float seedAllocation;
+    float biomassAllocation;
+    float maxInvestment;
+};
+#endif //RESOURCEALLOC_H

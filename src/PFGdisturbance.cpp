@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -27,7 +27,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  // --------------------------------------------------------------------------
 
 
- #include "p_PFGdisturbance.h"
+ #include "PFGdisturbance.h"
 /** @cond */
 #include "easylogging++.h"
 #include "nlohmann/json.hpp"

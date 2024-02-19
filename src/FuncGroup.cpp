@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -27,15 +27,15 @@ If not, see <https://www.gnu.org/licenses/>. */
  // --------------------------------------------------------------------------
 
 
-#include "p_FuncGroup.h"
+#include "FuncGroup.h"
 
-#include "g_GSP_PLANTS.h"
+#include "GSP_PLANTS.h"
 
-#include "p_PropPool.h"
-#include "p_PFG.h"
-#include "g_FGUtils.h"
-#include "p_Cohort.h"
-#include "p_PFGdisturbance.h"
+#include "PropPool.h"
+#include "PFG.h"
+#include "FGUtils.h"
+#include "Cohort.h"
+#include "PFGdisturbance.h"
 
 #include "rng.h"
 /** @cond */

@@ -1,13 +1,10 @@
-
-
-# INTERNAL USE ONLY, NO PROPAGATION, CONVEYING OR DISTRIBUTION WITHOUT EXPLICIT PERMISSSION
-
 # Version
 
-This readme concerns Plant model version 0.5.6. Please make sure the documentation matches the version you would like to use. 
+This readme concerns Plant model version 1.0.0. Please make sure the documentation matches the version you would like to use. 
+
 # Overview
 
-This repository hosts the ECOLOPES Plant model. It is meant for use within the computational workflow (WP3) of ECOLOPES, but we may in the future publish it as stand-alone model for research use as well. 
+This repository hosts the ECOLOPES Plant model. It is meant for use within the computational workflow (WP3) of ECOLOPES/plugin for grasshopper, but we may in the future publish it as stand-alone model for research use as well. 
 
 The folder /doc contains figures relevant for this documentation. 
 The folder /include contains dependencies: nlohmann::json, easylogging++, and a few files from the ECOLOPES ECOLOGICAL MODEL. It also includes the public header file of the plant model library (the output of this repo).
@@ -19,18 +16,7 @@ root further contains a master CMake file that compiles the binaries (library, e
 
 # COPYRIGHT notice
 
-> **The current version of the model is for internal use only, and in contrast to the licensing statements in individual files, any distribution (propagating or conveying) is forbidden.**
-
-I (Jens Joschinski) have not received clearance by the Project management board or any direct supervisor yet, thus any copyright I assume is contestable 
-and may lie with TU Munich or Studio Animal-Aided-Design. This would invalidate any license statements I made and restore the license to 
-"All Rights Reserved" 
-
-Note that usage and distribution may infringe the copyright of the FATE authors, if the program is distributed without GPL licenses.
-Additionally, Plant model is not yet licensed to use the ECOLOGICAL MODEL files, and distribution would similarly infringe the copyright of the ECOLOGICAL MODEL authors (Jens Joschinski, Victoria Culshaw, possibly TUM or SAAD). 
-All of above is not legal advice but my own layman's interpretation.
-
-In the future this document (README.md) will contain a GNU FDL license:
-> Copyright (C)  2023  Jens Joschinski.  
+> Copyright (C)  2022 - present  Studio Animal-Aided Design
 > Permission is granted to copy, distribute and/or modify this document  
 > under the terms of the GNU Free Documentation License, Version 1.3  
 > or any later version published by the Free Software Foundation;  
@@ -40,12 +26,10 @@ In the future this document (README.md) will contain a GNU FDL license:
 
 # Authorship  
 
-This readme file has been written by Jens Joschinski, integrating information from the general document, D4.1. (specifically the ecological modelling parts and the FG characterisation ) or comments in the FATE code.
+This readme file has been written by Jens Joschinski. Some text is copied or adapted from (non-public or public) documents of the ECOLOPES project. ECOLOPES has granted permission to use the text presented herein.
 
 The plant model is derived from Fate/RFate, but has been heavily modified. Some individual files still contain remnants of the original model or built on their ideas.  
 The "Authorship" section of individual files mentions the main contributor(s) to each file. If there is only a sole author or author group mentioned, then this person/group developed almost all (>90%) of the code. If there are further parties mentioned, their contributions are listed in detail in mostly chronological order. If an authorship statement is missing, all content was written by Jens Joschinski. 
-
-Currently some files are copied from the ECOLOGICAL MODEL. clear separation / movement into external library folder is required.
 
 # 0 Preface
 
@@ -74,7 +58,7 @@ Fate - HD was not intended to predict plant abundances in absolute numbers, but 
 **Throughout the remaining text, changes in comparison to FATE-HD are either highlighted in italics or placed in a blockquote**
 
 >>> 
-Within ECOLOPES, the model is expected to deliver "good enough" predictions on how building geometry alters community structure, such that the model can be relied upon to provide suggestions for improving building designs. The output of the plant model is also used as input for an allometric animal home range formation, which requires "reasonably accurate" biomass inputs. Thus, the model is required to return absolute numbers. It is, however, expected that an experienced human user group (architects and ecologists) will evaluate any design suggestion provided by the ECOLOPES toolchain, so a certain margin of error that is currently expected from the models can be accommodated. Furthermore, the current main aim of the model is to suggest a novel way of design, and to create and demonstrate the general applicability of a model-informed design workflow. Hence, not the results, but the pipelines matter. Accordingly, the by far largest changes in the plant model regard the technical implementation, not the concepts or theory. The model architecture was revised to achieve stronger encapsulation (classes no longer access data that is outside of their scope), modularization and information management. Major changes were also done to the way inputs are read and stored (separate Inputs class, runtime environment, no more use of GDAL) and exchanged (new data container). The model further contains more assertions and modified error checks.
+Within ECOLOPES, the model is expected to deliver "good enough" predictions on how building geometry alters community structure, such that the model can be relied upon to provide suggestions for improving building designs. The output of the plant model is also used as input for an allometric animal home range formation model, which requires "reasonably accurate" biomass inputs. Thus, the model is required to return absolute numbers. It is, however, expected that an experienced human user group (architects and ecologists) will evaluate any design suggestion provided by the ECOLOPES toolchain, so a certain margin of error that is currently expected from the models can be accommodated. Furthermore, the current main aim of the model is to suggest a novel way of design, and to create and demonstrate the general applicability of a model-informed design workflow. Hence, not the results, but the pipelines matter. Accordingly, the by far largest changes in the plant model regard the technical implementation, not the concepts or theory. The model architecture was revised to achieve stronger encapsulation (classes no longer access data that is outside of their scope), modularization and information management. Major changes were also done to the way inputs are read and stored (separate Inputs class, runtime environment, no more use of GDAL) and exchanged (new data container). The model further contains more assertions and modified error checks.
 
 Major conceptual changes include connections to other models, including: shading by external inputs and by neighbouring cells (competition); soil depth and soil classes (habitat suitability); a revision of how disturbances are read and saved; and simplified dispersal.
 >>>
@@ -129,7 +113,6 @@ Microenvironmental changes are captured via shading and soil depth variables, wh
 
 Another feature of urban environments is the strong influence of human use and human management plans. Management plans can, for example, target specific functional groups (or groups of functional groups) and remove their biomass (e.g., tree pruning, mowing), or kill individuals. Such management masks can in principle also be used to simulate human disturbance (e.g. trampling disturbing herb functional groups), and they can even be used to include further effects of the environment that are currently not part of the model (e.g. water runoffs causing waterlogging, which affects PFGs differently; see issue #24). A protoype version of management is included in the model. 
 
-**The inheritance pattern of the inputs classes needs to be clarified (Plant Model should inherit from BASE, and joint model should inherit from BASE; currently BASE includes joint model stuff instead). Further information regarding the environment will be placed here afterwards.**
 >>>
 
 # 3. Process overview and scheduling
@@ -330,13 +313,12 @@ The model can be compiled as a library (.dll or .dylib), so that it can easily b
 There is furthermore a "tests" subfolder, in which unit tests according to the GoogleTest framework are conducted. The test procedure is also included in the cmake files. 
 Alternatively, one can compile the source files together with a main.cpp (in src folder) to create a full executable. 
 
-Because this is work in progress, it currently only works on macOS, and the src/cmakelists.txt refers to local folders (to make it run, change the folder to Users/YOU/plantmodel...).
+Because this is work in progress, it currently only works on macOS and linux.
 
 ## Dependencies and requirements
 
 All dependencies are included in the /include folder (ECOLOPES joint model for data containers, nlohmann::json and easylogging). The model has no specific requirements to run (< 1 GB hard disc space, < 2GB RAM, any modern CPU), but compilation requires cmake and a c++20 compiler (it is tested llvm and MinGW's GNU compiler, but should also work on AppleClang). See USER_GUIDE.md for installation notes.
 
-**Please note that some further files from the joint ecolopes model (input classes) are included in src. They come with a different license and may not be used yet** 
 
 ## Implementation overview
 
@@ -452,47 +434,4 @@ To have proper competition of plants within a stratum, I think we need a new lay
 ndividual-based plant model 
 
 Most of the conceptual and technical issues highlighted above (competition with self, cohorts) relate to the lack of plant individuals in the model. A new model version could contain a plant community that is made up of individuals; the individual’s biomasses (distributed across strata) convert collected light into a resource and store it in a pool (root system); the resource is used for maintenance as well as to create new biomass and new seeds. Thus, shading on the lower parts of the plant  are compensated by the higher parts of the plant. Another major change in the new model is replacing any factors by integers. In the new model light , measured in lux, is converted into biomass, measured in kg. This allows correctly parametrizing the model with real-world data.  
-
-**Description of the new classes**
-
-*ResourceAlloc*
-
-This class holds information about the allocation of resources to growth and reproduction. Currently these are just some fixed attributes, stored as part of the PFG definition. Currently stored information:  
-
-- Light conversion efficiency 
-
-- maintenance costs 
-
-- resource allocation into reproduction 
-
-- resource allocation into biomass 
-
-- max annual biomassgrowth under ideal resource conditions 
-
-Reading of model papers is required to figure out exact variables and allometric relationships with other PFG attributes. 
-
- 
-
-*PlantResource*
-
-This classs converts light into resources (carbon storage) and saves the resources for a plant. A carbon storage pool of potentially infinite size keeps track of the plant resources. This storage is independent of the plant's age or size. The class is a placeholder for a proper model 1. It contains only the following relationships: 
-
-- Light is converted into resources, according to a fixed conversion efficiency. 
-
-- The plant pays maintenance costs for existing biomass, reducing the resource pool accordingly. The maintenance costs are a fixed fraction of the existing biomass. 
-
-- if resources are available, the plant will invest in seeds and reproduction, according to a fixed allocation. 
-
-- if resources go to zero, the resources are considered critical (which may cause the plant to die) 
-
-The various parameters (conversion efficiency, allocation and maintenance costs) _should_ follow allometric relationships with other PFG attributes, or be otherwise derived from publications and data, but currently they are fixed PFG attributes and very simple linear equations. 
-
-1 placeholder means that it is a fully working class, the Individuals can alreaddy use the resource pool and the functions to tap it are  written. Only the internal logic (allometric relationships etc) are not correct yet. 
-
- 
-
-*Individual* 
-
-An individual plant can collect light, grow and reproduce, thereby allocating some of its resources to new seeds and new biomass, and it can be disturbed. Because the individual has access to its PFG attributes, it can always tell in which strata it is growing. 
-
 >>>

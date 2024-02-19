@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -22,46 +22,47 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: simplification to a struct
+ // RFate team: original idea
+ // Jens Joschinski: reimplementation
  // --------------------------------------------------------------------------
 
-
-/*============================================================================*/
-/*                                Cohort Class                                */
-/*============================================================================*/
-
 /*!
- * \file p_Cohort.h
- * \brief Struct to store Plants abundance
+ * \file p_disturbance.h
+ * \brief plant functional group response to perturbation(s)
  * \author Jens Joschinski
- * \version 1.0
- * \date 2023/03/01
+ * \date 2023/03/29
+ 
  */
 
+#ifndef P_DISTURBANCE_H
+#define P_DISTURBANCE_H
 
-#ifndef COHORT_H
-#define COHORT_H
+#include <string>
+#include <map>
+#include <nlohmann/json.hpp>
+#include "dist.h"
+#include "FGUtils.h"
 
-
-
-/*!
- * \struct Cohort
- * \brief Basal Structure to store PFG abundances
- *  \details
- * A cohort is the formal unity for storing plant abundances in optimal way.
- * It is represented by individuals of different age but of the same abundance.
- * Thus, a cohort is defined by the ages of youngest and oldest individuals, and
- * by an integer representing the abundance of each age.
- * For example, a cohort defined by (100, 2, 4) contains 300 individuals aged
- * from 2 to 4 years.
- * \note JJ: not sure this way of storing information saves much memory (only if 
- * demography is quite homogenous, i.e. abundance of several age classes is the same);
- * but it increases computation time - see comment in FuncGroup.h
+/**
+ * \brief class to hold a list of disturbances
+ * \details 
+ * This class defines a list of disturbances that can be applied to a plant functional group.
+ * The magnitude of the disturbances is defined in the Dist class, and contains the following:
+ * - SeedKill: proportion of individuals killed
+ * - PropResprout: proportion of individuals resprouting
+ * - PropKilled: proportion of individuals killed
  */
-struct Cohort{
-	int CSize; /*!< Abundance of each age of the Cohort */
-	int Ay; /*!< Age of the Youngest individuals */
-	int Ao; /*!< Age of the Oldest individuals */
+class PFGDisturbances{
+    public:
+    friend class FuncGroup;
+    explicit PFGDisturbances(const nlohmann::json& pfg);
+    explicit PFGDisturbances() = default;
+    std::string name; /*!< name of the PFG */
+
+    private: 
+    std::map<LifeStage, std::map<std::string, const Dist>> distResponse; /*!< PFG response to disturbances */
+	// for every life stage we have a range of named disturbances, e.g. mouse, elephant, fire.
+	// the dist class determines the amount of biomass killed, the number of seeds destroyed, and potentially the amount that can resprout. 
+	// not sure about the resprouting though, better leave at zero. 
 };
 #endif

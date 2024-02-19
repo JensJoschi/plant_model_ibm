@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -28,7 +28,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 // This file includes unit tests for the class Resource. See tests/CMake file 
 // and google test documentation.
 
-#include "p_PlantResource.h"
+#include "PlantResource.h"
 #include "gtest/gtest.h"
 
 class ResourceTest : public ::testing::Test {

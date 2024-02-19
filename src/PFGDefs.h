@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -49,10 +49,10 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <vector>
 /** @endcond */
 
-#include "p_PFG.h"
-#include "g_FGUtils.h"
-#include "p_PFGdisturbance.h"
-#include "p_FuncGroup.h"
+#include "PFG.h"
+#include "FGUtils.h"
+#include "PFGdisturbance.h"
+#include "FuncGroup.h"
  /*!
  * \class PFGDefs
  * \brief lists all Plant Functional Groups

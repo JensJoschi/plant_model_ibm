@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-Copyright (C) 2023 - present Jens Joschinski
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
 This file is part of the ECOLOPES PLANT MODEL.
 
@@ -24,7 +24,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 // Authors and contributors to this file:
 // Jens Joschinski
 // ----------------------------------------------------------------------------
-#include "p_PlantModel.h" //implementation
+#include "PlantModel.h" //implementation
 #include "plants/plants.h" //public API
 #include "easylogging++.h"
 #include "config.h"
