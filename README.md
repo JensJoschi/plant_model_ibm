@@ -1,10 +1,10 @@
 # Version
 
-This readme concerns Plant model version 1.0.0. Please make sure the documentation matches the version you would like to use. 
+This readme concerns model version 1.0.0. Please make sure the documentation matches the version you would like to use. 
 
 # Overview
 
-This repository hosts the ECOLOPES Plant model. It is meant for use within the computational workflow (WP3) of ECOLOPES/plugin for grasshopper, but we may in the future publish it as stand-alone model for research use as well. 
+This repository hosts the IBM-Plant model (name to be decided)
 
 The folder /doc contains figures relevant for this documentation. 
 The folder /include contains dependencies: nlohmann::json, easylogging++, and a few files from the ECOLOPES ECOLOGICAL MODEL. It also includes the public header file of the plant model library (the output of this repo).
@@ -26,42 +26,19 @@ root further contains a master CMake file that compiles the binaries (library, e
 
 # Authorship  
 
-This readme file has been written by Jens Joschinski. Some text is copied or adapted from (non-public or public) documents of the ECOLOPES project. ECOLOPES has granted permission to use the text presented herein.
+This readme file has been written by Jens Joschinski. It is derived from the ECOLOPES PLANT MODEL readme.
 
-The plant model is derived from Fate/RFate, but has been heavily modified. Some individual files still contain remnants of the original model or built on their ideas.  
+The IBM-Plant model is derived from the ECOLOPES PLANT MODEL, which in turn is derived from Fate/RFate.
 The "Authorship" section of individual files mentions the main contributor(s) to each file. If there is only a sole author or author group mentioned, then this person/group developed almost all (>90%) of the code. If there are further parties mentioned, their contributions are listed in detail in mostly chronological order. If an authorship statement is missing, all content was written by Jens Joschinski. 
 
 # 0 Preface
 
-The ECOLOPES ECOLOGICAL MODE is a spatial-explicit model that models the interdependent spatial and temporal dynamics of the soil, microbiota, plants, and animals, as response to the regional species pool, the local abiotic conditions, the geometry of the building, the substrate used to design the ecolope, and the management. The biological units of the model are plant (PFG) and animal (AFG) functional groups and generic soil classes, which makes the model generalizable to all sets of conditions. The model is based on a multiscalar approach. The regional model determines which FGs of the species pool have a reasonable chance to colonize the ecolope according to its location in the city. The local model applies a second filter on these species based on the abiotic and biotic conditions delivered by the ecolope, and simulates demographic processes to predict the outcome of inter-and intra-specific interactions. The output of the models is a temporal sequence of plant-animal-soil community development.  The Plant Model is part of the larger ECOLOPES ECOLOGICAL MODEL, though it can also be used as a stand-alone tool.
-
 The model description *loosely* follows the ODD (Overview, Design concepts, Details) protocol for describing individual- and
-agent-based models (Grimm et al. 2006), as updated by Grimm et al. (2020). A proper and independent ODD-style description of the plant model will be written later.
+agent-based models (Grimm et al. 2006), as updated by Grimm et al. (2020). 
 
 # 1 Purpose and Patterns
 
-The plant model aims to predict the presence and abundance on the ecolope of different generic Plant Functional Groups (PFGs) with different maturity stages (height). For extensive discussion of the predecessor of the Plant Model, please refer to the Fate-HD documentation (paper and appendices). In short, Fate HD is a landscape model dealing with forest and non-forests that: 
-
-1. includes spatiotemporal dynamics 
-
-2. considers multiple species or species groups in interactions; 
-
-3. accounts for the processes shaping biodiversity distribution 
- 
-Fate - HD was not intended to predict plant abundances in absolute numbers, but instead provides guidance on relative shifts in community composition. 
-
-**The plant model repurposes FATE with the following aims in mind:**
-
-1. draw general correlations between geometry/environment and ecological functions. This allows creating general design rules, such as the (trivial) statment that "sloped surfaces do not support tree-dominated plant communities"; 
-2. evaluate a specific building design and return plant community information to the (architect) user. The user is expected to visualize and evaluate the results and draw conclusions (likely helped by computer programs and statistical / ML approaches), potentially using information from use case 1.
-
-**Throughout the remaining text, changes in comparison to FATE-HD are either highlighted in italics or placed in a blockquote**
-
->>> 
-Within ECOLOPES, the model is expected to deliver "good enough" predictions on how building geometry alters community structure, such that the model can be relied upon to provide suggestions for improving building designs. The output of the plant model is also used as input for an allometric animal home range formation model, which requires "reasonably accurate" biomass inputs. Thus, the model is required to return absolute numbers. It is, however, expected that an experienced human user group (architects and ecologists) will evaluate any design suggestion provided by the ECOLOPES toolchain, so a certain margin of error that is currently expected from the models can be accommodated. Furthermore, the current main aim of the model is to suggest a novel way of design, and to create and demonstrate the general applicability of a model-informed design workflow. Hence, not the results, but the pipelines matter. Accordingly, the by far largest changes in the plant model regard the technical implementation, not the concepts or theory. The model architecture was revised to achieve stronger encapsulation (classes no longer access data that is outside of their scope), modularization and information management. Major changes were also done to the way inputs are read and stored (separate Inputs class, runtime environment, no more use of GDAL) and exchanged (new data container). The model further contains more assertions and modified error checks.
-
-Major conceptual changes include connections to other models, including: shading by external inputs and by neighbouring cells (competition); soil depth and soil classes (habitat suitability); a revision of how disturbances are read and saved; and simplified dispersal.
->>>
+The plant model aims to predict the presence and abundance of plant individuals from multiple species or types. In contrast to the ECOLOPES PLANT MODEL, it includes Individuals, each with their specific resource and particular needs.
 
 # 2 Entities, state variables, and scales 
 

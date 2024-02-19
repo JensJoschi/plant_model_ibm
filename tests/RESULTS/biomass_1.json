@@ -1,0 +1,74 @@
+{
+    "(0, 0, 0)": {
+        "generalist_grass": 5000.0,
+        "generalist_tree": 0.0
+    },
+    "(0, 0, 1)": {
+        "generalist_grass": 517.0,
+        "generalist_tree": 14376.0
+    },
+    "(0, 1, 0)": {
+        "generalist_grass": 485.0,
+        "generalist_tree": 14290.0
+    },
+    "(0, 1, 1)": {
+        "generalist_grass": 6409.0,
+        "generalist_tree": 0.0
+    },
+    "(0, 2, 0)": {
+        "generalist_grass": 6376.0,
+        "generalist_tree": 0.0
+    },
+    "(0, 2, 1)": {
+        "generalist_grass": 503.0,
+        "generalist_tree": 14387.0
+    },
+    "(1, 0, 0)": {
+        "generalist_grass": 6375.0,
+        "generalist_tree": 0.0
+    },
+    "(1, 0, 1)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 14353.0
+    },
+    "(1, 1, 0)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 14204.0
+    },
+    "(1, 1, 1)": {
+        "generalist_grass": 6366.0,
+        "generalist_tree": 0.0
+    },
+    "(1, 2, 0)": {
+        "generalist_grass": 6431.0,
+        "generalist_tree": 0.0
+    },
+    "(1, 2, 1)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 14300.0
+    },
+    "(2, 0, 0)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 0.0
+    },
+    "(2, 0, 1)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 14413.0
+    },
+    "(2, 1, 0)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 14329.0
+    },
+    "(2, 1, 1)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 0.0
+    },
+    "(2, 2, 0)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 0.0
+    },
+    "(2, 2, 1)": {
+        "generalist_grass": 0.0,
+        "generalist_tree": 0.0
+    }
+}
