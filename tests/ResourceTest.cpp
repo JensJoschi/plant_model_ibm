@@ -24,19 +24,35 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (IBM)
  // --------------------------------------------------------------------------
 
 // This file includes unit tests for the class Resource. See tests/CMake file 
 // and google test documentation.
 
 #include "PlantResource.h"
+
+/** @cond */
 #include "gtest/gtest.h"
+#include "nlohmann/json.hpp"
+/** @endcond */
 
 class ResourceTest : public ::testing::Test {
-    protected: 
-    const ResourceAlloc allocation;
-    const ResourceAlloc allocation2{0.5, 0.01, 0.5, 0.1, 0.05};
+    protected:
+    nlohmann::json j = {
+        {"conversionEfficiency", 1.0},
+        {"maintenanceCosts", 0.1},
+        {"seedAllocation", 0.01},
+        {"biomassAllocation", 0.5},
+        {"maxInvestment", 0.05}};
+    nlohmann::json j2 = {
+        {"conversionEfficiency", 0.5},
+        {"maintenanceCosts", 0.1},
+        {"seedAllocation", 0.01},
+        {"biomassAllocation", 0.5},
+        {"maxInvestment", 0.05}};
+    const ResourceAlloc allocation{j};
+    const ResourceAlloc allocation2{j2};
     PlantResource pr{&allocation};
     PlantResource pr2{&allocation2};
 };
@@ -56,19 +72,19 @@ TEST_F(ResourceTest, isCritical) {
 
 TEST_F(ResourceTest, allocateResources) {
     Allocations a = pr.allocateResources(100); //resources need to feed 100 biomass
+    pr.updateResource(10); //was at -10 due to maintenance costs
     //plant contains no resources yet
     EXPECT_EQ(a.seeds, 0); 
     EXPECT_EQ(a.biomass, 0);
 
-    pr.updateResource(100);
+    pr.updateResource(120);
     a = pr.allocateResources(100);
-     //maxinvestment is 0.05, so 100 * 0.05 = 5
-    EXPECT_EQ(a.seeds, 0); 
-    EXPECT_EQ(a.biomass, 5); 
+    EXPECT_EQ(a.seeds, 1); //1% of resource, after paying maintenance cost (10% of 120)
+    EXPECT_EQ(a.biomass, 5);  //maxinvestment is 5% of biomass
     
     a = pr.allocateResources(21); 
     //5% of the biomass again
-    EXPECT_EQ(a.seeds, 0);
+    EXPECT_EQ(a.seeds, 1);
     EXPECT_EQ(a.biomass, 1);
 
     a = pr.allocateResources(21000000); 

@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: simplification to a struct
+ // RFate team (RFATE)
+ // Jens Joschinski(EPM): simplification to a struct
  // --------------------------------------------------------------------------
 
 
@@ -36,9 +36,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 /*!
  * \file p_Cohort.h
  * \brief Struct to store Plants abundance
- * \author Jens Joschinski
- * \version 1.0
- * \date 2023/03/01
  */
 
 

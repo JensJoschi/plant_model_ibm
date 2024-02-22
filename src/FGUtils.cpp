@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: removed GDAL and boost related things. 
+ // RFate team (RFATE)
+ // JJ: removed GDAL and boost related things. (EPM)
  // --------------------------------------------------------------------------
 
 #include "FGUtils.h"

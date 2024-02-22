@@ -19,10 +19,10 @@
 #	Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen,
 #	Wilfried Thuiller
 
-#Authors: Jens Joschinski
+#Authors: Jens Joschinski (EPM)
 
 cmake_minimum_required(VERSION 3.20)
-project(plants VERSION 1.0.0)
+project(plants VERSION 1.0.1)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

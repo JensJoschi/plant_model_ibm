@@ -24,57 +24,43 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team (RFATE)
- // JJ: cleanup and removal of unused code (EPM)
- // ----------------------------------------------------------------------------
+ // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // --------------------------------------------------------------------------
 
-#include "PropPool.h"
+#include "SoilRequirements.h"
+
 /** @cond */
-#include <cmath>
+#include "nlohmann/json.hpp"
 #include "easylogging++.h"
 /** @endcond */
 
 
-PropPool::PropPool(int size, bool declining, int dTime) : m_Size(size), m_Declining(declining), m_DTime(dTime){}
-
-/*----------------------------------------------------------------------------*/
-
-void PropPool::PutSeedInPool(int Inp){
-	if (Inp < m_Size){return;}
-	m_Size = Inp;
-	m_Declining = false;
-	m_DTime = 0;
+SoilRequirements::SoilRequirements(const nlohmann::json& SoilReqTraits) {
+    try {
+        if (SoilReqTraits.at("minDepth").is_number_integer()) {
+            minDepth = SoilReqTraits.at("minDepth").get<int>();
+        } else {
+            throw std::runtime_error("type of minDepth must be integer, but is " + 
+            std::string(SoilReqTraits.at("minDepth").type_name()));
+        }
+        acceptedSoils = SoilReqTraits.at("acceptedSoils").get<std::map<std::string, bool>>();
+        check();
+    } catch (nlohmann::json::exception& e) {
+        LOG(DEBUG) << "fields in Soil Req file are: " << SoilReqTraits.dump(4);
+        LOG(ERROR) << "Exception when initializing SoilRequirements: " << e.what() << '\n';
+        throw;
+    } catch (std::invalid_argument& e) {
+        LOG(ERROR) << "Invalid argument when initializing SoilRequirements: " << e.what() << '\n';
+        throw;
+    }
 }
 
-void PropPool::EmptyPool(){
-	m_Size = 0;
-	m_Declining = false;
-	m_DTime = 0;
+void SoilRequirements::check() {
+    // Check if the values are within an acceptable range
+    if (minDepth < 0) {
+        throw std::invalid_argument("SoilRequirements parameters must be positive");
+    }
+    if (acceptedSoils.empty()) {
+        throw std::invalid_argument("SoilRequirements must accept at least one soil type");
+    }
 }
-
-void PropPool::AgePool1(int pl){
-	if (m_Size<=0){return;}
-
-	/* Seed mortality rate follow a linear relationship as a function of seed life */
-	/* size (n+1) = size (n) - size(n) * (1 / (pl + 1)) */
-
-	double decRate = 1.0 / static_cast<double>( pl + 1.0 ); // calculate decreasing rate
-	m_Declining = true; // new seeds, so the pool is declining
-	m_DTime = m_DTime + 1; // increase age of youngest seeds
-	m_Size = floor(m_Size - decRate * m_Size);
-
-	if (m_Size == 0){
-		m_Declining = false;
-		m_DTime = 0;
-	}
-}
-
-/*----------------------------------------------------------------------------*/
-
-void PropPool::show() const{
-	// logg.debug("Seed Pool : size = ", m_Size, ", declining = ", m_Declining,
-	// 					 ", age = ", m_DTime);
-}
-
-int  PropPool::getSize() const { return m_Size; }
-

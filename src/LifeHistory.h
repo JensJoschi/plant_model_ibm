@@ -22,59 +22,54 @@ If not, see <https://www.gnu.org/licenses/>. */
  * For contributions to this particular file, see section "Authors and contributors".*/
 // --------------------------------------------------------------------------
 
- // --------------------------------------------------------------------------
+ // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team (RFATE)
- // JJ: cleanup and removal of unused code (EPM)
+ // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
  // ----------------------------------------------------------------------------
 
-#include "PropPool.h"
+
+/*!
+ * \file LifeHistory.h
+ * \brief Life history definition
+ * \details this class contains a list of parameters that define a plant's life History atttributes. 
+ */
+
+#ifndef LIFEHISTORY_H
+#define LIFEHISTORY_H
+
 /** @cond */
-#include <cmath>
-#include "easylogging++.h"
+#include "nlohmann/json.hpp"
 /** @endcond */
 
 
-PropPool::PropPool(int size, bool declining, int dTime) : m_Size(size), m_Declining(declining), m_DTime(dTime){}
 
-/*----------------------------------------------------------------------------*/
+ /*!
+ * \class LifeHistory
+ * \brief Plant life History definition
+ * \details 
+ * This object stores all the parameters characterizing the life history a plant. Parameters concern life span, maturation time etc, size and shape etc.
+ * \note
+ * This class is on purpose inaccessible except by one specialized class (Individual). Makes it easier to maintain the code and to add new features.
+ */
+class LifeHistory{
+	friend class Individual;
+	public:
 
-void PropPool::PutSeedInPool(int Inp){
-	if (Inp < m_Size){return;}
-	m_Size = Inp;
-	m_Declining = false;
-	m_DTime = 0;
-}
+	/**
+	 * \brief Construct a new LifeHistory object from json file
+	 * \param lifeHistoryTraits json object with all life history traits (maturity, lifespan etc)
+	 */
+	LifeHistory(const nlohmann::json& traits);
 
-void PropPool::EmptyPool(){
-	m_Size = 0;
-	m_Declining = false;
-	m_DTime = 0;
-}
+	private: 
+	int M;                  /*!< Maturation time */
+	int L;                  /*!< Life span */
+	int HMax;         		/*!< Maximum height reached */  //Former MaxStratum
+	float ShadeFactor;               /*!< how much shade does one biomass unit produce */
+    /**
+     * \brief check if the parameters are consistent
+     */
+	void check();
+};
 
-void PropPool::AgePool1(int pl){
-	if (m_Size<=0){return;}
-
-	/* Seed mortality rate follow a linear relationship as a function of seed life */
-	/* size (n+1) = size (n) - size(n) * (1 / (pl + 1)) */
-
-	double decRate = 1.0 / static_cast<double>( pl + 1.0 ); // calculate decreasing rate
-	m_Declining = true; // new seeds, so the pool is declining
-	m_DTime = m_DTime + 1; // increase age of youngest seeds
-	m_Size = floor(m_Size - decRate * m_Size);
-
-	if (m_Size == 0){
-		m_Declining = false;
-		m_DTime = 0;
-	}
-}
-
-/*----------------------------------------------------------------------------*/
-
-void PropPool::show() const{
-	// logg.debug("Seed Pool : size = ", m_Size, ", declining = ", m_Declining,
-	// 					 ", age = ", m_DTime);
-}
-
-int  PropPool::getSize() const { return m_Size; }
-
+#endif // LIFEHISTORY_H

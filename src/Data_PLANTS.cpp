@@ -24,9 +24,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 // --------------------------------------------------------------------------
 // Authors and contributors to this file:
-// Jens Joschinski: Code structure and content
-// Victoria Culshaw: split class into submodel classes
-// JJ Inheritance and restructuring
+// Jens Joschinski: Code structure and content (ECOLOPES JOINT MODEL)
+// Victoria Culshaw: split class into submodel classes (ECOLOPES JOINT MODEL)
+// JJ Inheritance and restructuring (ECOLOPES JOINT MODEL/EPM)
 // --------------------------------------------------------------------------
 
 

@@ -23,7 +23,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // Authors and contributors to this file:
-// Jens Joschinski
+// Jens Joschinski (EPM)
 // ----------------------------------------------------------------------------
 #include "PlantModel.h" //implementation
 #include "plants/plants.h" //public API

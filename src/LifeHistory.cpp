@@ -27,43 +27,58 @@ If not, see <https://www.gnu.org/licenses/>. */
  // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
  // --------------------------------------------------------------------------
 
-#include "ResourceAlloc.h"
+#include "LifeHistory.h"
 
 /** @cond */
 #include "nlohmann/json.hpp"
 #include "easylogging++.h"
 /** @endcond */
 
-ResourceAlloc::ResourceAlloc(const nlohmann::json& traits) {
+
+
+LifeHistory::LifeHistory(const nlohmann::json& traits) {
     try {
-        conversionEfficiency = traits.at("conversionEfficiency");
-        maintenanceCosts = traits.at("maintenanceCosts");
-        seedAllocation = traits.at("seedAllocation");
-        biomassAllocation = traits.at("biomassAllocation");
-        maxInvestment = traits.at("maxInvestment");
+        if (traits.at("MaturationTime").is_number_integer()) {
+            M = traits.at("MaturationTime").get<int>();
+        } else {
+            throw std::runtime_error("type of MatTime must be integer, but is " + 
+            std::string(traits.at("MaturationTime").type_name()));
+        }
+        if (traits.at("LifeSpan").is_number_integer()) {
+            L = traits.at("LifeSpan").get<int>();
+        } else {
+            throw std::runtime_error("type of LifeSpan must be integer, but is " + 
+            std::string(traits.at("LifeSpan").type_name()));
+        }
+        if (traits.at("MaxHeight").is_number_integer()) {
+            HMax = traits.at("MaxHeight").get<int>();
+        } else {
+            throw std::runtime_error("type of MaxHeight must be integer, but is " + 
+            std::string(traits.at("MaxHeight").type_name()));
+        }
+        ShadeFactor = traits.at("ShadeFactor").get<double>();
         check();
     } catch (nlohmann::json::exception& e) {
-        LOG(DEBUG) << "fields in resource alloc file are: " << traits.dump(4);
-        LOG(ERROR) << "Exception when reading from json ResourceAlloc: " << e.what() << '\n';
+        LOG(DEBUG) << "fields in life history file are: " << traits.dump(4);
+        LOG(ERROR) << "Exception when reading from json LifeHistory: " << e.what() << '\n';
+        throw;
+    } catch (std::runtime_error& e) {
+        LOG(ERROR) << "Runtime error when creating LifeHistory: " << e.what() << '\n';
         throw;
     } catch (std::invalid_argument& e) {
-        LOG(ERROR) << "Invalid argument when initializing ResourceAlloc: " << e.what() << '\n';
+        LOG(ERROR) << "Invalid argument when initializing LifeHistory: " << e.what() << '\n';
         throw;
     }
-
 }
 
-
-void ResourceAlloc::check() {
-    if (conversionEfficiency < 0    || conversionEfficiency > 1 ||
-        maintenanceCosts < 0        || maintenanceCosts > 1     ||
-        seedAllocation < 0          || seedAllocation > 1       ||
-        biomassAllocation < 0       || biomassAllocation > 1    || 
-        maxInvestment < 0           || maxInvestment > 1)       {
-        throw std::invalid_argument("Invalid values for ResourceAlloc traits");
+void LifeHistory::check() {
+    if (M < 0 || L < 0 || HMax < 0 || ShadeFactor < 0.0) {
+        throw std::invalid_argument("LifeHistory parameters must be positive");
     }
-
-    if (seedAllocation + biomassAllocation + maintenanceCosts > 1) {
-        throw std::invalid_argument("Seed, biomass  and maintenance allocations may not be larger than 1");
+    if (M > L) {
+        throw std::invalid_argument("Maturation time must be smaller than life span");
     }
-}
+    if (ShadeFactor > 1.0) {
+        throw std::invalid_argument("Shade factor must be smaller than 1.0");
+    }
+}   

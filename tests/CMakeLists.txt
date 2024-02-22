@@ -19,7 +19,7 @@
 #	Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen,
 #	Wilfried Thuiller
 
-#Authors: Jens Joschinski
+#Authors: Jens Joschinski (EPM)
 
 cmake_minimum_required(VERSION 3.10)
 
@@ -37,14 +37,24 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 # list all tests here
-set(TEST_SOURCES PropPoolTest.cpp
+set(TEST_SOURCES  SoilReqsTest.cpp
+                  SeedBiologyTest.cpp
+                  LifeHistoryTest.cpp
+                  ResourceAllocTest.cpp
+                  TraitsTest.cpp
+                  ResourceTest.cpp
+                  IndividualTest.cpp
+                  #SeedPoolTest.cpp
+
+                  #to update:
+                  DataTest.cpp
+                  CellTest.cpp
+                  PlantModelTest.cpp
+                  PlantModelTestNoDisp.cpp
+
+                  #to remove:
+                 PropPoolTest.cpp
                  FuncGroupTest.cpp
-                #  ResourceTest.cpp
-                 CellTest.cpp
-                 PlantModelTest.cpp
-                 PlantModelTestNoDisp.cpp
-                 DataTest.cpp
-                #  IndividualTest.cpp
                 )
 
 enable_testing()

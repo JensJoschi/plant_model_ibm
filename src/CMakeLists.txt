@@ -19,18 +19,25 @@
 #	Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen,
 #	Wilfried Thuiller
 
-#Authors: Jens Joschinski
+#Authors: Jens Joschinski (EPM)
 
 cmake_minimum_required(VERSION 3.20)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set (SRC "Data_PLANTS.cpp"            "FGUtils.cpp"      "GSP_PLANTS.cpp" 
-         "Cell.cpp"                   "FuncGroup.cpp"  
-         "PFG.cpp"                    "PFGDefs.cpp"     "PFGdisturbance.cpp"
-         "PlantModel.cpp"             "PropPool.cpp" 
-         "rng.cpp")
+set (SRC "SoilRequirements.cpp"  "SeedBiology.cpp"  "LifeHistory.cpp"  "ResourceAlloc.cpp"  "Traits.cpp"  
+         "Individual.cpp"   "PlantResource.cpp" #, seedPool
+         "rng.cpp"
+#to update
+        "Data_PLANTS.cpp"  "GSP_PLANTS.cpp" 
+        "Cell.cpp"         "PlantModel.cpp"  
+        "PFGDefs.cpp"  "PFGdisturbance.cpp"
+#to remove
+        "PFG.cpp"             
+        "FGUtils.cpp"       "FuncGroup.cpp"  
+        "PropPool.cpp" 
+)
 
 set (JOINT  "${CMAKE_SOURCE_DIR}/include/jointModel/g_Data_BASE.cpp"    "${CMAKE_SOURCE_DIR}/include/jointModel/g_GSP_BASE.cpp")
 

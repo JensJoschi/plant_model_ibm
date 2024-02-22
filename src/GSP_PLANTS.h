@@ -24,13 +24,13 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
+ // RFate team (RFATE)
  // JJ: integrated animal and soil parameters and removed fire, alien and drought modules.
- //     changed default constructor to create a useful set of parameters
- //     added error checking, json integration
- // VC: split global params class into subclasses
- // JJ: inheritance and rewrite
- //--------------------------------------------------------------------------
+ //     changed default constructor to create a useful set of parameters 
+ //     added error checking, json integration (ECOLOPES JOINT MODEL)
+ // VC: split global params class into subclasses (ECOLOPES JOINT MODEL)
+ // JJ: inheritance and rewrite (ECOLOPES JOINT MODEL/EPM)
+ // --------------------------------------------------------------------------
 
  /*!
  * \file g_GSP_PLANTS.h
@@ -38,8 +38,6 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \details  Contains constant setup variables that are read in or set 
  * during initialization and then not changed anymore (e.g. no. of strata: 4).
  * inherits from and complements GSP_BASE
- * \version 1.0
- * \date 2020
  */
 
 #ifndef GSP_P_H

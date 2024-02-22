@@ -23,17 +23,14 @@ If not, see <https://www.gnu.org/licenses/>. */
 // --------------------------------------------------------------------------
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: cleanup and removal of unused code
+ // RFate team (RFATE)
+ // JJ: cleanup and removal of unused code (EPM)
  // ----------------------------------------------------------------------------
 
 
 /*!
  * \file p_PropPool.h
  * \brief Propagules Pool (seeds) Class
- * \author Damien Georges, Jens Joschinski
- * \version 1.0
- * \date 2013/10/21
  */
 
 #ifndef PROPOOL_H

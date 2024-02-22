@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: partial reimplementation, addition of some new variables
+ // RFate team (RFATE)
+ // JJ: partial reimplementation, addition of some new variables (EPM)
  // --------------------------------------------------------------------------
 
 #include "PFG.h"

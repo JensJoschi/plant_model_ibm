@@ -24,57 +24,30 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team (RFATE)
- // JJ: cleanup and removal of unused code (EPM)
- // ----------------------------------------------------------------------------
+ // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // --------------------------------------------------------------------------
 
-#include "PropPool.h"
+
+#include "Traits.h"
+#include "ResourceAlloc.h"
+#include "LifeHistory.h"
+#include "SeedBiology.h"
+#include "SoilRequirements.h"
+
 /** @cond */
-#include <cmath>
+#include "nlohmann/json.hpp"
 #include "easylogging++.h"
 /** @endcond */
 
-
-PropPool::PropPool(int size, bool declining, int dTime) : m_Size(size), m_Declining(declining), m_DTime(dTime){}
-
-/*----------------------------------------------------------------------------*/
-
-void PropPool::PutSeedInPool(int Inp){
-	if (Inp < m_Size){return;}
-	m_Size = Inp;
-	m_Declining = false;
-	m_DTime = 0;
+Traits::Traits(const nlohmann::json& lifeHistoryTraits, const nlohmann::json& allocationTraits, const nlohmann::json& soilTraits, const nlohmann::json& seedTraits)
+    : allocation(new ResourceAlloc(allocationTraits)), 
+      lifeHist(new LifeHistory(lifeHistoryTraits)), 
+      seedBiol(new SeedBiology(seedTraits)), 
+      soilReqs(new SoilRequirements(soilTraits)) {
 }
 
-void PropPool::EmptyPool(){
-	m_Size = 0;
-	m_Declining = false;
-	m_DTime = 0;
+Traits::Traits(const nlohmann::json& traits): allocation(new ResourceAlloc(traits)), 
+                                              lifeHist(new LifeHistory(traits)),
+                                              seedBiol(new SeedBiology(traits)), 
+                                              soilReqs(new SoilRequirements(traits)) {
 }
-
-void PropPool::AgePool1(int pl){
-	if (m_Size<=0){return;}
-
-	/* Seed mortality rate follow a linear relationship as a function of seed life */
-	/* size (n+1) = size (n) - size(n) * (1 / (pl + 1)) */
-
-	double decRate = 1.0 / static_cast<double>( pl + 1.0 ); // calculate decreasing rate
-	m_Declining = true; // new seeds, so the pool is declining
-	m_DTime = m_DTime + 1; // increase age of youngest seeds
-	m_Size = floor(m_Size - decRate * m_Size);
-
-	if (m_Size == 0){
-		m_Declining = false;
-		m_DTime = 0;
-	}
-}
-
-/*----------------------------------------------------------------------------*/
-
-void PropPool::show() const{
-	// logg.debug("Seed Pool : size = ", m_Size, ", declining = ", m_Declining,
-	// 					 ", age = ", m_DTime);
-}
-
-int  PropPool::getSize() const { return m_Size; }
-

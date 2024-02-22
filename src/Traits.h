@@ -27,43 +27,57 @@ If not, see <https://www.gnu.org/licenses/>. */
  // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
  // --------------------------------------------------------------------------
 
+/*!
+ * \file Traits.h
+ * \brief Plant trait definition
+ * \details this class contains a list of parameters that define a plant. 
+ */
+
+#ifndef TRAITS_H
+#define TRAITS_H
+
 #include "ResourceAlloc.h"
+#include "LifeHistory.h"
+#include "SeedBiology.h"
+#include "SoilRequirements.h"
 
 /** @cond */
+#include <vector>
+#include <string>
 #include "nlohmann/json.hpp"
-#include "easylogging++.h"
 /** @endcond */
 
-ResourceAlloc::ResourceAlloc(const nlohmann::json& traits) {
-    try {
-        conversionEfficiency = traits.at("conversionEfficiency");
-        maintenanceCosts = traits.at("maintenanceCosts");
-        seedAllocation = traits.at("seedAllocation");
-        biomassAllocation = traits.at("biomassAllocation");
-        maxInvestment = traits.at("maxInvestment");
-        check();
-    } catch (nlohmann::json::exception& e) {
-        LOG(DEBUG) << "fields in resource alloc file are: " << traits.dump(4);
-        LOG(ERROR) << "Exception when reading from json ResourceAlloc: " << e.what() << '\n';
-        throw;
-    } catch (std::invalid_argument& e) {
-        LOG(ERROR) << "Invalid argument when initializing ResourceAlloc: " << e.what() << '\n';
-        throw;
-    }
+ /*!
+ * \class Traits
+ * \brief Plant definition
+ * \details 
+ * This object stores all the parameters characterizing a plant. Parameters concern life history, allocation of resources,
+ * seed biology and soil requirements.  
+ * \note
+ * The four pointers are public, but the classes they point to are on purpose inaccessible except by one specialized class each 
+ * (e.g. ResourceAlloc is only available for PlantResource). Future (better) PlantResource versions thus do not need to rewrite Traits but only ResourceAlloc.
+ */
+class Traits{
+	public:
 
-}
+	/**
+	 * \brief Construct a new Traits object from json files
+	 * \param lifeHistoryTraits json object with all life history traits (maturity, lifespan etc)
+	 * \param allocationTraits json object with all resource allocation traits (light conversion, allocation to growth and reproduction)
+	 * \param soilTraits json object with all soil traits (tolerance, depth requirements)
+	 * \param seedTraits json object with all seed traits (seed pool life spans, dormancy)
+	 */
+	Traits(const nlohmann::json& lifeHistoryTraits, const nlohmann::json& allocationTraits, const nlohmann::json& soilTraits, const nlohmann::json& seedTraits);
+/**
+	 * \brief Construct a new Traits object from json file
+	 * \param traits json object with all traits
+	 */
+	Traits(const nlohmann::json& traits);
 
+	const ResourceAlloc* const allocation;
+	const LifeHistory* const lifeHist;
+	const SeedBiology* const seedBiol;
+	const SoilRequirements* const soilReqs;
+};
 
-void ResourceAlloc::check() {
-    if (conversionEfficiency < 0    || conversionEfficiency > 1 ||
-        maintenanceCosts < 0        || maintenanceCosts > 1     ||
-        seedAllocation < 0          || seedAllocation > 1       ||
-        biomassAllocation < 0       || biomassAllocation > 1    || 
-        maxInvestment < 0           || maxInvestment > 1)       {
-        throw std::invalid_argument("Invalid values for ResourceAlloc traits");
-    }
-
-    if (seedAllocation + biomassAllocation + maintenanceCosts > 1) {
-        throw std::invalid_argument("Seed, biomass  and maintenance allocations may not be larger than 1");
-    }
-}
+#endif // PFG_H

@@ -24,16 +24,19 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (EPM)
  // --------------------------------------------------------------------------
-
-
-#include "Data_PLANTS.h"
-#include "GSP_PLANTS.h"
-#include "gtest/gtest.h"
 
 // This file includes unit tests for the class Data_PLANTS, which is derived from jointmodel/Data_BASE. See tests/CMake file 
 // and google test documentation.
+
+#include "Data_PLANTS.h"
+#include "GSP_PLANTS.h"
+
+/** @cond */
+#include "gtest/gtest.h"
+#include "easylogging++.h"
+/** @endcond */
 
 class DataTest : public testing::Test {
     protected:

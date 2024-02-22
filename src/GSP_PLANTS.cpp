@@ -24,12 +24,12 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
+ // RFate team (RFATE)
  // JJ: integrated animal and soil parameters and removed fire, alien and drought modules.
- //     changed default constructor to create a useful set of parameters
- //     added error checking, json integration
- // VC: split global params class into subclasses
- // JJ: inheritance and rewrite
+ //     changed default constructor to create a useful set of parameters 
+ //     added error checking, json integration (ECOLOPES JOINT MODEL)
+ // VC: split global params class into subclasses (ECOLOPES JOINT MODEL)
+ // JJ: inheritance and rewrite (ECOLOPES JOINT MODEL/EPM)
  // --------------------------------------------------------------------------
 
  #include "GSP_PLANTS.h"

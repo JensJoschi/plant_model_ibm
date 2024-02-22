@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: removed GDAL and boost related things. 
+ // RFate team (RFATE)
+ // JJ: removed GDAL and boost related things. (EPM) 
  // --------------------------------------------------------------------------
 
 
@@ -35,9 +35,6 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \details  several numerical values are turned into categorical data within FATE. These are coded as enums within this file. 
  * \note the use of Fracts does not make much sense, the fract enums are stored as ints. simple conversion of double->int would be better
  * \note the fracts should probably be their own class, or at least namespaced together with the fract-functions.
- * \author Damien Georges, Maya Gueguen
- * \version 1.0
- * \date 2022
  */
 
 

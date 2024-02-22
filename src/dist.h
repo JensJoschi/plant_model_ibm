@@ -24,18 +24,15 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file: 
- // RFate team: original idea
- // JJ: complete reimplementation
+ // RFate team: original idea (RFATE)
+ // JJ: complete reimplementation (EPM)
  // ----------------------------------------------------------------------------
 
 /*!
  * \file p_dist.h
  * \brief Disturbance definition
  * \details defines by how much a disturbance affects a plant functional group
- * The disturbance can kill individuals, or destroy their seeds. The plant may resprout, however.
- * \author Jens Joschinski
- * \date 2023/03/29
- 
+ * The disturbance can kill individuals, or destroy their seeds. The plant may resprout, however. 
  */
 
 #ifndef P_DIST_H

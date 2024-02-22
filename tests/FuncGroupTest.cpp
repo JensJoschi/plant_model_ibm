@@ -24,19 +24,22 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (EPM)
  // --------------------------------------------------------------------------
-
-#include "FuncGroup.h"
-#include "gtest/gtest.h"
-#include "PropPool.h"
-#include "PFG.h"
-#include "nlohmann/json.hpp"
-#include "rng.h"
-#include "PFGdisturbance.h"
 
 // This file includes unit tests for the class FuncGroup. See tests/CMake file 
 // and google test documentation.
+
+#include "FuncGroup.h"
+#include "PropPool.h"
+#include "PFG.h"
+#include "rng.h"
+#include "PFGdisturbance.h"
+
+/** @cond */
+#include "gtest/gtest.h"
+#include "nlohmann/json.hpp"
+/** @endcond */
 
 class FuncGroupTest : public ::testing::Test {
   protected:

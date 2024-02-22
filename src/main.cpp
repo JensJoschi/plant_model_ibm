@@ -22,10 +22,9 @@ If not, see <https://www.gnu.org/licenses/>. */
  * For contributions to this particular file, see section "Authors and contributors".*/
 // --------------------------------------------------------------------------
 
-
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (EPM)
 // ----------------------------------------------------------------------------
 
 /*! \mainpage Plant Model

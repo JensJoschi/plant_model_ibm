@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: added shading, complete restructuring and cleanup; calculate light passing through neighbour cells
+ // RFate team (RFATE)
+ // Jens Joschinski (EPM): added shading, complete restructuring and cleanup; calculate light passing through neighbour cells
  // ---------------------------------------------------------------------------
 
 

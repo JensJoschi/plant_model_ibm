@@ -24,57 +24,46 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team (RFATE)
- // JJ: cleanup and removal of unused code (EPM)
- // ----------------------------------------------------------------------------
+ // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // --------------------------------------------------------------------------
 
-#include "PropPool.h"
+#include "SeedBiology.h"
+
 /** @cond */
-#include <cmath>
+#include "nlohmann/json.hpp"
 #include "easylogging++.h"
 /** @endcond */
 
-
-PropPool::PropPool(int size, bool declining, int dTime) : m_Size(size), m_Declining(declining), m_DTime(dTime){}
-
-/*----------------------------------------------------------------------------*/
-
-void PropPool::PutSeedInPool(int Inp){
-	if (Inp < m_Size){return;}
-	m_Size = Inp;
-	m_Declining = false;
-	m_DTime = 0;
+SeedBiology::SeedBiology(const nlohmann::json& traits) {
+    try {
+        dormancy = traits.at("Dormancy");
+        mortalityActive = traits.at("MortalityActive");
+        mortalityDormant = traits.at("MortalityDormant");
+        activationRate = traits.at("ActivationRate");
+        check();
+    } catch (nlohmann::json::exception& e) {
+        LOG(DEBUG) << "fields in file Seed Biology file are: " << traits.dump(4);
+        LOG(ERROR) << "Exception when initializing SeedBiology: " << e.what() << '\n';
+        throw;
+    } catch (std::invalid_argument& e) {
+        LOG(ERROR) << "Invalid argument when initializing SeedBiology: " << e.what() << '\n';
+        throw;
+    }
 }
 
-void PropPool::EmptyPool(){
-	m_Size = 0;
-	m_Declining = false;
-	m_DTime = 0;
-}
+void SeedBiology::check() {
+    // Check if the values are within an acceptable range
+    if (mortalityActive < 0 || mortalityDormant < 0 || activationRate < 0.0) {
+        throw std::invalid_argument("SeedBiology parameters must be positive");
+    }
+    if (activationRate > 1.0) {
+        throw std::invalid_argument("Activation rate must be smaller than 1");
+    }
+    if (mortalityActive < mortalityDormant) {
+        throw std::invalid_argument("Mortality of active seeds cannot be smaller than mortality of dormant seeds");
+    }
+    if (mortalityActive > 1.0) {
+        throw std::invalid_argument("Mortality of active seeds must be smaller than 1");
+    }
 
-void PropPool::AgePool1(int pl){
-	if (m_Size<=0){return;}
-
-	/* Seed mortality rate follow a linear relationship as a function of seed life */
-	/* size (n+1) = size (n) - size(n) * (1 / (pl + 1)) */
-
-	double decRate = 1.0 / static_cast<double>( pl + 1.0 ); // calculate decreasing rate
-	m_Declining = true; // new seeds, so the pool is declining
-	m_DTime = m_DTime + 1; // increase age of youngest seeds
-	m_Size = floor(m_Size - decRate * m_Size);
-
-	if (m_Size == 0){
-		m_Declining = false;
-		m_DTime = 0;
-	}
-}
-
-/*----------------------------------------------------------------------------*/
-
-void PropPool::show() const{
-	// logg.debug("Seed Pool : size = ", m_Size, ", declining = ", m_Declining,
-	// 					 ", age = ", m_DTime);
-}
-
-int  PropPool::getSize() const { return m_Size; }
-
+}   

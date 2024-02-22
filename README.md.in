@@ -7,7 +7,7 @@ This readme concerns model version @PROJECT_VERSION@. Please make sure the docum
 This repository hosts the IBM-Plant model (name to be decided)
 
 The folder /doc contains figures relevant for this documentation. 
-The folder /include contains dependencies: nlohmann::json, easylogging++, and a few files from the ECOLOPES ECOLOGICAL MODEL. It also includes the public header file of the plant model library (the output of this repo).
+The folder /include contains dependencies: nlohmann::json, easylogging++, and a few files from the ECOLOPES ECOLOGICAL MODEL. It also includes the public header file of the model library (the output of this repo).
 The folder /out contains the binary files (including the library) constructed by this repo.
 The folder /rscripts contains a few rscripts to generate inputs or analyse outputs. More like scribbled notes than anything useful.
 The folder /src contains all source files of the model, and a CMake file that compiles the model as executable.  
@@ -57,8 +57,8 @@ FATE did not constrain spatial extent, temporal extent, or spatial resolution in
 >>>
 The model simulates 1x1x1 m voxels in a 3D landscape.  Not all cells need to be present (e.g. building interior, air between buildings), and undercuts or balconies can also be modelled. The maximum extent in x-, y-and z- direction is user-defined. Each voxel is a cube in which a plant community can thrive. The voxel itself is stratified into 4 layers. Plants differ in maximum sizes and growth patterns, but will generally grow thorugh those four layers. Any 3D dynamics (competition for light) are expected to happen within the 1 m3 voxel, among voxels of the same horizontal plane, or among all voxels but without considering space (random dispersal of plants), i.e. there is no interaction among stacked voxels.>
 
-Despite the expectations mentioned above, one can nevertheless use the model outside urban context, and one can change both the simulation duration and the spatial extent. Regarding the resolution, the model itself does not incorporate it into any calculations. If assuming a different resolution, one might have to choose different values in the PFG parameters and global parameters though. Also, thinking that all seeds disperse freely across the site becomes quite a stretch. Additionally, the plant model will be at some point parametrized for a square meter resolution, and the output is then based on these expectations. 
-If the model resolution is much smaller than the size of one PFG, the results become very awkward as well, because the model does not provision for the case that plants grow out of their voxel cell.
+Despite the expectations mentioned above, one can nevertheless use the model outside urban context, and one can change both the simulation duration and the spatial extent. Regarding the resolution, the model itself does not incorporate it into any calculations. If assuming a different resolution, one might have to choose different values in the Trait parameters and global parameters though. Also, thinking that all seeds disperse freely across the site becomes quite a stretch. Additionally, the plant model will be at some point parametrized for a square meter resolution, and the output is then based on these expectations. 
+If the model resolution is much smaller than the size of one plant, the results become very awkward as well, because the model does not provision for the case that plants grow out of their voxel cell.
 >>>
 
 The model does not incorporate seasonality and does not include fine-scaled modelling of growth processes within a year, so a temporal resolution below 1 year is impossible.
@@ -66,20 +66,42 @@ The model does not incorporate seasonality and does not include fine-scaled mode
 ## Entities
 | Entity | Description |
 | ---    | --- |
-| Environment | (urban) habitat containing grid cells, global simulation parameters *and regional model information* |
-| Grid cells | a 1x1 m cell with *a soil class, soil depth,* disturbances, and 4 layers. Each layer contains a different amount of light, and the abundances of different Plant Functional Groups. *Soil depth and soil class* impose constraints on which PFG can live here, and the disturbances can affect their growth. |
-| Functional Group definitions | ~600, a data input. Defines habitat suitability, growth, competition and disturbance attributes. |
+| Environment | (urban) habitat containing grid cells, global simulation parameters |
+| Grid cells | a 1x1 m cell containing (one or more) plant individuals of different types (e.g. species), light, soil, and disturbances.|
+| Individual | composed of an (aboveground) biomass and a (belowground) resource. Biomass converts light into resource, resource is spent on growth (height and biomass) and reproduction. Indidividuals cast shade, and can be disturbed. Individuals of different types (e.g. species) differ in traits.
+| Traits | Each type of individual (e.g. species) contains a set of traits defining 1) Life history parameters, 2) resource allocation strategies, 3) seed biology, 4) disturbance response and 5) soil requirements.
 
-### Individuals, grid cells, and functional groups 
+### Individuals and their traits
 
-The principle agent is not an individual plant but a functional group that lives with other functional groups in a grid cell (A functional group is a group of species with similar traits, see section Design Concepts). The grid cell contains information about the biomass of multiple Plant Functional Groups in multiple layers. 
+The principle agent is an individual plant. This individual lives with other individuals of the same type (e.g. species) or with individuals of other types in a cell. 
+A plant consists of (above-ground) biomass and a (belowground) resource storage:
+ - The biomass is used to collect light and convert it into resources. Biomass has a certain two-dimensional distribution, and 
+ the distribution is important, because competing individuals in the same community can shade each other. Generally speaking, it is 
+ beneficial to place as much biomass as high as possible, to reduce the risk of shading, but it also represents considerable investment. 
+ - Resources are chiefly carbohydrates (converted from light), though soil nutrients can also affect the ability to grow. 
+ The resource can be spent on biomass (for more resource collection), growth (competitive advantage), reproduction 
+ (seeds that will create copies of self), and maintenance (upkeep costs of biomass). 
+The individual may be further disturbed by environmental factors, depleting either the plant's biomass or its resources. The lifespan of the plant is limited, and it will die if it runs out of resources or reaches its maximum age. 
+The plant individual also has a height which changes over time. The change in height and in biomass may be independent.
 
-It is expected that the grid size (spatial resolution) is much larger than the diameter of the largest Plant Functional Group, as the shading provided by plant biomass does not cross grid cell boundaries. When this expectation is violated, and the environment is highly heterogenous, larger plants would be modelled to occupy only a single m2 patch. 
+There is no single optimal strategy for resource allocation and spatial distribution of biomass, rather the optimal strategy depends on the environment and the other individuals in the community. Hence, different trait combinations (strategies) have evolved. In this model, each individual belongs to a certain strategy type with fixed traits, i.e. there is no intraspecific trait variation, no evolution and no phenotypic plasticity. The trait types may be envisioned as species, but can also be genera, distinct subpopulations, functional groups or functional types.
+ 
+In this model, plant shape is simplified to a rectangular shape, and biomass is homogenously distributed from 0 to height. The rectangle may grow in height, according to the annual investment in growth (and resurce availability), and the biomass may  increase according to the annual investment in biomass (and resource availability). More biomass per m height means a wider rectangle. For now, the plant's growth in height is independent of resources or biomass and uses a logistic growth function, with the inflection point being the age of maturity (when plants invest into seeds, their growth decelerates); the slope is arbitrarily set to 1.0.
+In this model there is only a single form of biomass, but woody plants contain both structural (dead) and metabolically active biomass. A slower height growth and a lower allocation to (metabolically active) biomass gain, or a low light conversion rate, can be used to simulate woody plants. In a pure herbal plant, on the other hand, the conversion rate and the height growth are faster.  (there is however no way yet to have herbivores or mowing reduce the height, only the biomass or resources.)
+ 
+There are at least three different ways to disturb a plant: 
+    1) an insect may consume leaves or directly tap into the resources (aphids). This does not really affect the standing biomass, plant height, 
+       or the ability to shade competitors; but it reduces the resource pool and possibly the growth ability in the next year.
+    2) Pruning may remove standing biomass, which affects the ability to shade competitors in this year, and the biomass will take a while to grow back; 
+       the resources are not directly affected, however. Height is also unaffected.
+    3) a large browsing mammal removes enough leaves to affect shading, but the plant may grow back in the course of the same year. This does not affect
+       the standing biomass of next year (or height), but temporarily affect shading. If the lost biomass is recovered in the same year, 
+       it imposes a cost to resources.
+Cases 1 and 2 are implemented, but case 3 is not yet implemented. It may require additional trait data. In theory one could also reduce a plant's height, not only the biomass. This is also not implemented.
 
-The plant biomass of the higher levels will additionally shade lower levels, and when the grid size is not much larger than the PFG size this causes an unrealistic inter-individual competition for light. See issue #21 and #29.
+It is expected that the grid size (spatial resolution) is much larger than the diameter of the largest Plant, as the shading provided by plant biomass does not cross grid cell boundaries. When this expectation is violated, and the environment is highly heterogenous, larger plants would be modelled to occupy only a single m2 patch. 
 
-### Environment: microenvironment and management plans 
-
+### Environment: microenvironment and management plans , grid cells
 >>>
 The topographic features of the environment are very important in a rugged urban environment. We argue that topography affects the community in two fundamentally different ways: 
 
@@ -88,68 +110,48 @@ The topographic features of the environment are very important in a rugged urban
 
 Microenvironmental changes are captured via shading and soil depth variables, which map the effect of a 3D building geometry to individual cells (Shading in cell A is affected by the high rise building covering cells B and C). The ecological model uses these cell-wise representations, making the ecological communities respond to 3D topography indirectly. Future model developments will include more direct 3D effects, such as non-horizontal surfaces, or natural daylighting. They will also allow for further microenvironmental influences; the dispersal aspect will also be solved in a future version of the model.   
 
-Another feature of urban environments is the strong influence of human use and human management plans. Management plans can, for example, target specific functional groups (or groups of functional groups) and remove their biomass (e.g., tree pruning, mowing), or kill individuals. Such management masks can in principle also be used to simulate human disturbance (e.g. trampling disturbing herb functional groups), and they can even be used to include further effects of the environment that are currently not part of the model (e.g. water runoffs causing waterlogging, which affects PFGs differently; see issue #24). A protoype version of management is included in the model. 
+Another feature of urban environments is the strong influence of human use and human management plans. Management plans can, for example, target specific plants) and remove their biomass (e.g., tree pruning, mowing), or kill individuals. Such management masks can in principle also be used to simulate human disturbance (e.g. trampling disturbing herbs), and they can even be used to include further effects of the environment that are currently not part of the model (e.g. water runoffs causing waterlogging, which affects different types differently).
 
 >>>
 
 # 3. Process overview and scheduling
 
 ![Process overview and schduling](<doc/process_overview.png>)  
-*Process overview (draft). Notes: 1. the order doesn’t seem to make sense, but is copied from RFate; 2. processes match function names of code(see UML diagram). Or they should at least, I keep changing them.*
+
+**outdated, will be updated with proper figure later.**
 
 # 4. Design concepts
 
 ## Basic principles
 
-### Modelling framework
-
-FATE, from which the Plant Model is derived, combines phenomenological and process-based approaches: it first considers abiotic environmental filters 
-to determine where each agent can in principle live, and then simulates their growth and demographic structure, including competition among agents. 
-
->>>
-The Plant Model adds flexibility to the phenomenological approach, and allows users to derive habitat suitabilities instead based on other (process-based) models. It further lets the processes be influenced by observable inputs. For example, competition outcomes are now influecned by the total amount of light/shade that is provided in a grid cell.
->>>
-
-FATE is an agent-based model, but not implemented as a traditional ecological individual-based model. In agent-based models, simple rules are set up for individual entities (agents), and the interaction among agents causes complex behaviors to emerge. In Ecology the agents are usually individual cells or individuals of a population, which may for example grow, compete, reproduce and die. Individual agents are nested in habitats, populations or environments (multiple levels of nesting may occur), and the nesting is usually reflected in a Object-Oriented Programming (OOP) approach: individual instances are created (birth) or deleted (death), and may be reassigned to other instances of higher-order objects (dispersal). The modular structure of the OOP approach allows modification of agent rules easily. In FATE, however, the principal agent is the Plant Functional Group (similar to a plant species, see below), which is nested within a plant community of a grid cell, which in turn is nested in an environment. The Plant Functional Group is altered by the environment and changes its demographic composition according to simple rules, but the Plant Functional Group itself does neither move, nor be born or die. Accordingly, there is a single instance of each Functional Group  within each grid cell, which is constructed at initialization and only deleted at program termination. 
-
-This approach is computationally more feasible, but comes at the cost of model resolution and accuracy (only the community composition, but not individual plant development can be tracked). The biomass is hence not meant to represent an accurate absolute value, but shall be interpreted as a probability to find a certain plant (for relative comparisons among functional groups). *A **future** version of the plant model will implement Individuals, thus alleviating some of the current constraints and limitations (see issue #29).*
-
-### Functional Groups
-
-The model does not simulate individual species but functional groups. A functional group can be defined as a group of species that has a similar functional niche owing to a convergent ecological strategy. In this, the model results will allow generalisations based on the sensitivities of multiple species to different environmental conditions (Blaum et al. 2011). Furthermore, assessments of FG richness instead of simply measuring species richness in a single species approach is favourable since FG are directly related to traits rather than to an evolutionary based taxonomic classification, which may not relate to the capacity of a particular species to provide a specific ecosystem service (Tilman et al. 1997). 
-
->>>
-Current research practices define functional groups ad-hoc and in a non-systematic, case-specific way. We do instead provide a default set of very general PFGs (Plant Functional Groups), which is embedded in a set of matching Animal Functional Groups, PFGs and soil classes. PFGs, their attributes, and interactions with other modelling entities (soil classes, disturbances) can easily be changed by the user, enabling for example the modelling of any trophic structure and multiple external pressures (e.g. management). Nevertheless, we generally caution against changing PFG attributes in most use cases, because it requires reparametrization and validation. *Shortening* and reducing the number of PFGs and available soil classes is possible, and often advisable (currently by deleting some PFG definitions, later by using a regional model).
->>>
-
 ### Robust software engineering approach 
 
 FATE follows field-specific software engineering principles of ecological models. See (Scheller et al., 2010; Vedder et al., 2021) for an overview of common approaches, potential drawbacks and risks.
-
+The plant model improves on this and provides a platform prototype that is planned to be further extended in the future. It is, however, neither accurate nor correct ,as it inherits conceptual decisions from RFATE which may not work very well on a very high resolution.
 >>>
-The Plant Model is specifically designed as a platform prototype that is planned to be further extended in the future. It is thus neither accurate nor neccessarily correct, but built to be consistent, maintainable and extensible. The model thus employs robust software engineering principles that are not commonplace in ecological research (Scheller et al., 2010; Vedder et al., 2021), including, e.g. free and open code, modularization according to OOP best practices, a CI/CD system with automated unit tests, and up-to-date documentation of the code with doxygen. Conversion of the code is not finished, however (see issues #25-#31)
+This implementation adds extensive testing, proper inheritance structures and similar software engineering approahces, making the model more maintainable in the future. Moreover, it adds Individuals, which is an improtant step towards higher accuracy and realism.
 >>>
 
 
 ## Emergence and interaction 
 
-The key outcome of the simulation is the spatiotemporal change of community patterns, which emerges from the interaction of plant functional groups within each grid cell (particularly competition for light). On a landscape scale, abiotic factors (soil depth, soil class) impose a general community structure via habitat filtering, *and these abiotic factors may be static (inputs) or dynamically changing (passed on from another model). The abiotic factors (shading, in particular) further affect some competition outcomes, leading to the emergence of complex environment-community relationships, but we consider these indirect effects secondary and weaker than those imposed by habitat filtering.*
+The key outcome of the simulation is the spatiotemporal change of community patterns, which emerges from the interaction of plants within each grid cell (particularly competition for light). On a landscape scale, abiotic factors (soil depth, soil class) impose a general community structure via habitat filtering, and these abiotic factors may be static (inputs) or dynamically changing (passed on from another model). The abiotic factors (shading, in particular) further affect some competition outcomes, leading to the emergence of complex environment-community relationships, but we consider these indirect effects secondary and weaker than those imposed by habitat filtering.*
 
 ## Adaptation 
 
-The plant model does not contain any direct objective-seeking mechanisms, i.e. the agents do not possess the ability to choose among two or more alternative behaviors e.g. via learning or condition-dependent rules (phenotypic plasticity). Two grid cells with initially equal biomasses of each PFG will always develop exactly the same community, if no new seeds land via dispersal (*Dispersal is also entirely random and uninformed*). The rules by which agents respond to the environment (the "genotypes" of the Functional Groups) are instead provided by the user (PFG Definitions).
+The plant model does not contain any direct objective-seeking mechanisms, i.e. the agents do not possess the ability to choose among two or more alternative behaviors e.g. via learning or condition-dependent rules (phenotypic plasticity). Two grid cells with initially equal individuals of each plant type will always develop exactly the same community, if no new seeds land via dispersal (*Dispersal is also entirely random and uninformed*). The rules by which agents respond to the environment (the "genotypes" of the plant types) are instead provided by the user (trait Definitions).
 
 ## Objectives
 
 The plant model does not simulate adaptive behavior (fitness objectives). 
 
 >>>
-Nevertheless, indices at higher organizational structure (richness, mean biomass of grid cells) show how good or bad a community copes with its surrounding. Such indices can be used as fitness objectives in evolutionary solvers (e.g. Wallacei), allowing to optimize environments or building designs (phenotypes) such that one or multiple community indicators are maximized. Note that this procedure optimizes the "fitness" of building designs; the use of evolutionary algorithms in this case has nothing to do with evolution in the biological sense (apart from copying algorithms). More generally, the model outcomes can be used to assess how "fit" a PFG community is for a particular purpose, and the results can be used to adapt/manage the landscape with a particular objective in mind.
+Nevertheless, indices at higher organizational structure (richness, mean biomass of grid cells) show how good or bad a community copes with its surrounding. Such indices can be used as fitness objectives in evolutionary solvers (e.g. Wallacei), allowing to optimize environments or building designs (phenotypes) such that one or multiple community indicators are maximized. Note that this procedure optimizes the "fitness" of building designs; the use of evolutionary algorithms in this case has nothing to do with evolution in the biological sense (apart from copying algorithms). More generally, the model outcomes can be used to assess how "fit" a plant community is for a particular purpose, and the results can be used to adapt/manage the landscape with a particular objective in mind.
 >>>
 
 ## Interaction
 
-Currently, individual agents (PFGs) do not interact with one another, directly or indirectly, except in the competition for light, which is explained in detail in the submodel section. Briefly, growth and death of plants continually changes light conditions, and, subject to light tolerances, plants may be outcompeted and die. This leads to turnover of plant communities. 
+Individual plants interact with one another, directly or indirectly, especially in the competition for light, which is explained in detail in the submodel section. Briefly, growth and death of plants continually changes light conditions, and, subject to light tolerances, plants may be outcompeted and die. This leads to turnover of plant communities. 
 
 ## Stochasticity 
 
@@ -164,18 +166,8 @@ The initialization seeds a random number of plants (aged 0-1 years) to each cell
 >>>
 
 # 5. Input and Output Data
-Plant inputs and outputs were revised in comparison to FATE-HD.
 
->>>
-The plant model requires the following information to run:
-- configuration parameters (e.g. how many years to simulate)
-- Definition of Functional Groups, including their response to disturbances (e.g. management, animals) and soil (soil classes, depth requirements)
-- microenvironmental information, currently the amount of shading and the soil depth in each cell. 
-
-The output of the model is the biomass of each PFG in each grid cell, for each time step that was specified. A list of time steps to output can be provided via the configuration parameters.
-
-See USER_GUIDE.md for details on input and output data formats and their use.
->>>
+Rewrite
 
 # 6. Initialization
 

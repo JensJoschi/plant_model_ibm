@@ -24,20 +24,21 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (EPM)
  // --------------------------------------------------------------------------
-
-
-#include "Cell.h"
-#include "gtest/gtest.h"
-#include "PFGDefs.h"
-#include "GSP_PLANTS.h"
-#include "nlohmann/json.hpp"
-#include "rng.h"
-
 
 // This file includes unit tests for the class Cell. See tests/CMake file 
 // and google test documentation.
+
+#include "Cell.h"
+#include "PFGDefs.h"
+#include "GSP_PLANTS.h"
+#include "rng.h"
+
+/** @cond */
+#include "gtest/gtest.h"
+#include "nlohmann/json.hpp"
+/** @endcond */
 
 class CellTest : public ::testing::Test{
   protected: 

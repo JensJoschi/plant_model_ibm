@@ -24,16 +24,14 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: added shading, complete restructuring and cleanup; calculate light passing through neighbour cells
+ // RFate team (RFATE)
+ // Jens Joschinski (EPM): added shading, complete restructuring and cleanup; calculate light passing through neighbour cells
  // ---------------------------------------------------------------------------
 
  
 /*! 
  * \file p_Cell.h
  * \brief Succession (demographic model) class
- * \author Damien Georges, Maya Gueguen, Jens Joschinski
- * \date 2023
  */
 
 #ifndef CELL_H

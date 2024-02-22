@@ -21,25 +21,24 @@ If not, see <https://www.gnu.org/licenses/>. */
  * Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen, Wilfried Thuiller 
  * For contributions to this particular file, see section "Authors and contributors".*/
 // --------------------------------------------------------------------------
- // ----------------------------------------------------------------------------
+ // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
- // ----------------------------------------------------------------------------
+ // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // --------------------------------------------------------------------------
 
- // ----------------------------------------------------------------------------
- //THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
- // ----------------------------------------------------------------------------
 
 /*!
  * \file p_rsourcePool.h
  * \brief plant resources
  * \details 
- * \author Jens Joschinski
- * \version 1.0
  */
 
 #ifndef RESOURCEALLOC_H
 #define RESOURCEALLOC_H
+
+/** @cond */
+#include "nlohmann/json.hpp"
+/** @endcond */
 
 
 /**
@@ -62,15 +61,16 @@ If not, see <https://www.gnu.org/licenses/>. */
  */
 class ResourceAlloc{
     friend class PlantResource;
+
     public: 
-    ResourceAlloc();
-    ResourceAlloc(float, float, float, float, float);
-    ~ResourceAlloc();
+    ResourceAlloc(const nlohmann::json& traits);
+
     private:
     float conversionEfficiency;
     float maintenanceCosts;
     float seedAllocation;
     float biomassAllocation;
     float maxInvestment;
+    void check();
 };
 #endif //RESOURCEALLOC_H

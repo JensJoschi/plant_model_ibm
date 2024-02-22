@@ -24,14 +24,17 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (EPM)
  // --------------------------------------------------------------------------
 
 // This file includes unit tests for the class PropPool. See tests/CMake file 
 // and google test documentation.
 
 #include "PropPool.h"
+
+/** @cond */
 #include "gtest/gtest.h"
+/** @endcond */
 
   //  This class needs a rewrite. See comments in propPool.h
 

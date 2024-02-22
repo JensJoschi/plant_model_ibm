@@ -24,11 +24,11 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team: provide original code
- // JJ: split SimulMap into a PlantModel class and a EcolopesLand class (different project); 
- //     rewrote habitat suitability and disturbance functions
- //     functions to exchange data with other models
- // VMVC: functions to exchange data with other models
+ // RFate team: provide original code (RFATE)
+ // JJ: split SimulMap into a PlantModel class and a EcolopesLand class (ECOLOPES JOINT MODEL); 
+ //     rewrote habitat suitability and disturbance functions (EPM)
+ //     functions to exchange data with other models (ECOLOPES JOINT MODEL)
+ // VMVC: functions to exchange data with other models (ECOLOPES JOINT MODEL)
  // ----------------------------------------------------------------------------
 
 /*!
@@ -38,8 +38,6 @@ If not, see <https://www.gnu.org/licenses/>. */
  * and succession models, seed, habitat
  * suitability and (animal) disturbance maps, and functions to create the habitat suitability / disturbance maps, and to
  * invoke succession and dispersal
- * \author Jens Joschinski
- * \version 1.0
  */
 
 #ifndef PLANTMODEL_H

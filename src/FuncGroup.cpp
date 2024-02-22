@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ complete restructuring and cleanup; reimplementation of disturbance and soil checks
+ // RFate team (RFATE)
+ // JJ complete restructuring and cleanup; reimplementation of disturbance and soil checks (EPM)
  // --------------------------------------------------------------------------
 
 

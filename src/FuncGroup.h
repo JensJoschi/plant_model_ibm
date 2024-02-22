@@ -24,17 +24,14 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ complete restructuring and cleanup; reimplementation of disturbance and soil checks
+ // RFate team (RFATE)
+ // JJ complete restructuring and cleanup; reimplementation of disturbance and soil checks (EPM)
  // --------------------------------------------------------------------------
 
  
 /*!
  * \file p_FuncGroup.h
  * \brief Plant Functional Groups (seeds and cohorts)
- * \author Damien Georges, Jens Joschinski
- * \version 2.0
- * \date 2023/03/28
  */
 
 #ifndef FUNCGROUP_H

@@ -24,16 +24,18 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (EPM)
  // --------------------------------------------------------------------------
-
-
-#include "PlantModel.h"
-#include "gtest/gtest.h"
-#include "rng.h"
 
 // This file includes unit tests for the class PlantModel. See tests/CMake file 
 // and google test documentation.
+
+#include "PlantModel.h"
+#include "rng.h"
+
+/** @cond */
+#include "gtest/gtest.h"
+/** @endcond */
 
 class PlantModelTest : public testing::Test {
     protected:

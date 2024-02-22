@@ -24,15 +24,13 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team: original idea
- // Jens Joschinski: reimplementation
+ // RFate team: original idea (RFATE)
+ // Jens Joschinski: reimplementation (EPM)
  // --------------------------------------------------------------------------
 
 /*!
  * \file p_disturbance.h
  * \brief plant functional group response to perturbation(s)
- * \author Jens Joschinski
- * \date 2023/03/29
  
  */
 

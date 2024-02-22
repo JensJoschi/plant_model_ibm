@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team: original idea
- // Jens Joschinski: reimplementation
+ // RFate team: original idea (RFATE)
+ // Jens Joschinski: reimplementation (EPM)
  // --------------------------------------------------------------------------
 
 #include "PFGDefs.h"

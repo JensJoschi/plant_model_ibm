@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team: original idea
- // Jens Joschinski: reimplementation
+ // RFate team: original idea (RFATE)
+ // Jens Joschinski: reimplementation (EPM)
  // --------------------------------------------------------------------------
 
 
@@ -38,9 +38,6 @@ If not, see <https://www.gnu.org/licenses/>. */
  A set of PFG definitions is automatically built by using the default constructors( `PFGDefs mydefinitions;` ), 
  or a json file can be provided.
  \note this class should probably be a map, not a vector.
- * \author Jens Joschinski
- * \version 1.0
- * \date 2022
 */
 
 #ifndef PFGDEFS_H

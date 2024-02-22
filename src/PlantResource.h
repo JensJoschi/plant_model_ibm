@@ -24,19 +24,14 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (IBM)
  // ----------------------------------------------------------------------------
 
- // ----------------------------------------------------------------------------
- //THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
- // ----------------------------------------------------------------------------
 
 /*!
  * \file p_PlantResource.h
  * \brief plant resources
  * \details 
- * \author Jens Joschinski
- * \version 1.0
  */
 
 #ifndef PLANTRESOURCE_H
@@ -67,6 +62,7 @@ struct Allocations{
  * - if resources go to zero, the resources are considered critical (which may cause the plant to die)
  * The various parameters (conversion efficiency, allocation and maintenance costs) _should_ follow allometric relationships with other PFG attributes, or be otherwise
  * derived from publications and data, but currently they are fixed PFG attributes.
+ * \note plants can store an infinite amount of resources, and grow infinitely large as long as resources are available.
  */
 class PlantResource{
     public:

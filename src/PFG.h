@@ -24,8 +24,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team
- // JJ: partial reimplementation, addition of some new variables
+ // RFate team (RFATE)
+ // JJ: partial reimplementation, addition of some new variables (EPM)
  // --------------------------------------------------------------------------
 
 /*!
@@ -36,9 +36,6 @@ If not, see <https://www.gnu.org/licenses/>. */
  * with similar traits. The PFG is the basic unit of the plant model.
  * This class is usually only constructed through PFGDefs, which creates all PFGs of the 
  * model at once.
- * \author Damien Georges, Maya Gueguen, Jens Joschinski
- * \version 2.0
- * \date 2023
  */
 
 #ifndef PFG_H

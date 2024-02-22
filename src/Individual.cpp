@@ -24,56 +24,100 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski
+ // Jens Joschinski (IBM)
  // ----------------------------------------------------------------------------
-
- // ----------------------------------------------------------------------------
-//THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
- // ----------------------------------------------------------------------------
-
-/*!
- * \file p_Individual.cpp
- * \brief single plant individual
- * \details 
- * \author Jens Joschinski
- * \version 1.0
- */
-
 
 #include "Individual.h"
-#include "PFG.h"
+#include "Traits.h"
 #include "ResourceAlloc.h"
-/** @cond */
-#include <vector>
-#include <string>
-/** @endcond */
+#include "LifeHistory.h"
+#include "SoilRequirements.h"
 
+#include <iostream>
 
-
-Individual::Individual(const PFG* pfg): m_pfg_ptr(pfg), m_age(0), m_biomass(pfg->L), 
-                        m_identity(pfg->name), m_resprouting(pfg->L), 
-                        m_resPool_ptr(new PlantResource(&(pfg->allocation))){
+Individual::Individual(const Traits* traits, std::shared_ptr<Soil> soil): 
+        m_LifeHist_ptr(traits->lifeHist),m_SoilReq_ptr(traits->soilReqs), m_resPool_ptr(std::make_unique<PlantResource>(traits->allocation)),
+        m_age(0), m_height(0.0), m_biomass(0), m_soil_ptr(soil){
+    assert(m_LifeHist_ptr);
+    assert(m_SoilReq_ptr);
+    assert(m_soil_ptr);
+    assert(m_resPool_ptr);
 }
 
 Individual::~Individual(){
-    delete m_resPool_ptr;//make unique
+    m_resPool_ptr = nullptr;
 }
 
-void Individual::feed(const int light, bool soilIsSuitable){
+void Individual::feed(const int light){
+    assert(light >=0);
     m_resPool_ptr->updateResource(light);
 };
 
+int Individual::disturb(int amount){
+    assert(amount >= 0);
+    m_biomass -= amount;
+    if (m_biomass < 0) {
+        int deficit(-m_biomass);
+        m_biomass = 0;
+        return deficit;
+    }
+    return 0;
+}
+
+int Individual::disturb(int amount, int from, int to){
+    assert(amount >= 0);
+    assert(from >= 0);
+    assert(to <= m_height);
+    assert(to >= from);
+    int biomass = getBiomass(from, to);
+    m_biomass -= std::min(amount, biomass);
+    int deficit = amount > biomass ? amount - biomass : 0; 
+    return deficit;
+}
+
+int Individual::depleteResources(int amount){
+    assert(amount >= 0);
+    std::cerr << "calling unimplemented function Individual::depleteResources";
+    abort();
+    // return m_resPool_ptr->removeResource(amount);
+}
+
 bool Individual::doesItDie() const{
-    return (m_age > m_pfg_ptr->L || m_resPool_ptr->isResourceCritical());
+    return (m_age > m_LifeHist_ptr->L || m_resPool_ptr->isResourceCritical());
 }
 
-int Individual::useResources(){   
-    Allocations toDistribute = m_resPool_ptr->allocateResources(getTotalBiomass());
-    m_biomass += toDistribute.biomass;
-    m_age++;
-    return toDistribute.seeds;
-}
-
-int Individual::getTotalBiomass() const{
+int Individual::getBiomass() const{
     return m_biomass;
+}
+
+int Individual::getBiomass(int from, int to) const{
+    assert(from >= 0);
+    assert(to <= m_height);
+    assert(to >= from);
+    return m_biomass * (to - from) / m_height;
+}
+
+int Individual::getShading(int from, int to) const{
+    return m_LifeHist_ptr->ShadeFactor * getBiomass(from, to);
+}
+
+int Individual::getHeight() const{
+    return m_height;
+}
+
+int Individual::age(){
+    m_age ++;
+    double x0 = m_LifeHist_ptr->M / 2.0;
+    double k = 1;
+    m_height = m_LifeHist_ptr->HMax / (1 + exp(-k * (m_age - x0)));
+    int seeds = useResources();
+    return seeds;
+}
+
+
+//====================PRIVATE========================
+int Individual::useResources(){   
+    Allocations toDistribute = m_resPool_ptr->allocateResources(m_biomass);
+    m_biomass += toDistribute.biomass;
+    return toDistribute.seeds;
 }

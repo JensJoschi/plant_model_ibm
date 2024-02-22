@@ -21,14 +21,13 @@ If not, see <https://www.gnu.org/licenses/>. */
  * Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen, Wilfried Thuiller 
  * For contributions to this particular file, see section "Authors and contributors".*/
 // --------------------------------------------------------------------------
- // ----------------------------------------------------------------------------
- // Authors and contributors to this file:
- // Jens Joschinski
- // ----------------------------------------------------------------------------
 
  // ----------------------------------------------------------------------------
- //THIS FILE IS FOR A NEW IMPLEMENTATION OF PLANT MODEL AND NOT BEING USED YET.
+ // Authors and contributors to this file:
+ // Jens Joschinski (IBM)
  // ----------------------------------------------------------------------------
+
+
 
 
 #include "PlantResource.h"
@@ -52,7 +51,7 @@ bool PlantResource::isResourceCritical() const{
 }
 
 Allocations PlantResource::allocateResources(int biomass){
-    assert(biomass * m_resAlloc_ptr->maxInvestment >= 1); // plant growth rate. 1 * 0.05 would make 0.05 new biomass, but because biomass is type int, this would be rounded to 0.
+    // assert(biomass * m_resAlloc_ptr->maxInvestment >= 1); // plant growth rate. 1 * 0.05 would make 0.05 new biomass, but because biomass is type int, this would be rounded to 0.
     assert(m_resAlloc_ptr != nullptr);
     assert(m_resAlloc_ptr->seedAllocation >= 0 && m_resAlloc_ptr->seedAllocation <= 1);
     assert(m_resAlloc_ptr->biomassAllocation >= 0 && m_resAlloc_ptr->biomassAllocation <= 1);
