@@ -44,7 +44,7 @@ set(TEST_SOURCES  SoilReqsTest.cpp
                   TraitsTest.cpp
                   ResourceTest.cpp
                   IndividualTest.cpp
-                  #SeedPoolTest.cpp
+                  SeedPoolTest.cpp
 
                   #to update:
                   DataTest.cpp

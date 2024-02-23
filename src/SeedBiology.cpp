@@ -37,9 +37,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 SeedBiology::SeedBiology(const nlohmann::json& traits) {
     try {
         dormancy = traits.at("Dormancy");
-        mortalityActive = traits.at("MortalityActive");
+        germinationSuccess = traits.at("GerminationSuccess");
         mortalityDormant = traits.at("MortalityDormant");
-        activationRate = traits.at("ActivationRate");
+        dormancyBreakRate = traits.at("DormancyBreakRate");
         check();
     } catch (nlohmann::json::exception& e) {
         LOG(DEBUG) << "fields in file Seed Biology file are: " << traits.dump(4);
@@ -53,17 +53,17 @@ SeedBiology::SeedBiology(const nlohmann::json& traits) {
 
 void SeedBiology::check() {
     // Check if the values are within an acceptable range
-    if (mortalityActive < 0 || mortalityDormant < 0 || activationRate < 0.0) {
+    if (germinationSuccess < 0 || mortalityDormant < 0 || dormancyBreakRate < 0.0) {
         throw std::invalid_argument("SeedBiology parameters must be positive");
     }
-    if (activationRate > 1.0) {
-        throw std::invalid_argument("Activation rate must be smaller than 1");
+    if (dormancyBreakRate > 1.0) {
+        throw std::invalid_argument("Dormancy break rate must be smaller than 1");
     }
-    if (mortalityActive < mortalityDormant) {
-        throw std::invalid_argument("Mortality of active seeds cannot be smaller than mortality of dormant seeds");
+    if (germinationSuccess < mortalityDormant) {
+        throw std::invalid_argument("Mortality of germinating seeds cannot be smaller than mortality of dormant seeds");
     }
-    if (mortalityActive > 1.0) {
-        throw std::invalid_argument("Mortality of active seeds must be smaller than 1");
+    if (germinationSuccess > 1.0) {
+        throw std::invalid_argument("Mortality of germinating seeds must be smaller than 1");
     }
 
 }   

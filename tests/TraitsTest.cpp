@@ -73,20 +73,20 @@ class TraitsTest : public ::testing::Test {
     };
     nlohmann::json seedBiologyValid = {
         {"Dormancy", false},
-        {"MortalityActive", 0.1},
+        {"GerminationSuccess", 0.1},
         {"MortalityDormant", 0.05},
-        {"ActivationRate", 0.8}
+        {"DormancyBreakRate", 0.8}
     };
     nlohmann::json seedBiologyBroken = {
         {"Dormancy", false},
-        {"MortalityActive", 0.1},
+        {"GerminationSuccess", 0.1},
         {"MortalityDormant", 0.05}
     };
     nlohmann::json seedBiologyInvalid = {
         {"Dormancy", false},
-        {"MortalityActive", 0.05},
+        {"GerminationSuccess", 0.05},
         {"MortalityDormant", 0.1},
-        {"ActivationRate", 0.8}
+        {"DormancyBreakRate", 0.8}
     };
     nlohmann::json lifeHistValid = {
         {"MaturationTime", 5},

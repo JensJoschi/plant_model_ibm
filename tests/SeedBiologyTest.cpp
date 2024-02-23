@@ -42,56 +42,56 @@ class SeedBiologyTest : public ::testing::Test {
 protected:
     nlohmann::json validTraits = {
         {"Dormancy", false},
-        {"MortalityActive", 0.1},
+        {"GerminationSuccess", 0.1},
         {"MortalityDormant", 0.05},
-        {"ActivationRate", 0.8}
+        {"DormancyBreakRate", 0.8}
     };
     nlohmann::json emptyTraits = {};
     nlohmann::json missingTraits = {
-        {"MortalityActive", 0.1}
+        {"GerminationSuccess", 0.1}
     };
     nlohmann::json excessTraits = {
         {"Dormancy", false},
-        {"MortalityActive", 0.1},
+        {"GerminationSuccess", 0.1},
         {"MortalityDormant", 0.05},
-        {"ActivationRate", 0.8},
+        {"DormancyBreakRate", 0.8},
         {"excess", 4.2123}
     };
     nlohmann::json wrongTypeDormancy = {
         {"Dormancy", "true"},
-        {"MortalityActive", 0.1},
+        {"GerminationSuccess", 0.1},
         {"MortalityDormant", 0.05},
-        {"ActivationRate", 0.8}
+        {"DormancyBreakRate", 0.8}
     };
     nlohmann::json MortalityInt = {
         {"Dormancy", false},
-        {"MortalityActive", 1},
+        {"GerminationSuccess", 1},
         {"MortalityDormant", 0.05},
-        {"ActivationRate", 0.8}
+        {"DormancyBreakRate", 0.8}
     };
     nlohmann::json MortalityInt2 = {
         {"Dormancy", false},
-        {"MortalityActive", 2},
+        {"GerminationSuccess", 2},
         {"MortalityDormant", 0.05},
-        {"ActivationRate", 0.8}
+        {"DormancyBreakRate", 0.8}
     };
     nlohmann::json NegativeMortality = {
         {"Dormancy", false},
-        {"MortalityActive", -0.1},
+        {"GerminationSuccess", -0.1},
         {"MortalityDormant", 0.05},
-        {"ActivationRate", 0.8}
+        {"DormancyBreakRate", 0.8}
     };
     nlohmann::json ActivateLargerOne = {
         {"Dormancy", false},
-        {"MortalityActive", 0.1},
+        {"GerminationSuccess", 0.1},
         {"MortalityDormant", 0.05},
-        {"ActivationRate", 1.1}
+        {"DormancyBreakRate", 1.1}
     };
     nlohmann::json MortalityActiveSmallerDormant = {
         {"Dormancy", false},
-        {"MortalityActive", 0.05},
+        {"GerminationSuccess", 0.05},
         {"MortalityDormant", 0.1},
-        {"ActivationRate", 0.8}
+        {"DormancyBreakRate", 0.8}
     };
 
     void SetUp() override {

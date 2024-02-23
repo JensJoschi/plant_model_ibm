@@ -50,6 +50,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  * This class is on purpose inaccessible except by one specialized class (SeedPool). Makes it easier to maintain the code and to add new features.
  */
 class SeedBiology{
+    friend class SeedPool;
 	public:
 
 	/**
@@ -60,9 +61,9 @@ class SeedBiology{
 
     private:
     bool dormancy; 
-    float mortalityActive;
+    float germinationSuccess;
     float mortalityDormant;
-    float activationRate;
+    float dormancyBreakRate;
     /**
      * \brief check if the parameters are consistent
      * \details
