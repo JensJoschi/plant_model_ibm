@@ -29,95 +29,54 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "Individual.h"
 #include "Traits.h"
-#include "ResourceAlloc.h"
-#include "LifeHistory.h"
-#include "SoilRequirements.h"
+#include "PlantGrowth.h"
+#include "PlantResource.h"
+#include "HabSuit.h"
 
+/** @cond */
 #include <iostream>
+#include <memory>
+#include "easylogging++.h"
+#include <optional>
+#include <utility>
+#include <map>
+#include <cassert>
+#include <cmath>
+/** @endcond */
 
 Individual::Individual(const Traits* traits, std::shared_ptr<Soil> soil): 
-        m_LifeHist_ptr(traits->lifeHist),m_SoilReq_ptr(traits->soilReqs), m_resPool_ptr(std::make_unique<PlantResource>(traits->allocation)),
-        m_age(0), m_height(0.0), m_biomass(0), m_soil_ptr(soil){
-    assert(m_LifeHist_ptr);
-    assert(m_SoilReq_ptr);
-    assert(m_soil_ptr);
-    assert(m_resPool_ptr);
-}
-
-Individual::~Individual(){
-    m_resPool_ptr = nullptr;
+    m_growth_ptr    (std::make_unique<PlantGrowth>  (traits->lifeHist)), 
+    m_habSuit_ptr   (std::make_unique<HabSuit>      (traits->soilReqs, soil)), 
+    m_resource_ptr  (std::make_unique<PlantResource>(traits->allocation)){
+    assert(m_growth_ptr);
+    assert(m_habSuit_ptr);
+    assert(m_resource_ptr);
 }
 
 void Individual::feed(const int light){
     assert(light >=0);
-    m_resPool_ptr->updateResource(light);
+    m_resource_ptr->updateResource(light, m_habSuit_ptr->isSuitable());
 };
 
-int Individual::disturb(int amount){
-    assert(amount >= 0);
-    m_biomass -= amount;
-    if (m_biomass < 0) {
-        int deficit(-m_biomass);
-        m_biomass = 0;
-        return deficit;
+std::map<std::string, float> Individual::disturb(const std::map<std::string, float>& disturbance){
+    LOG(FATAL) << "Disturbance not implemented yet.";
+    return std::map<std::string, float>();
+}
+
+std::pair<bool, int> Individual::age(){
+    bool diesOfAge = !m_growth_ptr->age();
+    if (diesOfAge){
+        //add disturbance on dead plant (biomass can still be eaten)
+        return std::make_pair(false, 0);
     }
-    return 0;
+    else{
+        //add disturbance
+        return m_resource_ptr->allocateResources();
+    }
 }
 
-int Individual::disturb(int amount, int from, int to){
-    assert(amount >= 0);
+int Individual::getBiomass(int from, int to, bool shadingCorrected) const{
     assert(from >= 0);
-    assert(to <= m_height);
     assert(to >= from);
-    int biomass = getBiomass(from, to);
-    m_biomass -= std::min(amount, biomass);
-    int deficit = amount > biomass ? amount - biomass : 0; 
-    return deficit;
-}
-
-int Individual::depleteResources(int amount){
-    assert(amount >= 0);
-    std::cerr << "calling unimplemented function Individual::depleteResources";
-    abort();
-    // return m_resPool_ptr->removeResource(amount);
-}
-
-bool Individual::doesItDie() const{
-    return (m_age > m_LifeHist_ptr->L || m_resPool_ptr->isResourceCritical());
-}
-
-int Individual::getBiomass() const{
-    return m_biomass;
-}
-
-int Individual::getBiomass(int from, int to) const{
-    assert(from >= 0);
-    assert(to <= m_height);
-    assert(to >= from);
-    return m_biomass * (to - from) / m_height;
-}
-
-int Individual::getShading(int from, int to) const{
-    return m_LifeHist_ptr->ShadeFactor * getBiomass(from, to);
-}
-
-int Individual::getHeight() const{
-    return m_height;
-}
-
-int Individual::age(){
-    m_age ++;
-    double x0 = m_LifeHist_ptr->M / 2.0;
-    double k = 1;
-    m_height = m_LifeHist_ptr->HMax / (1 + exp(-k * (m_age - x0)));
-    int seeds = useResources();
-    return seeds;
-}
-
-
-//====================PRIVATE========================
-int Individual::useResources(){   
-    Allocations toDistribute = m_resPool_ptr->allocateResources(m_biomass);
-    m_biomass += toDistribute.biomass;
-    return toDistribute.seeds;
+    return std::round(m_resource_ptr->getBiomass(shadingCorrected) * m_growth_ptr->getProportion(from, to));
 }

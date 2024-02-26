@@ -50,7 +50,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  * This class is on purpose inaccessible except by one specialized class (Individual). Makes it easier to maintain the code and to add new features.
  */
 class SoilRequirements{
-friend class Individual;
+friend class HabSuit;
 	public:
 	/**
 	 * \brief Construct a new SeedBiology object from json file

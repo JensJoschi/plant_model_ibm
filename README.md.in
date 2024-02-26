@@ -71,24 +71,48 @@ The model does not incorporate seasonality and does not include fine-scaled mode
 | Individual | composed of an (aboveground) biomass and a (belowground) resource. Biomass converts light into resource, resource is spent on growth (height and biomass) and reproduction. Indidividuals cast shade, and can be disturbed. Individuals of different types (e.g. species) differ in traits.
 | Traits | Each type of individual (e.g. species) contains a set of traits defining 1) Life history parameters, 2) resource allocation strategies, 3) seed biology, 4) disturbance response and 5) soil requirements.
 
-### Individuals and their traits
+### Individuals, seeds and traits
 
-The principle agent is an individual plant. This individual lives with other individuals of the same type (e.g. species) or with individuals of other types in a cell. 
-A plant consists of (above-ground) biomass and a (belowground) resource storage:
- - The biomass is used to collect light and convert it into resources. Biomass has a certain two-dimensional distribution, and 
- the distribution is important, because competing individuals in the same community can shade each other. Generally speaking, it is 
- beneficial to place as much biomass as high as possible, to reduce the risk of shading, but it also represents considerable investment. 
- - Resources are chiefly carbohydrates (converted from light), though soil nutrients can also affect the ability to grow. 
- The resource can be spent on biomass (for more resource collection), growth (competitive advantage), reproduction 
- (seeds that will create copies of self), and maintenance (upkeep costs of biomass). 
-The individual may be further disturbed by environmental factors, depleting either the plant's biomass or its resources. The lifespan of the plant is limited, and it will die if it runs out of resources or reaches its maximum age. 
-The plant individual also has a height which changes over time. The change in height and in biomass may be independent.
+The principle agent is an individual plant. The plant has two life stages: a seed stage and the actual plant individual. 
 
-There is no single optimal strategy for resource allocation and spatial distribution of biomass, rather the optimal strategy depends on the environment and the other individuals in the community. Hence, different trait combinations (strategies) have evolved. In this model, each individual belongs to a certain strategy type with fixed traits, i.e. there is no intraspecific trait variation, no evolution and no phenotypic plasticity. The trait types may be envisioned as species, but can also be genera, distinct subpopulations, functional groups or functional types.
- 
-In this model, plant shape is simplified to a rectangular shape, and biomass is homogenously distributed from 0 to height. The rectangle may grow in height, according to the annual investment in growth (and resurce availability), and the biomass may  increase according to the annual investment in biomass (and resource availability). More biomass per m height means a wider rectangle. For now, the plant's growth in height is independent of resources or biomass and uses a logistic growth function, with the inflection point being the age of maturity (when plants invest into seeds, their growth decelerates); the slope is arbitrarily set to 1.0.
-In this model there is only a single form of biomass, but woody plants contain both structural (dead) and metabolically active biomass. A slower height growth and a lower allocation to (metabolically active) biomass gain, or a low light conversion rate, can be used to simulate woody plants. In a pure herbal plant, on the other hand, the conversion rate and the height growth are faster.  (there is however no way yet to have herbivores or mowing reduce the height, only the biomass or resources.)
- 
+The individual has the following attributes:
+- it lives: it has a geometrical shape, which changes over time (growth), it may reproduce (seeds) and it can die (life span)
+- it uses light: it has a metabolically active (above-ground) biomass, which is used to collect light. The light is converted and stored as (below-ground) resource. The resource can be spent on biomass (for more resource collection), growth (competitive advantage), reproduction (seeds), and maintenance (upkeep costs of biomass). 
+- it needs a place to live: the soil determines whether a plant can grow at all (habitat is suitable). In addition, soil (or space) can be seen as a limiting resource. If multiple Individuals live on the same soil, they may reach the capacity, or deplete soil resources.
+- it can be disturbed by the environment: There is a multitude of possible environmental disturbances (e.g. "rabbit", "fire"), and they can affect each of the above properties, i.e. cause mortality, deplete resources or affec the soil.
+The seeds have the following attributes:
+- they live: they can die, or they can be converted into individuals
+- they can form seed banks: Seeds produced in autumn may germinate the next year, or they can stay dormant and be buried in the soil for many years. The mortality of dormant seeds is lower than the mortality of active seeds that attempt to germinate (germination rate)
+- they need space: the soil can accomodate a potentially large, but not infinite number of seeds. 
+
+The attributes are highly interdependent. For example, light is often a limiting resource and competing individuals in the same community can shade each other, so the spatial positioning of the biomass is important. The positioning of biomass depends on life history characteristics (height and shape). Similarly, disturbance may affect each other characteristic, and there is a strong connection between seeds and soil. The interdependences are currently kept to a minimum, but should be extended in the future. In particular:
+- Age and other life-history parameters do not affect seed biology (except of course fecundity only starting at maturity) or resource allocation (except for height affectinh the location of biomass), and are neither affected by soil nor by resources or seed attributes.
+- Resources do not affect heigth growth or seed attributes, and are not affected by soil.
+- Soil is not conditioned in any way by the plants or seeds living in it, and it does not affect resource use, life history or ungerminated seeds
+- disturbance is not fully implemented, and will anyway only affect resources and biomass, but not lifespan (height or mortality), seeds or soil 
+
+There is no single optimal strategy for life history, resource allocation and other attributes, rather the optimal strategy depends on the environment and the other individuals in the community. Hence, different trait combinations (strategies) have evolved. In this model, each individual belongs to a certain strategy type with fixed traits, i.e. there is no intraspecific trait variation, no evolution and no phenotypic plasticity. The trait types may be envisioned as species, but can also be genera, distinct subpopulations, functional groups or functional types.
+ According to the attributes given above, traits that define an individual fall into 5 categories: 
+ 1) Life history parameters. Life history determines general change of plant shape (e.g. height growth) and demographics (maturity onset, lifespan).
+ 2) resource allocation strategies. Resource allocation determines the relative investment into seeds and biomass gain (e.g. light conversion efficiency, fecundity).
+ 3) soil requirements. Plants can only grow on certain types of soil, and the soil needs to meet some minimum requirements (minimum depth).
+ 4) disturbance response. Disturbance response defines which types of disturbance ("rabbit", "fire") affect the plant, and how strongly.
+ 5) seed biology. The seed biology determines the mortality of seeds, dormancy attributes, and germination rates.
+
+There are a few implementation-specific notes affecting the general logic of the model:
+- life history: Plant shape is simplified to a rectangular shape. 
+- Soil: soil has a capacity to simulate competition for space, but no other attributes that may be depleted. Hence, plants of different types compete for the same singular resource.
+- disturbance: limited to depleting either the plant's biomass or its resources.  
+
+
+[to move:]
+#### life history
+Plant shape is simplified to a rectangular shape, and biomass is homogenously distributed from 0 to height. Annual height growth affects the rectangle's height, and annual investment in biomass (resource-dependent) affects its width. A wider rectangle (more biomass per m height) consumes more light.
+For now, the plant's growth in height is resource-independent and uses a logistic growth function, with the inflection point being the age of maturity (when plants invest into seeds, their growth decelerates); the slope is arbitrarily set to 1.0.
+
+#### Resources
+In this model there is only a single form of biomass, but woody plants contain both structural (dead) and metabolically active biomass. A slower height growth and a lower allocation to (metabolically active) biomass gain, or a low light conversion rate, can be used to simulate woody plants. In a pure herbal plant, on the other hand, the conversion rate and the height growth are faster.
+ ##### disturbance
 There are at least three different ways to disturb a plant: 
     1) an insect may consume leaves or directly tap into the resources (aphids). This does not really affect the standing biomass, plant height, 
        or the ability to shade competitors; but it reduces the resource pool and possibly the growth ability in the next year.
@@ -97,9 +121,9 @@ There are at least three different ways to disturb a plant:
     3) a large browsing mammal removes enough leaves to affect shading, but the plant may grow back in the course of the same year. This does not affect
        the standing biomass of next year (or height), but temporarily affect shading. If the lost biomass is recovered in the same year, 
        it imposes a cost to resources.
-Cases 1 and 2 are implemented, but case 3 is not yet implemented. It may require additional trait data. In theory one could also reduce a plant's height, not only the biomass. This is also not implemented.
+Caesses 1 and 2 are implemented, but case 3 is not yet implemented. It may require additional trait data. In theory one could also reduce a plant's height, not only the biomass. This is also not implemented.
 
-It is expected that the grid size (spatial resolution) is much larger than the diameter of the largest Plant, as the shading provided by plant biomass does not cross grid cell boundaries. When this expectation is violated, and the environment is highly heterogenous, larger plants would be modelled to occupy only a single m2 patch. 
+
 
 ### Environment: microenvironment and management plans , grid cells
 >>>

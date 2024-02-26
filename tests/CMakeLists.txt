@@ -37,24 +37,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 # list all tests here
-set(TEST_SOURCES  SoilReqsTest.cpp
-                  SeedBiologyTest.cpp
-                  LifeHistoryTest.cpp
-                  ResourceAllocTest.cpp
-                  TraitsTest.cpp
-                  ResourceTest.cpp
-                  IndividualTest.cpp
-                  SeedPoolTest.cpp
-
-                  #to update:
-                  DataTest.cpp
-                  CellTest.cpp
-                  PlantModelTest.cpp
-                  PlantModelTestNoDisp.cpp
-
-                  #to remove:
-                 PropPoolTest.cpp
-                 FuncGroupTest.cpp
+set(TEST_SOURCES  SoilReqsTest.cpp        HabSuitTest.cpp
+                  SeedBiologyTest.cpp     SeedPoolTest.cpp
+                  LifeHistoryTest.cpp     PlantGrowthTest.cpp
+                  ResourceAllocTest.cpp   ResourceTest.cpp
+                  TraitsTest.cpp          IndividualTest.cpp
+                  
                 )
 
 enable_testing()

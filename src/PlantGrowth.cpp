@@ -24,51 +24,39 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM)
  // ----------------------------------------------------------------------------
 
-
-/*!
- * \file LifeHistory.h
- * \brief Life history definition
- * \details this class contains a list of parameters that define a plant's life History atttributes. 
- */
-
-#ifndef LIFEHISTORY_H
-#define LIFEHISTORY_H
-
+#include "PlantGrowth.h"
+#include "LifeHistory.h"
+#include "Traits.h"
 /** @cond */
-#include "nlohmann/json.hpp"
+#include <cmath>
 /** @endcond */
 
+PlantGrowth::PlantGrowth(const LifeHistory* const traits): m_lifehist_ptr(traits),           m_height(0.0), m_age(0){}
+PlantGrowth::PlantGrowth(const Traits* const traits):      m_lifehist_ptr(traits->lifeHist), m_height(0.0), m_age(0){}
 
 
- /*!
- * \class LifeHistory
- * \brief Plant life History definition
- * \details 
- * This object stores all the parameters characterizing the life history a plant. Parameters concern life span, maturation time etc, size and shape etc.
- * \note
- * This class is on purpose inaccessible except by one specialized class (PlantGrowth). Makes it easier to maintain the code and to add new features.
- */
-class LifeHistory{
-	friend class PlantGrowth;
-	public:
+int PlantGrowth::getHeight() const{
+    return m_height;
+}
 
-	/**
-	 * \brief Construct a new LifeHistory object from json file
-	 * \param lifeHistoryTraits json object with all life history traits (maturity, lifespan etc)
-	 */
-	LifeHistory(const nlohmann::json& traits);
+float PlantGrowth::getProportion(int from, int to) const{
+    assert(from >= 0);
+    assert(to >= from);
+    if (to > m_height) to = m_height;
+    if (m_height == 0) return 0.0f;
+    return static_cast<float>(to - from) / m_height;
+}
 
-	private: 
-	int MatAge;  
-	int LifeSpan;
-	int HMax; 
-    /**
-     * \brief check if the parameters are consistent
-     */
-	void check();
-};
-
-#endif // LIFEHISTORY_H
+bool PlantGrowth::age(){
+    if ((m_age+1) > m_lifehist_ptr->LifeSpan) return false;
+    else{ 
+        m_age ++;
+        double x0 = m_lifehist_ptr->MatAge;
+        double k = 1.0;
+        m_height = static_cast<int>(std::round(m_lifehist_ptr->HMax / (1 + exp(-k * (m_age - x0)))));
+        return true;
+    }
+}

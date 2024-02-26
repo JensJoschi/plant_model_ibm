@@ -26,8 +26,12 @@ cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set (SRC "SoilRequirements.cpp"  "SeedBiology.cpp"    "LifeHistory.cpp"  "ResourceAlloc.cpp"  "Traits.cpp"  
-         "Individual.cpp"        "PlantResource.cpp"  "SeedPool.cpp"
+set (SRC "SeedPool.cpp"         "SeedBiology.cpp"    
+         "PlantGrowth.cpp"      "LifeHistory.cpp"     
+         "HabSuit.cpp"          "SoilRequirements.cpp" 
+         "PlantResource.cpp"    "ResourceAlloc.cpp"
+         "Individual.cpp"
+         "Traits.cpp" 
          "rng.cpp"
 #to update
         "Data_PLANTS.cpp"  "GSP_PLANTS.cpp" 

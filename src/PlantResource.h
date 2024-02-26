@@ -40,16 +40,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "ResourceAlloc.h"
 /** @cond */
 #include <vector>
+#include <utility>
 /** @endcond */
-
-/**
- * \brief describes how much resource is spent on seeds and reproduction, respectively.
-*/
-struct Allocations{ 
-        int seeds;
-        int biomass;
-};
-
 
 /**
  * \brief Plant resources
@@ -61,22 +53,24 @@ struct Allocations{
  * - if resources are available, the plant will invest in seeds and reproduction, according to a fixed allocation.
  * - if resources go to zero, the resources are considered critical (which may cause the plant to die)
  * The various parameters (conversion efficiency, allocation and maintenance costs) _should_ follow allometric relationships with other PFG attributes, or be otherwise
- * derived from publications and data, but currently they are fixed PFG attributes.
- * \note plants can store an infinite amount of resources, and grow infinitely large as long as resources are available.
+ * derived from publications and data, but currently they are fixed PFG attributes. They are written into the ResourceAlloc class.
+ * PlantResource, PlantGrowth, EnvEffects and Habsuit together make up an Individual.
+ * \note plants can store an infinite amount of resources. 
+ * \note resource is arbitrarily intiiated with 100 biomass. Prevents plants from being too small to grow (resource allocation is proportional to biomass)
  */
 class PlantResource{
+    friend class ResourceTest_updateResource_Test;
     public:
     PlantResource(const ResourceAlloc* const resAlloc_ptr);
     ~PlantResource();
-
     /**
      * \brief update plant resources
      * \details incoming light is converted into resources, using information from the ResourceAlloc class
      * (conversion efficiency etc).
      * \param light incoming light that is to be converted into resources
-     * @return int current resource state
+     * \param soilIsSuitable if the soil is suitable for the plant
      */
-    int updateResource(const int light);
+    void updateResource(int light, bool soilIsSuitable = true);
 
     /**
      * \brief invest in seeds and reproduction
@@ -85,23 +79,37 @@ class PlantResource{
      * 2. the plant uses the remaining resources (if any) to invest in seeds and reproduction, reducing the resource pool accordingly.
      *  The information comes from the ResourceAlloc class. 
      * As the plant grows, the maintenance costs rise. If there are some bad years and the resource pool depletes, the plant may die due to the maintenance costs.
-     * @return Allocations[int seeds, int biomass]  how much resource is spent on seeds and reproduction, respectively.
+     * @return   if plant survives, and how many new seeds were produced
      */
-    Allocations allocateResources(int biomass);
+    std::pair<bool, int> allocateResources();
 
     /**
-     * \brief assess resources
-     * \details if resources are zero or below, the plant may die
-     * @return bool true if resources are zero or below
+     * \brief reduce biomass by a certain amount
+     * \details removes a certain amount of biomass. If the plant is smaller than the disturbance, the remaining 
+     * amount of disturbance is returned
+     * \param amount disturbance 
+     * @return non-consumed disturbance
      */
-    bool isResourceCritical() const;
+    int disturb(int amount);
 
+    /**
+     * \brief reduce saved resources by a certain amount
+     * \details removes a certain amount of resources. If the plant has fewer resources than required, the remaining amount
+     * of depletion is returned. 
+     * \param amount of resource depleted 
+     * @return int amount of resource that could not be depleted
+     */
+    int depleteResources(int amount); 
+
+    /**
+     * \brief Get the current biomass
+     */
+    int getBiomass(bool shadingCorrected = false) const;
 
     private:
     const ResourceAlloc* const m_resAlloc_ptr;
     int resources;
-
-
+    int biomass;
 };
 
 

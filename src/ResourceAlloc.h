@@ -71,6 +71,7 @@ class ResourceAlloc{
     float seedAllocation;
     float biomassAllocation;
     float maxInvestment;
+    float shadeFactor;               /*!< how much shade does one biomass unit produce */
     void check();
 };
 #endif //RESOURCEALLOC_H

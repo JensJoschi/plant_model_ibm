@@ -38,24 +38,15 @@ If not, see <https://www.gnu.org/licenses/>. */
 #define INDIVIDUAL_H
 
 #include "Traits.h"
+#include "PlantGrowth.h"
 #include "PlantResource.h"
-#include "LifeHistory.h"
-#include "SoilRequirements.h"
+#include "HabSuit.h"
 
 /** @cond */
 #include <string>
+#include <memory>
+#include <utility>
 /** @endcond */
-
-//to move in sep file
-class Soil{
-    public:
-    Soil(int capacity, int depth, const std::string& name): m_capacity(capacity), m_depth(depth), m_name(name){};
-    void updateSoilClass(const std::string& name){m_name = name;};
-    const int m_capacity;
-    const int m_depth;
-    private:
-    std::string m_name;
-};
 
 
 /*!
@@ -63,42 +54,36 @@ class Soil{
  * \brief single plant individual
  * \details 
  * Objectives:
- * This class simulates an individual plant. A plant consists of (above-ground) biomass and a (belowground) resource storage:
- * - The biomass is used to collect light and convert it into resources. Biomass has a certain two-dimensional distribution, and 
- *   the distribution is important, because competing individuals in the same community can shade each other. Generally speaking, it is 
- *   beneficial to place as much biomass as high as possible, to reduce the risk of shading, but it also represents considerable investment. 
- * - Resources are chiefly carbohydrates (converted from light), though soil nutrients can also affect the ability to grow. 
- *   The resource can be spent on biomass (for more resource collection), growth (competitive advantage), reproduction 
- *    (seeds that will create copies of self), and maintenance (upkeep costs of biomass). 
- * The individual may be further disturbed by environmental factors, depleting either the plant's biomass or its resources.
- * The lifespan of the plant is limited, and it will die if it runs out of resources or reaches its maximum age. 
+ * This class simulates an individual plant. The individual has the following attributes:
+- it lives: it has a geometrical shape, it grows, reproduces and dies.
+- it uses light: it has a metabolically active (above-ground) biomass, which is used to collect light. Light resources are 
+   needed for growth and reproduction.
+- it needs a place to live: the soil determines whether a plant can grow at all (habitat is suitable). Soil 
+   (or space) can be seen as a limiting resource.
+- it can be disturbed by the environment: Stressors can affect each of the above properties,
+   i.e. cause mortality, deplete resources or affec the soil.
 
- * There is no single optimal strategy for resource allocation and spatial distribution of biomass, rather the optimal strategy depends on the
- * environment and the other individuals in the community. Hence, different trait combinations (life history strategies) have evolved. 
- 
+The four attributes (life, light, soil, disturbance) are implemented as separate classes. They are highly interdependent,
+however, and the Individual class takes care of their interaction. The interdependences are currently kept to a minimum, but should
+be extended in the future. In particular:
+- Age and other life-history parameters do not affect seed biology (except onset of fecundity) or resource allocation 
+  (except for height affecting the location of biomass), and are neither affected by soil nor by resources
+  or seed attributes.
+- Resources do not affect heigth growth or seed attributes, and are not affected by soil.
+- Soil is not conditioned in any way by the plants or seeds living in it, and it does not affect resource use, life history 
+or ungerminated seeds
+- disturbance is not fully implemented, and will anyway only affect resources and biomass, but not lifespan (height or 
+mortality), seeds or soil 
+
+
  * Implementation details:
  * The trait combination that makes up the plant's strategy (representing e.g, species, functional group or functional type) is encoded 
  * in the Traits class rather than using class inheritance patterns. Having a separate class allows traits to 
  * be read from file and easily updated (or used in an evolutionary model, though this is currently not planned). The traits class in turn 
  * is made up of the classes "ResourceAllocation", "SoilRequirements", "LifeHistory" and "SeedBiology". Changes to either functionality 
  * (aging, resource allocation...) only requires changes to the according Trait subclass (possibly using inheritance patterns).
- * Currently this class (Individual) handles aging and soil use, but Seed Biology and Resource allocation each have their own class. 
- * This separates the biologically informed calculations from the rest of the code and allows for easy replacement and updating.
  
- * In this model, plant shape is simplified to a rectangular shape, and biomass is homogenously distributed from 0 to height.
- * The rectangle may grow in height, according to the annual investment in growth (and resurce availability), and the biomass may 
- * increase according to the annual investment in biomass (and resource availability). More biomass per m height means a wider rectangle.
- * The allocation of resources into growth and biomass is defined in the traits class (same for all Individuals of the same type).
- * For now, the plant's growth in height is independent of resources or biomass and uses a logistic growth function, with the inflection point
- * being the age of maturity (when plants invest into seeds, their growth decelerates); the slope is arbitrarily set to 1.0.
- * \note In RFate, a slightly different formula was used, as the plants reached Immsize*MaxStratum at maturity/2. The curve apparently is not sigmoidal, 
- * but in the beginning a straight line, which then decelearates (no slow start). Immsize is hard to guess from data anyway so it was not used here.
- 
- * \note In this model there is only a single form of biomass, but woody plants contain both structural (dead) 
- * and metabolically active biomass. A slower height growth and a lower allocation to (metabolically active) biomass gain, or a low light conversion
- * rate, can be used to simulate woody plants. In a pure herbal plant, on the other hand, the conversion rate and the height growth are faster. 
- * (there is however no way yet to have herbivores or mowing reduce the height, only the biomass or resources.)
- 
+ //TO MOVE TO DISTURBANCE class:
  * \note There are at least three different ways to disturb a plant: 
     1) an insect may consume leaves or directly tap into the resources (aphids). This does not really affect the standing biomass, plant height, 
        or the ability to shade competitors; but it reduces the resource pool and possibly the growth ability in the next year.
@@ -109,126 +94,76 @@ class Soil{
        it imposes a cost to resources.
     Cases 1 and 2 are implemented (disturb() and depleteResources()), but case 3 is not yet implemented. It may require additional trait data.
     In theory one could also reduce a plant's height, not only the biomass. This is also not implemented.
-* \note this individual class has a rectangular base shape. One may derive a class with a different shape (lollipop, triangular) and override the 
-* getBiomass(from, to) function. 
 */
 class Individual{
-    friend class IndividualTest_builds_Test; //lets unit test "IndividualTest::builds" access this class
-    friend class IndividualTest_getBiomass_Test;
-    friend class IndividualTest_doesItDie_Test;
-    friend class IndividualTest_disturbWithoutRange_Test;
-    friend class IndividualTest_disturbWithRange_Test;
-    friend class IndividualTest_age_Test;
+   friend class IndividualTest_builds_Test; //give unit test IndividualTest::builds access to private members
+      public:
+      /**
+       * \brief create an individual (factory function)
+       * \details creates an individual, but only if the soil is suitable. Otherwise returns a nullptr.
+       * \param traits life history, resource allocation, disturbance and soil traits
+       * \param soil soil on which Individual shall live
+       */
+    static std::unique_ptr<Individual> create(const Traits* traits, std::shared_ptr<Soil> soil){
+      HabSuit habSuit(traits->soilReqs, soil);
+      if (habSuit.isSuitable()){
+           return std::unique_ptr<Individual>(new Individual(traits, soil));
+      }
+      else{
+           return nullptr;
+      }
+   }  
+private: 
+      /**
+       * \brief constructor
+       * \details Individuals need to be created through Individual::create, which only constructs
+       * Individual if soil is suitable.
+       */
+    Individual(const Traits* traits, std::shared_ptr<Soil> soil);
 
-    public:
-    explicit Individual(const Traits* traits, std::shared_ptr<Soil> soil);
-    ~Individual();
+      public:
     /**
      * \brief turn light into a resource
      * \details light is forwarded to the ResourcePool, which converts the light into resources
      * Resources can only be used if the soil is suitable.
      * \param light amount of light (in lux)
-     * \note soil is currently ignored
      */
     void feed(const int light);
 
     /**
-     * \brief reduce individual biomass by a certain amount
-     * \details removes a certain amount of biomass. If the plant is smaller than the disturbance, the remaining 
+     * \brief let plant be disturbed
+     * \details Disturb the plant's resources. Depending on type of disturbance, 
+     * it may have no effect, remove biomass, or deplete resources.
+     * If the plant is smaller than the disturbance, the remaining 
      * amount of disturbance is returned
-     * \param amount disturbance 
+     * \param disturabnces name and amount of disturbances 
      * @return non-consumed disturbance
+     * \note not yet implemented
      */
-    int disturb(int amount);
-
-//this overload checks first whether / how much the disturbance affects the plant. to write
-   //  int disturb(int amount, const std::string& name); 
-
-    /**
-     * \brief reduce individual biomass by a certain amount
-     * \details attacks a plant at a specific height window (between "from" and "to") and removes a certain amount of biomass. 
-     * If the biomass in the window is smaller than the disturbance, the remaining 
-     * amount of disturbance is returned
-     * \param amount disturbance 
-     * \param from lower bound of the window
-     * \param to upper bound of the window
-     * @return non-consumed disturbance
-     */
-   int disturb(int amount, int from, int to);
-
-    /**
-     * \brief reduce saved resources by a certain amount
-     * \details removes a certain amount of resources. If the plant has fewer resources than required, the remaining amount
-     * of depletion is returned. 
-     * \param amount of resource depleted 
-     * @return int amount of resource that could not be depleted
-     */
-    int depleteResources(int amount); 
-
-    /**
-     * \brief Check whether conditions for death are met
-     * \details Plant dies if there is critical lack of resources or lifespan exceeded
-     * \note soil is currently ignored
-     */
-    bool doesItDie() const;
-
-    /**
-     * \brief Get the current biomass
-     */
-    int getBiomass() const;
-
-    /**
-     * \brief Get the Biomass between two heights
-     * \details The biomass is distributed homogenously throughout the plant height. 
-     * This function returns the biomass in a window between "from" and "to".
-     * \param from lower bound of the window
-     * \param to upper bound of the window
-     * @return int biomass in the window
-     */
-    int getBiomass(int from, int to) const;
-
-      /**
-      * \brief Get the current shading
-      * \details The shading is calculated from the biomass and the plant's shading factor. 
-      * The shading is the amount of light that is blocked by the plant. 
-      * \param from lower bound of the window
-      * \param to upper bound of the window
-      * @return int shading in the window
-      */
-    int getShading(int from, int to) const;
-
-   /**
-   * \brief Get the current plant height
-   */
-    int getHeight() const;
-
+    std::map<std::string, float> disturb(const std::map<std::string, float>& disturbances);
 
     /**
      * \brief let plant age
      * \details when aging, the plant allocates resources into growth, reproduction and maintenances
-     * \return int number of seeds produced
+     * \return bool does the plant survive, int number of seeds produced (which may be zero)
      */
-    int age();
+    std::pair<bool, int> age();
+
+      /**
+      * \brief Get the current biomass
+      * \details Return biomass between two heigths; if shadingCorrected is true, it returns instead the shade 
+      * provided by the biomass
+      * \param from lower bound of the window
+      * \param to upper bound of the window
+      * @return int biomass in the window
+      */
+    int getBiomass(int from, int to, bool shadingCorrected = false) const;
 
 
     private:
-    const LifeHistory* const m_LifeHist_ptr;
-    const SoilRequirements* const m_SoilReq_ptr;
-    
-    std::unique_ptr<PlantResource> m_resPool_ptr;
-    int m_age;
-    float m_height;
-    int m_biomass;
-    std::shared_ptr<Soil> const m_soil_ptr;
-
-    /**
-     * \brief allocate resources
-     * \details a certain amount of resources is reserved for maintenance; some is used for growth (height or biomass gain), some 
-     * for reproduction (seeds), and some is saved. The proportions are defined in the Traits::ResourceAlloc attribute
-     * @return int number of seeds produced. Has side-effect of increasing biomass (usually) and depleting resources
-     * \note soil is currently ignored
-     */
-    int useResources();
+   std::unique_ptr<PlantResource> m_resource_ptr;
+   std::unique_ptr<PlantGrowth> m_growth_ptr;
+   std::unique_ptr<HabSuit> m_habSuit_ptr;
 
 };
 

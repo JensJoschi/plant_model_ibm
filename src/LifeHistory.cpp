@@ -39,13 +39,13 @@ If not, see <https://www.gnu.org/licenses/>. */
 LifeHistory::LifeHistory(const nlohmann::json& traits) {
     try {
         if (traits.at("MaturationTime").is_number_integer()) {
-            M = traits.at("MaturationTime").get<int>();
+            MatAge = traits.at("MaturationTime").get<int>();
         } else {
             throw std::runtime_error("type of MatTime must be integer, but is " + 
             std::string(traits.at("MaturationTime").type_name()));
         }
         if (traits.at("LifeSpan").is_number_integer()) {
-            L = traits.at("LifeSpan").get<int>();
+            LifeSpan = traits.at("LifeSpan").get<int>();
         } else {
             throw std::runtime_error("type of LifeSpan must be integer, but is " + 
             std::string(traits.at("LifeSpan").type_name()));
@@ -56,7 +56,6 @@ LifeHistory::LifeHistory(const nlohmann::json& traits) {
             throw std::runtime_error("type of MaxHeight must be integer, but is " + 
             std::string(traits.at("MaxHeight").type_name()));
         }
-        ShadeFactor = traits.at("ShadeFactor").get<double>();
         check();
     } catch (nlohmann::json::exception& e) {
         LOG(DEBUG) << "fields in life history file are: " << traits.dump(4);
@@ -72,13 +71,10 @@ LifeHistory::LifeHistory(const nlohmann::json& traits) {
 }
 
 void LifeHistory::check() {
-    if (M < 0 || L < 0 || HMax < 0 || ShadeFactor < 0.0) {
+    if (MatAge < 0 || LifeSpan < 0 || HMax < 0 ) {
         throw std::invalid_argument("LifeHistory parameters must be positive");
     }
-    if (M > L) {
+    if (MatAge > LifeSpan) {
         throw std::invalid_argument("Maturation time must be smaller than life span");
-    }
-    if (ShadeFactor > 1.0) {
-        throw std::invalid_argument("Shade factor must be smaller than 1.0");
     }
 }   

@@ -56,7 +56,8 @@ class TraitsTest : public ::testing::Test {
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8}
+        {"maxInvestment", 0.8},
+        {"shadeFactor", 0.5}
     };
     nlohmann::json resAllocBroken = {
         {"conversionEfficiency", 0.5},
@@ -69,7 +70,8 @@ class TraitsTest : public ::testing::Test {
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8}
+        {"maxInvestment", 0.8},
+        {"shadeFactor", 0.5}
     };
     nlohmann::json seedBiologyValid = {
         {"Dormancy", false},
@@ -92,24 +94,20 @@ class TraitsTest : public ::testing::Test {
         {"MaturationTime", 5},
         {"LifeSpan", 10},
         {"MaxHeight", 100},
-        {"ShadeFactor", 0.5}
     };
     nlohmann::json lifeHistBroken = {
         {"MaturationTime", 5},
         {"LifeSpan", 10},
-        {"MaxHeight", 100}
     };
     nlohmann::json Int_Float_error = {
         {"MaturationTime", 5.99}, //float instead of int; conversion is valid (cast to int possible) but wrong (5 instead of 6)
         {"LifeSpan", 10},
         {"MaxHeight", 100},
-        {"ShadeFactor", 0.5}
     };
     nlohmann::json lifeHistInvalid = {
         {"MaturationTime", 5},
         {"LifeSpan", 10},
         {"MaxHeight", -100},
-        {"ShadeFactor", 0.5}
     };
 
     void SetUp() override {

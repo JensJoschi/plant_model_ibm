@@ -24,48 +24,59 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM)
  // --------------------------------------------------------------------------
 
-#include "ResourceAlloc.h"
+// This file includes unit tests for the class PlantGrowth. See tests/CMake file 
+// and google test documentation.
+
+#include "PlantGrowth.h"
+#include "LifeHistory.h"
 
 /** @cond */
-#include "nlohmann/json.hpp"
-#include "easylogging++.h"
+#include "gtest/gtest.h"
 /** @endcond */
 
-ResourceAlloc::ResourceAlloc(const nlohmann::json& traits) {
-    try {
-        conversionEfficiency = traits.at("conversionEfficiency");
-        maintenanceCosts = traits.at("maintenanceCosts");
-        seedAllocation = traits.at("seedAllocation");
-        biomassAllocation = traits.at("biomassAllocation");
-        maxInvestment = traits.at("maxInvestment");
-        shadeFactor = traits.at("shadeFactor");
-        check();
-    } catch (nlohmann::json::exception& e) {
-        LOG(DEBUG) << "fields in resource alloc file are: " << traits.dump(4);
-        LOG(ERROR) << "Exception when reading from json ResourceAlloc: " << e.what() << '\n';
-        throw;
-    } catch (std::invalid_argument& e) {
-        LOG(ERROR) << "Invalid argument when initializing ResourceAlloc: " << e.what() << '\n';
-        throw;
-    }
+class PlantGrowthTest : public ::testing::Test {
+    protected:
+   protected:
+    nlohmann::json j = {
+        {"MaturationTime", 5},
+        {"LifeSpan", 10},
+        {"MaxHeight", 100}};
+    nlohmann::json j2 = {
+        {"MaturationTime", 5},
+        {"LifeSpan", 10},
+        {"MaxHeight", 3}};
+    const LifeHistory traits{j};
+    const LifeHistory traits2{j2};
+    PlantGrowth p{&traits};
+    PlantGrowth p2{&traits2};
+};
 
+TEST_F(PlantGrowthTest, age) {
+    EXPECT_TRUE(p.getHeight() == 0);
+    for (int i = 0; i < 5; i++) {
+        EXPECT_TRUE(p.age());
+    }
+    EXPECT_TRUE(p.getHeight() == 50);
+    for (int i = 0; i < 5; i++) {
+        EXPECT_TRUE(p.age());
+    }
+    EXPECT_FALSE(p.age());
+    EXPECT_TRUE(p.getHeight() == 99);//asymptotic growth
 }
 
-
-void ResourceAlloc::check() {
-    if (conversionEfficiency < 0    || conversionEfficiency > 1 ||
-        maintenanceCosts < 0        || maintenanceCosts > 1     ||
-        seedAllocation < 0          || seedAllocation > 1       ||
-        biomassAllocation < 0       || biomassAllocation > 1    || 
-        maxInvestment < 0           || maxInvestment > 1        ||
-        shadeFactor < 0             || shadeFactor > 1          ){
-        throw std::invalid_argument("Invalid values for ResourceAlloc traits");
+TEST_F(PlantGrowthTest, getProportion){
+    EXPECT_TRUE(p.getHeight() == 0);
+    for (int i = 0; i < 5; i++) {
+        p.age();
     }
-
-    if (seedAllocation + biomassAllocation + maintenanceCosts > 1) {
-        throw std::invalid_argument("Seed, biomass  and maintenance allocations may not be larger than 1");
-    }
+    EXPECT_TRUE(p.getHeight() == 50);
+    EXPECT_FLOAT_EQ(p.getProportion(0, 50), 1.0);
+    EXPECT_FLOAT_EQ(p.getProportion(0, 25), 0.5);
+    EXPECT_FLOAT_EQ(p.getProportion(25, 50), 0.5);
+    EXPECT_FLOAT_EQ(p.getProportion(0, 100), 1.0);
+    EXPECT_FLOAT_EQ(p.getProportion(0, 23), 0.46);
+    EXPECT_FLOAT_EQ(p.getProportion(2, 23), 0.42);
 }

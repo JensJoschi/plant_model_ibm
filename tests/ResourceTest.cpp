@@ -44,13 +44,15 @@ class ResourceTest : public ::testing::Test {
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.01},
         {"biomassAllocation", 0.5},
-        {"maxInvestment", 0.05}};
+        {"maxInvestment", 0.05},
+        {"shadeFactor", 0.5}};
     nlohmann::json j2 = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.01},
         {"biomassAllocation", 0.5},
-        {"maxInvestment", 0.05}};
+        {"maxInvestment", 0.05},
+        {"shadeFactor", 0.5}};
     const ResourceAlloc allocation{j};
     const ResourceAlloc allocation2{j2};
     PlantResource pr{&allocation};
@@ -58,45 +60,64 @@ class ResourceTest : public ::testing::Test {
 };
 
 TEST_F(ResourceTest, updateResource) {
-    EXPECT_EQ(pr.updateResource(0), 0);
-    EXPECT_EQ(pr.updateResource(100), 100); //assuming conversion efficiency == 1
-    EXPECT_EQ(pr2.updateResource(100), 50); //assuming conversion efficiency == 0.5
-
-}
-
-TEST_F(ResourceTest, isCritical) {
-    EXPECT_TRUE(pr.isResourceCritical());
+    EXPECT_EQ(pr.resources, 0);
+    pr.updateResource(0);
+    EXPECT_EQ(pr.resources, 0);
     pr.updateResource(100);
-    EXPECT_FALSE(pr.isResourceCritical());
+    EXPECT_EQ(pr.resources, 100);
+    pr2.updateResource(100);        //different object!
+    EXPECT_EQ(pr2.resources, 50); 
+    pr2.updateResource(100, false); //soil is not suitable
+    EXPECT_EQ(pr2.resources, 50);
 }
 
 TEST_F(ResourceTest, allocateResources) {
-    Allocations a = pr.allocateResources(100); //resources need to feed 100 biomass
-    pr.updateResource(10); //was at -10 due to maintenance costs
-    //plant contains no resources yet
-    EXPECT_EQ(a.seeds, 0); 
-    EXPECT_EQ(a.biomass, 0);
+    std::pair<bool, int> seeds = pr.allocateResources(); //first: survival, second:no. of seeds
+    EXPECT_EQ(seeds.first, false);//plant has no resources to spend
+    EXPECT_EQ(seeds.second, 0);
+    EXPECT_EQ(pr.getBiomass(), 100);
 
-    pr.updateResource(120);
-    a = pr.allocateResources(100);
-    EXPECT_EQ(a.seeds, 1); //1% of resource, after paying maintenance cost (10% of 120)
-    EXPECT_EQ(a.biomass, 5);  //maxinvestment is 5% of biomass
+    pr.updateResource(130);
+    seeds = pr.allocateResources();
+    EXPECT_EQ(seeds.first, true); 
+    EXPECT_EQ(seeds.second, 1); //1% of resource, after paying maintenance cost (10% of 120)
+    EXPECT_EQ(pr.getBiomass(), 105);  //maxinvestment is 5% of biomass
     
-    a = pr.allocateResources(21); 
-    //5% of the biomass again
-    EXPECT_EQ(a.seeds, 1);
-    EXPECT_EQ(a.biomass, 1);
-
-    a = pr.allocateResources(21000000); 
-    //biomass so large that maintenance over-depletes resources
-    EXPECT_TRUE(pr.isResourceCritical());
-    EXPECT_EQ(a.seeds, 0);
-    EXPECT_EQ(a.biomass, 0);
     
     pr2.updateResource(10000000); 
-    a = pr2.allocateResources(1000);
-    //nearly infinite resources, large biomass
-    //note that conversion efficiency = 0.5, so resource is half of the light input
-    EXPECT_EQ(a.biomass, 50); //max investment
-    EXPECT_EQ(a.seeds, 49999); //resource-limited only (seed allocation after maintenance costs)
+    seeds = pr2.allocateResources();
+    EXPECT_EQ(pr2.getBiomass(), 105); //max investment
+    EXPECT_EQ(seeds.second, 49999); //resource-limited only (seed allocation after maintenance costs)
+}
+
+TEST_F(ResourceTest, disturb){
+    EXPECT_EQ(pr.getBiomass(), 100);
+    int deficit = pr.disturb(50);
+    EXPECT_EQ(deficit, 0);
+    EXPECT_EQ(pr.getBiomass(), 50);
+
+    deficit = pr.disturb(60);
+    EXPECT_EQ(deficit, 10);
+    EXPECT_EQ(pr.getBiomass(), 0);
+
+    deficit = pr.disturb(0);
+    EXPECT_EQ(deficit, 0);
+    EXPECT_EQ(pr.getBiomass(), 0);
+}
+
+TEST_F(ResourceTest, depleteResources){
+    EXPECT_EQ(pr.depleteResources(50), 50);
+    pr.updateResource(40);
+    EXPECT_EQ(pr.depleteResources(50), 10);
+    pr.updateResource(100);
+    EXPECT_EQ(pr.depleteResources(50), 0);
+    pr.updateResource(80);
+    std::pair<bool, int> seeds = pr.allocateResources(); //see test AllocateResources with 130
+    EXPECT_EQ(seeds.second, 1); 
+    EXPECT_EQ(pr.getBiomass(), 105);
+}
+
+TEST_F(ResourceTest, getBiomass){
+    EXPECT_EQ(pr.getBiomass(), 100);
+    EXPECT_EQ(pr.getBiomass(true), 50);
 }

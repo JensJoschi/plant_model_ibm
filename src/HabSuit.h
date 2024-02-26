@@ -24,51 +24,56 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM)
  // ----------------------------------------------------------------------------
 
-
 /*!
- * \file LifeHistory.h
- * \brief Life history definition
- * \details this class contains a list of parameters that define a plant's life History atttributes. 
- */
-
-#ifndef LIFEHISTORY_H
-#define LIFEHISTORY_H
-
-/** @cond */
-#include "nlohmann/json.hpp"
-/** @endcond */
-
-
-
- /*!
- * \class LifeHistory
- * \brief Plant life History definition
+ * \file Habsuit.h
+ * \brief Habitat suitability
  * \details 
- * This object stores all the parameters characterizing the life history a plant. Parameters concern life span, maturation time etc, size and shape etc.
- * \note
- * This class is on purpose inaccessible except by one specialized class (PlantGrowth). Makes it easier to maintain the code and to add new features.
  */
-class LifeHistory{
-	friend class PlantGrowth;
-	public:
 
-	/**
-	 * \brief Construct a new LifeHistory object from json file
-	 * \param lifeHistoryTraits json object with all life history traits (maturity, lifespan etc)
-	 */
-	LifeHistory(const nlohmann::json& traits);
+#ifndef HABSUIT_H
+#define HABSUIT_H
 
-	private: 
-	int MatAge;  
-	int LifeSpan;
-	int HMax; 
-    /**
-     * \brief check if the parameters are consistent
-     */
-	void check();
+
+#include <string>
+//to move in sep file
+class Soil{
+    public:
+    Soil(int capacity, int depth, const std::string& name): m_capacity(capacity), m_depth(depth), m_name(name){};
+    void updateSoilClass(const std::string& name){m_name = name;};
+    const int m_capacity;
+    const int m_depth;
+    std::string m_name;
 };
 
-#endif // LIFEHISTORY_H
+
+
+#include "SoilRequirements.h"
+#include "Traits.h"
+/** @cond */
+#include <memory>
+/** @endcond */
+
+/**
+ * \brief Habitat suitability
+ * \details This class determines if a plant can grow in a specific habitat. 
+ * The habitat is mostly determined by soil attributes. Soil is a shared resource,
+ * i.e., multiple plants have access and may modify/deplete the soil. Suitability is a 
+ * boolean attribute (a habitat is either suitable or not) and currently only defined by
+ * soil type and depth. The soil type and depth are defined in the SoilRequirements class.
+ * PlantResource, PlantGrowth, EnvEffects and Habsuit together make up an Individual.
+ */
+class HabSuit{
+    public:
+    explicit HabSuit(const SoilRequirements* const traits, std::shared_ptr<Soil> soil);
+    explicit HabSuit(const Traits* const traits, std::shared_ptr<Soil> soil);
+
+    bool isSuitable() const;
+
+    private:
+    std::shared_ptr<Soil> const m_soil_ptr;
+    const SoilRequirements* const m_soilTraits_ptr;
+};
+#endif //HABSUIT_H

@@ -24,51 +24,44 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM)
  // ----------------------------------------------------------------------------
 
-
-/*!
- * \file LifeHistory.h
- * \brief Life history definition
- * \details this class contains a list of parameters that define a plant's life History atttributes. 
- */
-
-#ifndef LIFEHISTORY_H
-#define LIFEHISTORY_H
-
+ #include "HabSuit.h"
+#include "SoilRequirements.h"
+#include "Traits.h"
 /** @cond */
-#include "nlohmann/json.hpp"
+#include <memory>
+#include <easylogging++.h>
 /** @endcond */
 
+HabSuit::HabSuit(const SoilRequirements* const traits, std::shared_ptr<Soil> soil) : 
+    m_soilTraits_ptr(traits), m_soil_ptr(soil){
+    assert(m_soilTraits_ptr);
+    assert(m_soil_ptr);
+    auto it = m_soilTraits_ptr->acceptedSoils.find(m_soil_ptr->m_name);
+    if (it == m_soilTraits_ptr->acceptedSoils.end()){
+        LOG(ERROR) << "Soil " << m_soil_ptr->m_name << " not found in acceptedSoils";
+        throw std::runtime_error("Soil not found in acceptedSoils");
+    }
+}
 
 
- /*!
- * \class LifeHistory
- * \brief Plant life History definition
- * \details 
- * This object stores all the parameters characterizing the life history a plant. Parameters concern life span, maturation time etc, size and shape etc.
- * \note
- * This class is on purpose inaccessible except by one specialized class (PlantGrowth). Makes it easier to maintain the code and to add new features.
- */
-class LifeHistory{
-	friend class PlantGrowth;
-	public:
+HabSuit::HabSuit(const Traits* const traits, std::shared_ptr<Soil> soil) : 
+    m_soilTraits_ptr(traits->soilReqs), m_soil_ptr(soil){
+    assert(m_soilTraits_ptr);
+    assert(m_soil_ptr);
+    auto it = m_soilTraits_ptr->acceptedSoils.find(m_soil_ptr->m_name);
+    if (it == m_soilTraits_ptr->acceptedSoils.end()){
+        LOG(ERROR) << "Soil " << m_soil_ptr->m_name << " not found in acceptedSoils";
+        throw std::runtime_error("Soil not found in acceptedSoils");
+    }
+}
 
-	/**
-	 * \brief Construct a new LifeHistory object from json file
-	 * \param lifeHistoryTraits json object with all life history traits (maturity, lifespan etc)
-	 */
-	LifeHistory(const nlohmann::json& traits);
-
-	private: 
-	int MatAge;  
-	int LifeSpan;
-	int HMax; 
-    /**
-     * \brief check if the parameters are consistent
-     */
-	void check();
-};
-
-#endif // LIFEHISTORY_H
+bool HabSuit::isSuitable() const {
+    auto it = m_soilTraits_ptr->acceptedSoils.find(m_soil_ptr->m_name);
+    assert (it != m_soilTraits_ptr->acceptedSoils.end());
+    bool typeFits = it->second;
+    bool depthFits = m_soil_ptr->m_depth >= m_soilTraits_ptr->minDepth;
+    return (typeFits && depthFits);
+}
