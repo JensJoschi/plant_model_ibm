@@ -39,42 +39,30 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "LifeHistory.h"
 #include "Traits.h"
 /** @cond */
-
+#include <nlohmann/json.hpp>
 /** @endcond */
 
 /**
  * \brief Plant Growth
  * \details
- * This classs lets the plant age, mature and grow in height. It also contains the general shape of the plant. The traits
+ * This classs lets the plant age, mature and grow in height. The traits
  * defining the plant's growth are stored in the LifeHistory class.
  * PlantResource, PlantGrowth, EnvEffects and Habsuit together make up an Individual.
- * Plant shape is currently simplified to a rectangular shape, and biomass is homogenously distributed from 0 to height. 
- * Annual height growth affects the rectangle's height, and annual investment in biomass (resource-dependent) affects its width. 
- * A wider rectangle (more biomass per m height) consumes more light. The resource-dependent biomass growth is implemented in the PlantResource class.
- * For now, the plant's growth in height is resource-independent and uses a logistic growth function, 
- * with the inflection point being the age of maturity (when plants invest into seeds, their growth decelerates); the slope is arbitrarily set to 1.0.
+ * The growth in height is resource-independent and uses a logistic growth function, with the inflection point being 
+ * the age of maturity (when plants invest into seeds, their growth decelerates), the slope is arbitrarily set to 1.0.
+ * The height defines only the potential positioning of biomass, but does not imply a certain biomass or shape. Biomass growth is
+ * on purpose entirely height-agnostic and has its own class (PlantResource).
+ * height and biomass are used together to calculate the area of the plant or of sections of it (PlantShape class).
  * \note In RFate, a slightly different growth formula was used, as the plants reached Immsize*MaxStratum at maturity/2. The curve apparently is not sigmoidal, 
- * but in the beginning a straight line, which then decelearates (no slow start). Immsize is hard to guess from data anyway so it was not used here.
- * \note this class has a rectangular base shape. One may derive a class with a different shape (lollipop, triangular) and override the 
- * getProportion(from, to) function
+ * but in the beginning a straight line, which then decelearates (no slow start). Immsize is hard to guess from data anyway so it was not used here
+ * \note maturity is not implemented yet.
  */
 class PlantGrowth{
     public:
     explicit PlantGrowth(const LifeHistory* const traits);
-    explicit PlantGrowth(const Traits* const traits);
+    explicit PlantGrowth(const LifeHistory* const traits, nlohmann::json j);
 
-    int getHeight() const;
-
-    /**
-     * \brief Get the proportion of the plant's total area between two heights
-     * \details
-     * The plant has a rectangular shape. The proportion of the plants total area that falls 
-     * between two heights x and y is (y-x)/height.
-     * \param from the lower bound of the height interval
-     * \param to the upper bound of the height interval
-     * \return the proportion of the plants total area that falls between the two heights
-     */
-    float getProportion(int from, int to) const;
+    float getHeight() const;
 
     /**
      * \brief let plant age and grow
@@ -83,11 +71,17 @@ class PlantGrowth{
      * It follows a logistic growth function with an inflection point at maturity
      * \return bool true if the plant is still alive, false if it has reached its lifespan
      */
-    bool age();
+    bool grow();
 
     private:
     int m_age;
-    int m_height;
+    float m_height;
     const LifeHistory* const m_lifehist_ptr;
+
+    /**
+     * \brief check of input parameters
+     * \details if a json with parameters is provided, this function checks the consistency with life history attributes.
+     */
+    void check() const;
 };
 #endif //PLANTGROWTH_H

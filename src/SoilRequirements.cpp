@@ -24,7 +24,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM);
  // --------------------------------------------------------------------------
 
 #include "SoilRequirements.h"
@@ -42,6 +42,12 @@ SoilRequirements::SoilRequirements(const nlohmann::json& SoilReqTraits) {
         } else {
             throw std::runtime_error("type of minDepth must be integer, but is " + 
             std::string(SoilReqTraits.at("minDepth").type_name()));
+        }
+        if (SoilReqTraits.at("size").is_number_integer()) {
+            size = SoilReqTraits.at("size").get<int>();
+        } else {
+            throw std::runtime_error("type of size must be integer, but is " + 
+            std::string(SoilReqTraits.at("size").type_name()));
         }
         acceptedSoils = SoilReqTraits.at("acceptedSoils").get<std::map<std::string, bool>>();
         check();

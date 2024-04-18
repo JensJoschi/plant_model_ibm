@@ -24,7 +24,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM);
  // --------------------------------------------------------------------------
 
 
@@ -39,15 +39,18 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "easylogging++.h"
 /** @endcond */
 
-Traits::Traits(const nlohmann::json& lifeHistoryTraits, const nlohmann::json& allocationTraits, const nlohmann::json& soilTraits, const nlohmann::json& seedTraits)
+Traits::Traits(const nlohmann::json& lifeHistoryTraits, const nlohmann::json& allocationTraits, 
+    const nlohmann::json& soilTraits, const nlohmann::json& seedTraits, const nlohmann::json& shapeTraits)
     : allocation(new ResourceAlloc(allocationTraits)), 
       lifeHist(new LifeHistory(lifeHistoryTraits)), 
       seedBiol(new SeedBiology(seedTraits)), 
-      soilReqs(new SoilRequirements(soilTraits)) {
+      soilReqs(new SoilRequirements(soilTraits)),
+      shape(new PlantRectangle(shapeTraits)){
 }
 
 Traits::Traits(const nlohmann::json& traits): allocation(new ResourceAlloc(traits)), 
                                               lifeHist(new LifeHistory(traits)),
                                               seedBiol(new SeedBiology(traits)), 
-                                              soilReqs(new SoilRequirements(traits)) {
+                                              soilReqs(new SoilRequirements(traits)),
+                                              shape(new PlantRectangle(traits)){
 }

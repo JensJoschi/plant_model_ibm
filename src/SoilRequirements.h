@@ -24,14 +24,14 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM);
  // --------------------------------------------------------------------------
 
 
 /*!
  * \file SoilRequirements.h
  * \brief soil requirements definition
- * \details this class contains a list of parameters that define a plant's needs regareding soil
+ * \details this class contains a list of parameters that define a plant's needs regarding soil
  */
 
 #ifndef SOILREQ_H
@@ -39,6 +39,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 /** @cond */
 #include "nlohmann/json.hpp"
+#include <map>
 /** @endcond */
 
  /*!
@@ -54,6 +55,10 @@ friend class HabSuit;
 	public:
 	/**
 	 * \brief Construct a new SeedBiology object from json file
+     * \details The json file must contain the following entries:
+     * - "minDepth": minimum depth of the soil
+     * - "size": determines how much soil one plant uses
+     * - "acceptedSoils": list of accepted soils
 	 * \param SeedBiologyTraits json object with all seed traits (mortality, dormancy etc)
 	 */
 	SoilRequirements(const nlohmann::json& SoilReqTraits);
@@ -61,6 +66,7 @@ friend class HabSuit;
     private: 
     int minDepth;
     std::map<std::string, bool> acceptedSoils; //could eventually be turned into map <string, float> if we want to add a preference for certain soils
+    int size;       //determines how much soil one plant uses (decrements soil space by size; soil has a capacity)
 
     /**
      * \brief check if the parameters are consistent

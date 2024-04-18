@@ -1,6 +1,6 @@
 # Version
 
-This readme concerns model version 1.0.3. Please make sure the documentation matches the version you would like to use. 
+This readme concerns model version 1.0.4. Please make sure the documentation matches the version you would like to use. 
 
 # Overview
 
@@ -30,6 +30,46 @@ This readme file has been written by Jens Joschinski. It is derived from the ECO
 
 The IBM-Plant model is derived from the ECOLOPES PLANT MODEL, which in turn is derived from Fate/RFate.
 The "Authorship" section of individual files mentions the main contributor(s) to each file. If there is only a sole author or author group mentioned, then this person/group developed almost all (>90%) of the code. If there are further parties mentioned, their contributions are listed in detail in mostly chronological order. If an authorship statement is missing, all content was written by Jens Joschinski. 
+The following classes have been written from scratch for the individual-based-model:  
+Traits  
+SoilRequirements  
+Soil  
+Seed Pool  
+Seed Biology  
+ResourceAlloc  
+PlantShape  
+PlantResource  
+PlantGrowth  
+LifeHistory  
+Individual  
+HabSuit  
+Community  
+Illumination  
+
+The following classes are imported from PlantModel and have been altered:  
+none  
+
+The following classes are imported from PlantModel and are used without alteration:  
+none  
+
+The following classes are imported from PlantModel but are not used (they will eventually be deleted or used with or without alteration):  
+rng  
+PropPool  
+plants  
+PlantModel  
+PFGDisturbance  
+PfgDefs  
+PFG  
+main  
+GSP_PLANTS  
+FuncGroup  
+FGUtils  
+dist  
+Data_PLANTS  
+cohort  
+Cell  
+Of these classes, the following are used with minor/no alteration from Fate: PropPool , FGUtils, FuncGroup  
+The following were written from scratch for the Ecolopes Plant Model: rng, plants, PFGDisturbance, Data_Plants, GSP_Plants, main, PFGDefs  
 
 # 0 Preface
 
@@ -45,51 +85,41 @@ The plant model aims to predict the presence and abundance of plant individuals 
 ## Spatial and temporal resolution  
 
 FATE did not constrain spatial extent, temporal extent, or spatial resolution in any way, but was designed as a landscape scale model with annual time scale.
-
-*The Plant Model was originally built for use in urban environments, and it simulates community dynamics over the typical life time of a building envelope. We assume that the simulation time ranges from 10 to 200 years, the spatial extent is in the order of 100 x 100 x 10 m, and the resolution are voxel cells of 1 m3.*
-| Dimension | Value range |
-| ---------- | ----------- |
-| Spatial extent | *~100 x 100 m* |
-| Temporal extent | *~25-100 years* | 
-| Spatial resolution | *1 m x 1 m* |
-| Temporal resolution | 1 year |
-
->>>
-The model simulates 1x1x1 m voxels in a 3D landscape.  Not all cells need to be present (e.g. building interior, air between buildings), and undercuts or balconies can also be modelled. The maximum extent in x-, y-and z- direction is user-defined. Each voxel is a cube in which a plant community can thrive. The voxel itself is stratified into 4 layers. Plants differ in maximum sizes and growth patterns, but will generally grow thorugh those four layers. Any 3D dynamics (competition for light) are expected to happen within the 1 m3 voxel, among voxels of the same horizontal plane, or among all voxels but without considering space (random dispersal of plants), i.e. there is no interaction among stacked voxels.>
-
-Despite the expectations mentioned above, one can nevertheless use the model outside urban context, and one can change both the simulation duration and the spatial extent. Regarding the resolution, the model itself does not incorporate it into any calculations. If assuming a different resolution, one might have to choose different values in the Trait parameters and global parameters though. Also, thinking that all seeds disperse freely across the site becomes quite a stretch. Additionally, the plant model will be at some point parametrized for a square meter resolution, and the output is then based on these expectations. 
-If the model resolution is much smaller than the size of one plant, the results become very awkward as well, because the model does not provision for the case that plants grow out of their voxel cell.
->>>
-
-The model does not incorporate seasonality and does not include fine-scaled modelling of growth processes within a year, so a temporal resolution below 1 year is impossible.
+The ECOLOPES PLANT MODEL was originally built for use in urban environments, and it simulates community dynamics over the typical life time of a building envelope (annual time steps, 10-200 years, 1 m3 spatial resolution, 100x100x10 m spatial extent).
+This model does not constrain spatial extent, temporal extent or spatial resolution in any way, but it does not contain any functions to model seasonal change. 
 
 ## Entities
 | Entity | Description |
 | ---    | --- |
-| Environment | (urban) habitat containing grid cells, global simulation parameters |
-| Grid cells | a 1x1 m cell containing (one or more) plant individuals of different types (e.g. species), light, soil, and disturbances.|
+| Environment | (urban) habitat containing voxel cells, global simulation parameters |
+| voxel cell | a voxel cell containing a community of one or more plant individuals of different types (e.g. species); light; soil; and disturbances.|
 | Individual | composed of an (aboveground) biomass and a (belowground) resource. Biomass converts light into resource, resource is spent on growth (height and biomass) and reproduction. Indidividuals cast shade, and can be disturbed. Individuals of different types (e.g. species) differ in traits.
-| Traits | Each type of individual (e.g. species) contains a set of traits defining 1) Life history parameters, 2) resource allocation strategies, 3) seed biology, 4) disturbance response and 5) soil requirements.
+| Traits | Each type of individual (e.g. species) contains a set of traits defining 1) Life history parameters, 2) resource allocation strategies, 3) seed biology, 4) disturbance response, 5) soil requirements and 6) shape.
 
 ### Individuals, seeds and traits
 
 The principle agent is an individual plant. The plant has two life stages: a seed stage and the actual plant individual. 
 
 The individual has the following attributes:
-- it lives: it has a geometrical shape, which changes over time (growth), it may reproduce (seeds) and it can die (life span)
-- it uses light: it has a metabolically active (above-ground) biomass, which is used to collect light. The light is converted and stored as (below-ground) resource. The resource can be spent on biomass (for more resource collection), growth (competitive advantage), reproduction (seeds), and maintenance (upkeep costs of biomass). 
-- it needs a place to live: the soil determines whether a plant can grow at all (habitat is suitable). In addition, soil (or space) can be seen as a limiting resource. If multiple Individuals live on the same soil, they may reach the capacity, or deplete soil resources.
-- it can be disturbed by the environment: There is a multitude of possible environmental disturbances (e.g. "rabbit", "fire"), and they can affect each of the above properties, i.e. cause mortality, deplete resources or affec the soil.
+- it lives: it grows, reproduces and dies.
+- it is photoautotrophic: it converts light into a (carbohydrate) resource; it lives from these resources
+- it has a shape: it has a geometric representation, being able to e.g. cast a shade 
+- it needs a place to live: the soil determines whether a plant can grow at all (habitat is suitable). Soil 
+   (or space) is a limiting resource.
+- it interacts with the environment: Stressors can affect each of the above properties,
+   i.e. cause mortality, deplete resources or affect the soil.
+
 The seeds have the following attributes:
 - they live: they can die, or they can be converted into individuals
 - they can form seed banks: Seeds produced in autumn may germinate the next year, or they can stay dormant and be buried in the soil for many years. The mortality of dormant seeds is lower than the mortality of active seeds that attempt to germinate (germination rate)
 - they need space: the soil can accomodate a potentially large, but not infinite number of seeds. 
 
-The attributes are highly interdependent. For example, light is often a limiting resource and competing individuals in the same community can shade each other, so the spatial positioning of the biomass is important. The positioning of biomass depends on life history characteristics (height and shape). Similarly, disturbance may affect each other characteristic, and there is a strong connection between seeds and soil. The interdependences are currently kept to a minimum, but should be extended in the future. In particular:
+The attributes are highly interdependent. For example, light is often a limiting resource and competing individuals in the same community can shade each other, so the spatial positioning of the biomass is important. The interdependences are currently kept to a minimum, but should be extended in the future. In particular:
 - Age and other life-history parameters do not affect seed biology (except of course fecundity only starting at maturity) or resource allocation (except for height affectinh the location of biomass), and are neither affected by soil nor by resources or seed attributes.
 - Resources do not affect heigth growth or seed attributes, and are not affected by soil.
 - Soil is not conditioned in any way by the plants or seeds living in it, and it does not affect resource use, life history or ungerminated seeds
 - disturbance is not fully implemented, and will anyway only affect resources and biomass, but not lifespan (height or mortality), seeds or soil 
+- The plant shape is, however affected by height and biomass.
 
 There is no single optimal strategy for life history, resource allocation and other attributes, rather the optimal strategy depends on the environment and the other individuals in the community. Hence, different trait combinations (strategies) have evolved. In this model, each individual belongs to a certain strategy type with fixed traits, i.e. there is no intraspecific trait variation, no evolution and no phenotypic plasticity. The trait types may be envisioned as species, but can also be genera, distinct subpopulations, functional groups or functional types.
  According to the attributes given above, traits that define an individual fall into 5 categories: 
@@ -97,52 +127,35 @@ There is no single optimal strategy for life history, resource allocation and ot
  2) resource allocation strategies. Resource allocation determines the relative investment into seeds and biomass gain (e.g. light conversion efficiency, fecundity).
  3) soil requirements. Plants can only grow on certain types of soil, and the soil needs to meet some minimum requirements (minimum depth).
  4) disturbance response. Disturbance response defines which types of disturbance ("rabbit", "fire") affect the plant, and how strongly.
- 5) seed biology. The seed biology determines the mortality of seeds, dormancy attributes, and germination rates.
+ 5) seed biology. The seed biology determines the mortality of seeds, dormancy attributes, and germination rates.  
+
+ In addition, the plant has a certain shape; the shape determines the amount of biomass at a specific height. 
+ Shape does not change over time (a rectangular plant cannot become a lollipop tree), but its extent does (height, width)
 
 There are a few implementation-specific notes affecting the general logic of the model:
-- life history: Plant shape is simplified to a rectangular shape. 
+- Plant shape is simplified to a rectangular shape. 
 - Soil: soil has a capacity to simulate competition for space, but no other attributes that may be depleted. Hence, plants of different types compete for the same singular resource.
 - disturbance: limited to depleting either the plant's biomass or its resources.  
 
 
-[to move:]
-#### life history
-Plant shape is simplified to a rectangular shape, and biomass is homogenously distributed from 0 to height. Annual height growth affects the rectangle's height, and annual investment in biomass (resource-dependent) affects its width. A wider rectangle (more biomass per m height) consumes more light.
-For now, the plant's growth in height is resource-independent and uses a logistic growth function, with the inflection point being the age of maturity (when plants invest into seeds, their growth decelerates); the slope is arbitrarily set to 1.0.
+### Voxel Cell
+A voxel contains a soil, a plant community, and light.  
+Soil is a shared resource, used by the Individuals (see above). It has a limited capacity to host plant individuals (individuals may differ in the space they occupy), a depth, and an identity. Depth is a fixed attribute, assigned at initialization of the simulation, while soil identity (soil class) is initially assigned but may change over the simulation.  
+For the purpose of light calculations, the voxel can be conceptualized as a stratified cuboid. The dimensions and number of strata, as well as the abiotic shade provided in each stratum (e.g. by buildings, cliffs) are fixed at model initialization. Light beams that hit the community at an angle of 90 degrees first hit the uppermost strata and plants therein. The light is then distributed to all plant individuals living in it, according to the surface area they cover. Any light that is not absorbed by the plants in the uppermost strata is passed on to the next strata, and so on. If there is abiotic shading, the light entering each stratum is reduced by a percentage. 
+The logic of light calculation follows RFate and the ECOLOPES PLANT MODEL, but with some improvements:
+- like in ECOLOPES (but not RFate) the built environment reduces available light
+- light is an integer and not a factor, this allows converting watt/m2 into resources in joule (at least in principle; parametrization is required)
+- plants on the same stratum do compete for light; 
+- plants still do shade themselves, but as the upper and lower  parts share resources, they do not kill themselves. 
 
-#### Resources
-In this model there is only a single form of biomass, but woody plants contain both structural (dead) and metabolically active biomass. A slower height growth and a lower allocation to (metabolically active) biomass gain, or a low light conversion rate, can be used to simulate woody plants. In a pure herbal plant, on the other hand, the conversion rate and the height growth are faster.
- ##### disturbance
-There are at least three different ways to disturb a plant: 
-    1) an insect may consume leaves or directly tap into the resources (aphids). This does not really affect the standing biomass, plant height, 
-       or the ability to shade competitors; but it reduces the resource pool and possibly the growth ability in the next year.
-    2) Pruning may remove standing biomass, which affects the ability to shade competitors in this year, and the biomass will take a while to grow back; 
-       the resources are not directly affected, however. Height is also unaffected.
-    3) a large browsing mammal removes enough leaves to affect shading, but the plant may grow back in the course of the same year. This does not affect
-       the standing biomass of next year (or height), but temporarily affect shading. If the lost biomass is recovered in the same year, 
-       it imposes a cost to resources.
-Caesses 1 and 2 are implemented, but case 3 is not yet implemented. It may require additional trait data. In theory one could also reduce a plant's height, not only the biomass. This is also not implemented.
+The plant community can (still) outgrow the voxel cell. Plant biomass that spills into neighbouring voxels is considered lost (does not provide shade, does not collect light)
+In contrast to the ECOLOPES plant model, light no longer can pass through neighbouring voxel cells (see issue #8).
+For the correct setting of number of strata, see issue #10.
+Disturbance to add
 
-
-
-### Environment: microenvironment and management plans , grid cells
->>>
-The topographic features of the environment are very important in a rugged urban environment. We argue that topography affects the community in two fundamentally different ways: 
-
-1. by limiting dispersal, and 
-2. by altering the microenvironment. 
-
-Microenvironmental changes are captured via shading and soil depth variables, which map the effect of a 3D building geometry to individual cells (Shading in cell A is affected by the high rise building covering cells B and C). The ecological model uses these cell-wise representations, making the ecological communities respond to 3D topography indirectly. Future model developments will include more direct 3D effects, such as non-horizontal surfaces, or natural daylighting. They will also allow for further microenvironmental influences; the dispersal aspect will also be solved in a future version of the model.   
-
-Another feature of urban environments is the strong influence of human use and human management plans. Management plans can, for example, target specific plants) and remove their biomass (e.g., tree pruning, mowing), or kill individuals. Such management masks can in principle also be used to simulate human disturbance (e.g. trampling disturbing herbs), and they can even be used to include further effects of the environment that are currently not part of the model (e.g. water runoffs causing waterlogging, which affects different types differently).
-
->>>
+### Environment: microenvironment and management plans
 
 # 3. Process overview and scheduling
-
-![Process overview and schduling](<doc/process_overview.png>)  
-
-**outdated, will be updated with proper figure later.**
 
 # 4. Design concepts
 
@@ -163,7 +176,7 @@ The key outcome of the simulation is the spatiotemporal change of community patt
 
 ## Adaptation 
 
-The plant model does not contain any direct objective-seeking mechanisms, i.e. the agents do not possess the ability to choose among two or more alternative behaviors e.g. via learning or condition-dependent rules (phenotypic plasticity). Two grid cells with initially equal individuals of each plant type will always develop exactly the same community, if no new seeds land via dispersal (*Dispersal is also entirely random and uninformed*). The rules by which agents respond to the environment (the "genotypes" of the plant types) are instead provided by the user (trait Definitions).
+The plant model does not contain any direct objective-seeking mechanisms, i.e. the agents do not possess the ability to choose among two or more alternative behaviors e.g. via learning or condition-dependent rules (phenotypic plasticity). The rules by which agents respond to the environment (the "genotypes" of the plant types) are instead provided by the user (trait definitions).
 
 ## Objectives
 
@@ -182,12 +195,14 @@ Individual plants interact with one another, directly or indirectly, especially 
 In FATE, dispersal is random within "dispersal discs" that indicate how far seeds can travel. The radius of the dispersal discs (short-and long-distance dispersal) was an input parameter, and several distributions (neg exponential, uniform) can be used for the random dispersal.
 
 >>>
-The plant model contains two sources of stochasticity:  
+The ECOLOPES PLANT MODEL contains two sources of stochasticity:  
 
 At the end of the time step, all plant seeds are pooled and randomly redistributed over the simulation environment, together with the seeds that enter from the region (seed rain). This simplified form of dispersal was chosen over the pre-existing disc-based dispersal from FATE-HD, because the spatial extent of the site is expected to be smaller than the usual dispersal kernel of all PFGs. 
 
 The initialization seeds a random number of plants (aged 0-1 years) to each cell where the habitat is generally suitable. The number of plants per age group follows a random uniform distribution between 0 and 100. 
 >>>
+
+stochasticity of this model to write.
 
 # 5. Input and Output Data
 
@@ -195,95 +210,71 @@ Rewrite
 
 # 6. Initialization
 
->>>
-Upon startup, the model reads all inputs, and then reserves memory and creates all PFGs in all grid cells. 
-First, the model reads the input file, which contains the file name of the global simulation parameters(“GlobSimulFile”), and the file name of the data file (“DATA”). The model then reads and checks the information in those two files as well. Using the information in the global simulation parameters and in the DATA file, the model checks the data content, and builds and initializes the grid cells and their Functional Groups. 
-
-Building the Functional groups includes seeding a random number of plants (aged 0-1 years) to each cell where the habitat is generally suitable. The number of plants per age group follows a random uniform distribution between 0 and 100.
-
-During initialization, the plant model runs 5 iterations. Running the model for several iterations ensures a buildup of a reasonable plant community, as the grid cells are initially seeded with only 0-1 year old plant material.
->>>
-
 # 7. Submodels
 
-
-*The modelling approach contains three main processes: habitat suitability, succession, and dispersal. (note that this description of processes contradicts FATE, which sees disturbance and light competition as separate modules.)*
+## Plant growth
+This submodel lets the plant age, mature and grow in height. The life history traits defining the plant's growth are:  
+	- int MatAge: Age at which the plant reaches maturity and can start reproducing.   
+	- int LifeSpan; Maximum age that a plant can reach, if not dying of other causes. The age is entirely deterministic (no random deviations in life span).  
+	- int HMax; Maxumum height a plant can reach.  
+The plant's age is incremented in every growth cycle; if it exceeds the life span, it dies.  
+The growth in height is resource-independent and uses a logistic growth function, with the inflection point being the age of maturity (when plants invest into seeds, their growth decelerates), the slope is arbitrarily set to 1.0. The height defines only the potential positioning of biomass, but does not imply a certain biomass or shape. Biomass growth is on purpose entirely height-agnostic and has its own submodel (Resource use).
 
 ## Habitat suitability 
 
-The habitat suitability module checks for each PFG in which cells it can theoretically occur (habitat filtering), based on a static user input.
+The habitat suitability submodel checks for each plant type in which cells it can theoretically occur (habitat filtering).
+The soil requirements defining the habitat suitability are:  
+- int minDepth; minimum depth that the soil must have to be considered suitable  
+- std::map<std::string, bool> acceptedSoils; list of soils on which this plant can grow  
+- int size determines how much space the individual takes (there is only a maximum number of "seats" available in each soil)
+While seeds may be deposited on any soil, and also germinate, they only are recruited (converted into Individuals) if the soil is at least as deep as minDepth, and one of the acceptedSoils of the plant.
+Already established plants will not be destroyed if a habitat becomes unsuitable. This may, however, affect efficient resource use or storage (in future versions) 
 
->>>
-The habitat suitability module now uses a soil class that can be provided as a static input by the user or as a dynamically changing property provided by a different model. The soil class of each cell is compared with the soil class requirements of each PFG (each PFG can potentially live on multiple soil classes), and it also checks whether the soil depth is deeper than the minimum requirement of each PFG. The outcome of this comparison indicates the suitability of the cell for each PFG.
->>>
+## Disturbance  
 
-The suitability of a habitat impacts whether seeds can germinate. Already established plants will not be destroyed if a habitat becomes unsuitable.  
+The disturbance model allows to provide a list of disturbances. The disturbances can destroy biomass, deplete the resource pool, or remove seeds.
+Disturbance is not yet implemented.
 
-## Succession (*to be renamed!*)
+## Shape
+The plant's shape describes the location of biomass, which affects the light that can be collected and the shade the plant casts. 
+The most important function of the shape submodel is the calculation of the plant surface area, either of the total plant, or (more useful) of certain height section. The surface area determines how much light a plant can intercept, and is thus used to calculate the light household of a voxel cell.
+Currently all plants have a rectangular shape, and the surface area is homogenous along all the plant's height. 
+The traits the shape submodel uses are: 
+-    float density; the density of the plant describes how compact the biomass is distributed. Like Specific Leaf Area (SLA), it is expressed in m2/kg. However, in contrast to SLA, the density in this model describes the **area per fresh aboveground biomass**. Density in this model can be calculated from SLA, water content and woodiness (possibly just SLA / 1000 or a similar universal scaling factor)  
+-    Height is determined by the Plant Growth model, and biomass is calculated by the Resource model.  
+The calculation of specific leaf area is simply: (height section/total height) * biomass/density  
+Example: A 10 m high tree has a biomass of 1000 kg, so there are 200 kg of plant material in the section between 4 and 6 m. With a density of 0.1m2/kg, the 200 kg cover a surface area of 20 m2.  
+Note: density is the inverse of SLA. The variable will eveentually be renamed to specificArea, and the calculations will be inverted. For now, the variable put into the model should be "density": {scaling factor * 1/SLA} 
 
-Succession describes the growth processes that happen within a year inside a single grid cell. It consists (in this order) of disturbance, death due to insufficient light, aging, calculation of current light resources, germination and recruitment, and reproduction. 
+## Resource use
+The resource submodel takes care of collecting light, converting it into resources, and spending resources on growth and reproduction.
+The resource allocation traits that determine Resource use are:
+ -   float conversionEfficiency; The photosynthetic efficiency of the plant. Typical values are in the order of 0.005 (https://en.wikipedia.org/wiki/Photosynthetic_efficiency;
+ -   float maintenanceCosts;
+ -   float seedAllocation; proportion of the resources that is available for allocation into biomass in each growth cycle
+ -   float biomassAllocation; proportion of the resources that is available for allocation into biomass in each growth cycle
+ -   int maxBiomass;  Maximum biomass that can be reached
 
-The processes largely describe processes affecting individuals, yet the model's smallest unit are Functional Groups, i.e. the processes work on a demographic level.
+The plant converts light into a resource. One light unit (in watt/m2) is converted into conversionEfficency resource units (e.g. carbohydrates in g). Typically, the photosynthetic efficiency is in the order of 5% but this includes direct above-and belowground biomass gain; storing as starch incurs further cost, so a reasonable estimate is approx 1% or less.  
+The plant needs to pay an annual maintenance cost of maintenanceCosts * biomass  
+The plant can allocate the fraction seedAllocation of the resources to reproduction and up to biomassAllocation to biomass. Seed production is only resource-limited  
+Biomass growth follows a sqrt function, i.e. the growth rate decelerates as the biomass approaches maxBiomass; this limits biomass even if enough resources are available. If less resources are available, the growth is limited accordingly; The amount of available resources is not the whole full resource pool, but only resource pool * biomassAllocation.  
+If the plant runs out of resources, it dies.
 
-*The implementation of succession was revised, but the general calculations have not changed (yet). See figure "Process overview and scheduling, innermost box" for sequence of events. Long-term Seed dormancy is disabled, however.*
+## Seed Pool
+The seed pool submodel simulates the life of seeds before they are recruited and converted into individuals. 
+The seed biology definings seeds are:  
+-    bool dormancy;   
+-    float germinationSuccess;  
+-    float mortalityDormant;  
+-    float dormancyBreakRate;  
 
-### Disturbance  
-
-The disturbance model allows to provide a map (for one disturbance) or several maps (several disturbances) for each PFG and each stage (juvenile, mature, senescent) that can either cause a given % of mortality or a given % of seed production. The lost material may, however ,grow back in the following years, depending on the type of disturbance. 
-
->>>
-We make two kinds of disturbance possible: 
-1. the user may provide a constant disturbance map that works the same way as in the original version, and 
-2. the user may provide a new map every time step. The dynamic maps are not read from files, but passed on from another model as c++-internal objects. 
-
-In the PFG definitions one can define the effect each kind of disturbance has on each PFG. The constant maps represent management decisions such as annual tree pruning, while the dynamic maps are, for example, annually changing animal biomasses. Currently only one of the two disturbances can be used at a time. 
->>>
-
-### Death due to insufficient light
-
-![Light competition](<doc/light_competition.png>)
-
-This function works on the light conditions of the preceding year. Light is expressed as a vector of factors, classifying the light in each stratum as low, intermediate or high. It is tested for each PFG in each growth stage (seed, germinant, juveniles, matures)  whether the light tolerance matches the current light conditions (the 12 light tolerance parameters, I.e., low, med and high for each growth stage, are provided in the PFG definitions). Plant material that does not tolerate the current light conditions dies.
-
-### Aging
-
-The description of the demography of the functional group is updated, according to the LifeSpan and maturity attributes of the PFG. Material that exceeds the life span of a PFG is removed. 
-
-
-### calculation of current light resources
-
-![Light calculation](<doc/light_calculation.png>)
-
-Conceptually, the light is calculated for the uppermost stratum according to the biomass of the PFGs living in it. The light that is not consumed is passed on to the next stratum, being reduced in the same fashion until it reaches zero or arrives at ground level (stratum 0). Consumption of light depends on a shading factor *(not to be confused with the input “shading”)* that represents leaf and growth form, maturity of the plant, and on the biomass that the plant reaches (the maximum biomass that a plant can reach differs between small, medium and large plants, and the abundance class is another PFG attribute). The amount of light in each stratum is converted into a factor (low, medium and high light conditions). 
-
-Technically, a ray of shading passes through the cell. It collects any (leaf-form and maturity- corrected) plant abundance it encounters. In each level the shading ray is compared against a light threshold parameter, and if smaller than the "low" or "medium" threshold, the light resource declines to the according level
-
->>>
-In contrast to the original Rfate/Fate HD implementation, the threshold against which the shading ray is compared is corrected by a shading index (a proportion ranging from 0 = full sun to 1 = full shade) in our model. This ensures that shaded grid cells fall earlier to "medium" or "low" light conditions, though the uppermost stratum can never be converted into lower light levels (see issue #20). Furthermore, light may fall at an angle below 90°. If this is the case, if will partially pass through the neighbouring cell and is accordingly reduced by the neighbour’s plant abundance. The calculation is as following:
-
-The modelled grid cell is actually a box (voxel) that is stratified. Light will enter into stratum i, get depleted by the plant biomass, and the remaining light enters stratum i-1 etc. (Figure, left). When light enters at an angle (figure, right), a proportion bypasses the upper layer. Knowing the height of the stratum (a) and the angle at which light enters(ß), we can calculate the length at which light hits the ground as x = a/tan(ß) (x is actually an area, not a line, but if light enters exactly from south/east/etc., the calculation does not change). With a grid cell size of 1m, the area not covered by light is y= 1-x. The light falling on the ground is thus y * (light from above) + x * (light from above in neighbouring cell). We can repeat this calculation for every layer. The angle ß is a simulation parameter that can be changed, but the direction of incoming light is fixed at  x  = - inf.*
->>>
-
-### germination and recruitment
-
-![](<doc/germ_and_recruit.png>)
-
-To do
-
-### reproduction
-
-![](<doc/reproduciton.png>)
-
-To do
-
+The seed pool contains up to c seeds of a plant type (species, PFG etc.); the cell and its soil are responsible for determining c.  
+Seeds may be dormant or active; if dormant, they have a mortality of mortalityDormant in each growth cycle, if active they suffer germinatSuccess mortality upon attempting to turn into an Individual. Active seeds cannot turn into dormant seeds, but dormant seeds are converted at a rate of dormancyBreakRate into active seeds in each growth cycle.  
+Seeds may be disturbed (affecting only acitve or in equal proportions active and dormant seeds), and new seeds (active or dormant) may be added to the seed pool.  
 
 ## Dispersal  
-
-In Fate-HD the dispersal model was based on three parameters: d50 that is the maximum distance within which 50% of the seeds are dispersed, d99 is the maximum distance within which 99% of the seeds are found in total, and ldd is the maximum long-distance dispersal. Within each dispersal disc, the seeds could be distributed uniformly or decreasing exponentially with distance from the plant. 
-
->>>
-Plant dispersal has been simplified in comparison to Fate: all seeds produced in a year are pooled, and then redistributed randomly across the site at the end of the year.
->>>
+to do
 
 
 # 8. Implementation
@@ -293,11 +284,8 @@ Plant dispersal has been simplified in comparison to Fate: all seeds produced in
 | --- | --- |
 | Operating system | Portable to any common OS |
 | Programming language | c++ 20 (or newer) |
-| Precursors | FATE-HD, RFate; some code (data containers, inputs) shared with joint ECOLOPES models |
+| Precursors | FATE-HD, RFate; ECOLOPES PLANT MODEL; some code (data containers, inputs) shared with joint ECOLOPES models |
 
-The *plant model* was developed as part of a joint ECOLOPES model(written by the same author(s)), and is usually meant to be used in that context. However, it is also able to be run on its own, or to be integrated into another program. The *joint ECOLOPES model* is usually meant to run as a grasshopper plugin- but it can be run on its own as well. In the latter case, the user is responsible for creating sensible input data. 
-
-Being developed as part of a joint model and partially derived and altered from FATE, the model contains code and concepts that are currently not required and better turned off (e.g. seed dormancy), and code which works but is clumsy, inefficient, or uses outdated programming paradigms. Special care is taken that the documentation is up to date, but some code comments or documentation sections may ocassionally be forgotten. 
 
 ## Compiling as library or executable
 
@@ -315,116 +303,11 @@ All dependencies are included in the /include folder (ECOLOPES joint model for d
 
 ## Implementation overview
 
-PlantModel consists of individual Cell objects (10,000 for a 100x100 site). Each cell contains abiotic informaion (soil class, shading), as well as a plant community that consists of multiple FuncGroups (one per PFG). The FuncGroups store the demographic information of the PFG in the cell. PlantModel is also linked to various inputs, consisting chiefly of 1) general simulation parameters (GSP), 2) constant user inputs (e.g. shading, soil depth), and 3) constant PFG definition (containing e.g. Life span). The input classes are inherited from a base class, which all submodels of the ECOLOPES ecological model share. 
-
-![UML](<doc/uml.png>)
-
-*UML diagram of plant model. Notation follows standard UML notation. "EcolopesLand" refers to a class of the joint ECOLOPES ecological model, which may #include the plant model as a library and run it. The use of "Cohorts" inside the FuncGroup class, the FuncGroup class itself, and the PropPool class stem from FATE-HD and will be changed in a future version.* 
-
-The plant model will undergo major changes, as the funcGroup and lower classes pose significant challenges for further development. See limitations and constraints section.
-
-![UML](<doc/uml_new.png>)
-
-*UML diagram of a revised model (snippet of Cell and lower levels only). FuncGroup and related classes will in a future version be replaced by a plant-individual-based model. Drafts of the new files can already be found in the folder src but are not being used yet.*
-
-## Warnings and limitations
-
-The model is not fully parametrized and not validated. Inputs are assumed to be coarse approximations or simplifcations, and the model accordingly only suggests relative differences among FGs. The model is not yet thoroughly tested and currently meant to be used only for academic purposes. 
-
-
-## Problems, bugs, inconsistencies
-
-Various of the issues listed here will be solvred with  a new individual-based model (issue #29)
-
-* Shading issues* (issues #20, #21, #23)
-
-The original plant model was built for a landscape-scale. The community of each cell was a stand of trees etc, containing multiple individuals that may shade each other. By reducing the spatial extent to a square/cube meter, we now may have only a single indivdidual of a PFG present. The highest stratum of the PFG shades the lower parts and causes them to die, which is no longer realistic when we talk about a single plant. 
-Additionally, plants that grow within the same stratum do not compete with each other for light, only plants reaching a higher stratum will compete with others.
-
-*Other conceptual issues* (issues #22)
-
-When the soil changes, it does not affect growing or mature plants, it only affects the seed recruitment process. One could also let it affect the fecundity of the plants. In the original RFate implementation this was possibly handled differently. If a habitat turned unsuitable, the FG would be treated like an immature, so the fecundity would be set to zero. It seems as if it was also treated in the light calculation like an immature (small) plant, yet it still aged normally. This might be a conceptional oversight of the original implementation.     
-
-
-
-
-*cohorts and legions* (issue #25)
-
-The plant model saves data as “cohort” objects. If a plant produces 20 offspring each year over 10 years, the data could be represented in a vector: 
-
-[20 
-
-20 
-
-20 
-
-20 
-
-…] 
-
-The plant model instead chooses to summarize the information to (0, 10, 20), I.e., (minAge, maxAge, amount). This way of storing information might save a bit of memory, but requires rather complex operations whenever a cohort passes over an age border. For example, a tree may reach its mature size at age 10. In year 9, we have a cohort of (0,9,20); in year 10 we need to age the cohort and get (1,10,20). Then we create an offspring cohort (0,0,20) and join the cohorts (0,10,20). If we want to apply a disturbance to immature plants only, we split at age 10 into (0,9,20) and (10,10,20). In year 11 we repeat all of those steps but add the split cohort (10,10,10) to the new (11,11,10) cohort. All the time we are dealing with a vector of cohorts (size 1-2 in this example). Resizing a vector or inserting something into the middle of a vector is costly, and maintaining/debugging this code was difficult. I doubt that the potential to save some memory warrants such computationally complex operations (increases processing time). 
-
-The way cohorts are split and put together is also suboptimal in my view. A for loop/while loop is used to loop over the cohorts, and whenever a cohort is split, the iterator needs to be adjusted. This results in a recursive-like function. There is an unwritten rule that one should not mess with loop iterators, although it is technically possible it can easily result in logical errors that are hard to debug.  
-
-The model code would in principle also allow for overlapping cohorts; for example, one could have 50 individuals each from age 0-10; 20 individuals aged 3-5, and 40 individuals aged 4-7. This notation is equivalent to 50 individuals aged 0-2; 70 individuals aged 3; 110 individuals aged 4-5; 90 individuals aged 5-7; and 50 individuals aged 7-10. I do not know whether this freedom to choose different cohorts for the same demography was intended, and whether it affects the calculations (it does seem to affect the age() function though). To make the code more maintainable (and enhance performance), I disassemble the cohort at each time step ((0,0,10), (1,1,10) etc) and put it back at the end, but I would vote for getting rid of this system entirely at some point. The disassembly has the side effect of removing cohort overlap. 
-
-
-*PropPool* (issue #26)
-
-The seed propagule pool is not well described in either the original paper or the user manual, so it is a bit difficult to infer the concepts and ideas behind it. Essentially it is a functionality that has long been abandoned. As I understand it, the amount of seeds produced every year depends on the abundance and fecundity of a PFG. Only a certain proportion of the seeds can germinate every year, so naturally a seed pool would build up in the soil (there is no carrying capacity or density dependence in the seed pool). This is counteracted by a constant seed mortality rate which diminishes the seed pool over time. However, if the user chooses a long “shelf life” of the seeds, one would still build up a considerable seed bank, and because recruitment is proportional to the seed bank, a considerable rejuvenation potential (potentially a conceptual oversight?).   
-
-The implementation of the PropPool class is a bit awkward to use and raised a few questions. The class consists of a seed set (“m_size”) that is meant to decline with a constant mortality rate, and this mortality rate is given by  
-
-size (n+1) = size (n) - size(n) * (1 / (pl + 1)),  
-
-where pl is is the pool life span. The decline happens whenever the member function “agepool1” is called. For instance, with a pool life span of 1 the seed set halves every time step, with a life span of 10 years it decreases by 10% per year. This means that the seeds diminish exponentially.  
-
-The pool life span is not a property of the class, but a PFG attribute, passed on as function argument whenever the pool ages. This means that the responsibility for the pool life span has been shifted away from the object and to the caller (who may e.g., decrease the seed pool by 50% in year 1, but by 10 % in year two), which is suboptimal. 
-
-The class also contains a private “DTime” variable, which is never used, and the declining of the seed set can be disabled (bool m_declining) which does not seem to make much sense. The class contains a public “emptyPool()” function which erases all content but does not properly delete the object.  
-
-Lastly, the class contains a “putseedsinPool” function, which replaces the seed set by a new one, if the new one is larger than the older (it does not add the seeds but replaces them). If the new seed set is smaller than the old one, the function does nothing. I do not understand why this approach was chosen. The age of the seeds is not tracked (or rather not used?), and mortality is independent of seed age anyway (it depends on life span, not age), so one could simply have added the seeds. I think this might be a bug. This bug seems to counteract the lack of a carrying capacity, as the seed pool is emptied and refilled (but only to a maximum value) every time step. 
-
-I suggest rewriting and making the mortality rate a const argument that cannot be changed after instantiating the object. The constructor should implement the linear equation based on pool life span, so this function is only called once per seed pool object. I would remove the m_declining variable, and also the emptyPool() function. The class FuncGroup should instead delete the pool and replace it by a different one if required. One could alternatively create a “addSeedsToPool” function. 
-
-It also seems that the function FuncGroup::agepool1(), which indirects to PropPool::agepool1() is not being used. I think it should be erased.  
-
-That said, seeds are somehow stored, and if not germinating they will age and die. The proportion killed every year is a bit difficult to figure out, but it works. Only the dormant seeds shouldn’t be touched. 
-
-*Enums and Fracts* (issue #27)
-
-The plant model contains various unscoped enumerations (enums), such as Abund (can contain the values “low”, “medium” or “high”) or LifeStage(“Propagule”, “Germinant”, “Immature”, “Mature”). These enums are internally stored as integers and can be implicitly converted (can be verified by hovering over an enum in vscode).  Standard enums are neither type safe nor strongly scoped, so  “Abund::low == LifeStage::Propagule” would be true but not sensible (or even “Mature – Immature == medium”). It is better to use scoped enumerations (enum class). 
-
-The plant model further uses enums to circumvent calculations based on floats. In general, calculations based on integers used to be faster than calculations on floats (“Fract” enums).  Because Enums are internally stored as integers, the float essentially is rounded to an integer. These enums have 10 levels (10, 20... 100) and their use reduces the precision but may in principle increase performance. I see two problems with the approach: 1) there is no performance gain between an enum of size 10 and an enum of size 100, so one could round to the nearest integer instead of the nearest decade; 2) CPUs are no longer limited by processing time but mostly by loading the memory. If speed is an issue, one may simply convert from double to single precision, which is still several orders more accurate than the fract conversion.  
-
-Multiple functions are required to convert between doubles and Fract’s, bloating the code and requiring additional function calls. I suggest removing the fracts in the future. 
-
-
-*Vector-map conversion* (issue #28)
-
-The model used to run on std::vectors. Most parts have been changed to std::maps to reduce the possibility of confusing inputs/assigning attributes to the wrong plant functional group. In light of the intended use(long-term development and maintenance), we opted for the slightly slower but safer std::maps approach. Some remnants of the old vector system still exists, and whenever we do a conversion there is a risk of breaking something (e.g. suddenly having to call a pfg “pfg 14” instead of its actual name). Proper tests with multiple PFGs are required (tedious), or, even better, the remaining vectors of the SuFate class need to be cleaned up. 
-
-
-*Major bugs* 
-- Light at the highest stratum is never reduced, even if the cell is 100% shaded. This causes unrealistic results in dark corners of a site.   
-
-
 ## Ideas for the future 
 
-*Light calculation and 3D in the plant model* (issue #17, #15, #29, #31)
+*Light calculation and 3D in the plant model* 
 
-The plant model is, strictly speaking, only correct when all cells are horizontal and light enters at a 90° angle. This is unrealistic, in reality light comes in at a variety of angles (changing over the course of the day), and the distribution of angles is latitude dependent. When the cell is tilted, the distribution of angles is strongly affected by the aspect (north/east/south/west) of the cell. When light enters at an angle, it does not pass through all strata of a cell, but partly through strata of a neighbouring cell. A first version of light passing through the immediate neighbour is implemented, but limited to a single light angle rather than a distribution, and limited to horizontal and immediately adjacent cells. 
+The plant model is, strictly speaking, only correct when all cells are horizontal and light enters at a 90° angle. This is unrealistic, in reality light comes in at a variety of angles (changing over the course of the day), and the distribution of angles is latitude dependent. When the cell is tilted, the distribution of angles is strongly affected by the aspect (north/east/south/west) of the cell. When light enters at an angle, it does not pass through all strata of a cell, but partly through strata of a neighbouring cell.
+A solution to above problem is raytracing, I.e. following the sun rays and checking with which cells they collide. 
 
-The above already allows for better 3D effects, causing e.g. vegetation on a building edge to receive more light than vegetation in the center. There are a few disadvantages though: 1) if light comes in at a sufficiently steep angle, it should pass through multiple cells. This is ignored in above version; 2) with this method we can only model light coming from the eastern/southern etc. Neighbour, but not light coming in from e.g. SSW. This is important when trying to simulate a natural distribution of light angles; 3) we would want to deal with sloped angles or even facades. The technique does not work very well in these cases (see fig.  below). Tilting voxel cells will cause them to overlap and make calculations impossible. We can, however, assume that plants of the lowest layer grow perpendicular to the ground (even if tilted), but larger plants will grow towards the sky (left figure). Tilting the lowest level will correctly change the angle of the sun and change the area covered by neighbouring light (compare ß1 and ß2 in left figure), but the neighbouring light may partially pass through the neighbour’s stratum of the same level (light blue). On a vertical cell (right figure) the light shouldn’t go at all through the neighbour’s layer (blue arrow shows what the model thinks) but through the upper layer of the same cell (dark green).  
-**figure missing**
-A solution to above problem is raytracing, I.e. following the sun rays and checking with which cells they collide. This technique is employed in any modern 3D video game (“shaders/shading”) but potentially would slow down the model considerably. Possibly code from the Unreal Engine or similar c++-based game engines/libraries could be used, but I do not know how feasible it is to employ. 
-
-The addition of shading through neighbours made it necessary to implement a voxel cell height variable. There are no checks yet that two stacked voxels do not overlap (issue #31)
-
-*Solving the shading issues*  (issue #29)
-
-To have proper competition of plants within a stratum, I think we need a new layer in the model, simulating individual plants (that extent over all strata). It doesn’t matter which parts of the plant get exposed to light, as long as the summed light amount across all layers is sufficient for the plant to survive. The plant may also have a certain shape, e.g. a large crown etc. Disturbance may affect a certain stratum, but we could give the plant the opportunity to redistribute its mass at the end of the year (using energy reserves from lower strata if the higher strata got attacked).  
-ndividual-based plant model 
-
-Most of the conceptual and technical issues highlighted above (competition with self, cohorts) relate to the lack of plant individuals in the model. A new model version could contain a plant community that is made up of individuals; the individual’s biomasses (distributed across strata) convert collected light into a resource and store it in a pool (root system); the resource is used for maintenance as well as to create new biomass and new seeds. Thus, shading on the lower parts of the plant  are compensated by the higher parts of the plant. Another major change in the new model is replacing any factors by integers. In the new model light , measured in lux, is converted into biomass, measured in kg. This allows correctly parametrizing the model with real-world data.  
->>>
+*addition of other shapes* 

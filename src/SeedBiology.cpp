@@ -24,7 +24,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM);
  // --------------------------------------------------------------------------
 
 #include "SeedBiology.h"

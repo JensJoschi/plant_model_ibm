@@ -23,7 +23,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 // --------------------------------------------------------------------------
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM); 
  // --------------------------------------------------------------------------
 
 
@@ -44,34 +44,32 @@ If not, see <https://www.gnu.org/licenses/>. */
 /**
  * \brief Resource allocation information
  * \details
- * This class holds information about the allocation of resources to growth and reproduction. Currently these are just some fixed attributes, 
- *  but ultimately the class may consist of the following information:
- * - allocation to growth vs to seeds vs to storage (this replaces the potFecundity variable in PFG attributes)
- * - size of storage system (roots)
- * - maintenance costs of existing biomass 
- * - minimal yearly investment(even if no resource is available, plants need to keep growing)
- * - max yearly investment (if light is abundant, plants can still not grow infinitely fast)
- * - light conversion efficiency (how much light is needed to produce 1 biomass unit)
- 
- * Further notes: 
- *  max yearly investment and allocation together determine growth rate;
- *  replaces immSize and potFecundity in PFG attributes;
- *  immature plants shouldalways allocate 100% to growth.
- *  reading of model papers required to figure out exact variables and allometric relationships with other PFG attributes
+ * This class holds information about the allocation of resources to growth and reproduction.
+ * \note
+ * This class is on purpose inaccessible except by one specialized class (SeedPool). Makes it easier to maintain the code and to add new features.
  */
 class ResourceAlloc{
     friend class PlantResource;
 
     public: 
+    /**
+     * \brief Construct a new Resource Alloc object
+     * \details The json file must contain the following entries:
+     * - "conversionEfficiency": The photosynthetic efficiency of the plant.
+     * - "maintenanceCosts": The maintenance costs of the plant.
+     * - "seedAllocation": The allocation of resources to seed production.
+     * - "biomassAllocation": The allocation of resources to biomass production.
+     * - "maxBiomass": The maximum biomass that can be reached.
+     * \param traits 
+     */
     ResourceAlloc(const nlohmann::json& traits);
 
     private:
-    float conversionEfficiency;
+    float conversionEfficiency;  /*The photosynthetic efficiency of the plant. Typical values are in the order of 0.005 (https://en.wikipedia.org/wiki/Photosynthetic_efficiency;*/
     float maintenanceCosts;
     float seedAllocation;
     float biomassAllocation;
-    float maxInvestment;
-    float shadeFactor;               /*!< how much shade does one biomass unit produce */
+    int maxBiomass;                  /*!< Maximum biomass that can be reached */
     void check();
 };
 #endif //RESOURCEALLOC_H

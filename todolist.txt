@@ -1,0 +1,12 @@
+update miro board,  position of Traits in code. Community doesn't require a Traits*
+
+add function to output current community as json, run model in one cell and test
+
+build community with proper json: {soil: {...}, voxel: {...}, startPop: {...}}
+
+add Tests of Community: 
+- build community with one or more starting populations and varying starting conditions
+- test rainseeds, age etc with nice starting population
+
+voxel volume and plant surface area: how many strata should be modelled, how much total surface area does a cell support?
+

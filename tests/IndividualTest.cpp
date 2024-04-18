@@ -49,12 +49,13 @@ class IndividualTest : public ::testing::Test {
     nlohmann::json j = {
         {"minDepth", 10},
         {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1},
 
         {"conversionEfficiency", 1.0},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.01},
         {"biomassAllocation", 0.5},
-        {"maxInvestment", 0.05},
+        {"maxBiomass", 1000},
 
         {"Dormancy", false},
         {"GerminationSuccess", 0.1},
@@ -64,10 +65,12 @@ class IndividualTest : public ::testing::Test {
         {"MaturationTime", 10},
         {"LifeSpan", 20},
         {"MaxHeight", 8},
-        {"shadeFactor", 0.5}
+
+        {"density", 2.0}
+
     };
     traits = new Traits(j);
-    soil = std::make_shared<Soil>(3,10,"sand");
+    soil = std::make_shared<Soil>(4,10,"sand");
     }
 
   static void TearDownTestSuite() {
@@ -76,8 +79,7 @@ class IndividualTest : public ::testing::Test {
   }
 
   void SetUp() override { 
-    std::shared_ptr<Soil> soil_ptr(soil);
-    i = Individual::create(traits, soil_ptr);
+    i = Individual::create(traits, soil);
   }
 };
 
@@ -85,9 +87,11 @@ const Traits* IndividualTest::traits = nullptr;
 std::shared_ptr<Soil> IndividualTest::soil = nullptr;
 
 TEST_F(IndividualTest, builds){
+    EXPECT_FALSE (i == nullptr);
     EXPECT_TRUE(i->m_growth_ptr);
     EXPECT_TRUE(i->m_habSuit_ptr);
     EXPECT_TRUE(i->m_resource_ptr);
+    EXPECT_TRUE(i->m_shape_ptr);
     EXPECT_FALSE(i == nullptr);
     soil->m_name = "clay";
     std::unique_ptr<Individual> i2 = Individual::create(traits,soil);
@@ -95,28 +99,99 @@ TEST_F(IndividualTest, builds){
     soil->m_name = "sand";
 }
 
+TEST_F(IndividualTest, buildsWithJson){
+  nlohmann::json correctVariables = {
+      {"height", 3.2},
+      {"age", 4},
+      {"resources", 9999.0},
+      {"biomass", 200.0}};
+  nlohmann::json heightMissing = {
+      {"age", 4},
+      {"resources", 100.0},
+      {"biomass", 100.0}};
+  nlohmann::json ageMissing = {
+      {"height", 3.2},
+      {"resources", 100.0},
+      {"biomass", 100.0}};
+  nlohmann::json resourcesMissing = {
+      {"height", 3.2},
+      {"age", 4},
+      {"biomass", 100.0}};
+  nlohmann::json biomassMissing = {
+      {"height", 3.2},
+      {"age", 4},
+      {"resources", 100.0}};
+  nlohmann::json wrongType = {
+      {"height", "3.2"},
+      {"age", 4},
+      {"resources", 100.0},
+      {"biomass", 100.0}};
+  nlohmann::json negativeHeight = {
+      {"height", -3.2},
+      {"age", 4},
+      {"resources", 100.0},
+      {"biomass", 100.0}};
+  nlohmann::json negativeAge = {
+      {"height", 3.2},
+      {"age", -4},
+      {"resources", 100.0},
+      {"biomass", 100.0}};
+  nlohmann::json negativeResources = {
+      {"height", 3.2},
+      {"age", 4},
+      {"resources", -100.0},
+      {"biomass", 100.0}};
+  nlohmann::json negativeBiomass = {
+      {"height", 3.2},
+      {"age", 4},
+      {"resources", 100.0},
+      {"biomass", -100.0}};
+  nlohmann::json tooMuchBiomass = {
+      {"height", 3.2},
+      {"age", 4},
+      {"resources", 100.0},
+      {"biomass", 1001.0}};
+  EXPECT_NO_THROW(Individual::create(traits, soil, correctVariables));
+  std::unique_ptr<Individual> customIndividual = Individual::create(traits, soil, correctVariables);
+    EXPECT_EQ(customIndividual->getArea(0,10), 100.0); //biomass / density
+    //rounding error due to float- int conversion
+  std::pair<bool, int> result = customIndividual->age();
+  EXPECT_TRUE(result.first);
+
+  ASSERT_ANY_THROW(Individual::create(traits, soil, heightMissing));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, ageMissing));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, resourcesMissing));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, biomassMissing));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, wrongType));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, negativeHeight));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, negativeAge));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, negativeResources));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, negativeBiomass));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, tooMuchBiomass));
+}
+
 TEST_F(IndividualTest, age){
-  EXPECT_EQ(i->getBiomass(0,10), 0); //seems odd, as plants are built with 100 biomass. Howver, height = 0, so from = to = 0
+  EXPECT_EQ(i->getArea(0.0,10.0), 50.0);
   std::pair<bool, int> results = i->age();
   EXPECT_EQ(results.first, false); //death by maintenance costs
   EXPECT_EQ(results.second, 0);
-  EXPECT_EQ(i->getBiomass(0,10), 0);
   i->feed(120);
   results = i->age();
   EXPECT_EQ(results.first, true);
   EXPECT_EQ(results.second, 1);
 }
 
-TEST_F(IndividualTest, getBiomass){
+TEST_F(IndividualTest, getArea){
   i->age();
   i->feed(120);
   for (int j = 0; j < 11; j++){ //plant needs a while to grow to more than zero height
     i->age();
   }
-  EXPECT_EQ(i->getBiomass(0,10), 132);
-  EXPECT_EQ(i->getBiomass(0,7), 132);
-  EXPECT_EQ(i->getBiomass(0,7, true), 66);
-  EXPECT_EQ(i->getBiomass(0,4), 75);
+  EXPECT_FLOAT_EQ(i->getArea(0,10), 82.25);
+  EXPECT_FLOAT_EQ(i->getArea(0,7.046377671), 82.25); //actual height after 11 time steps
+  EXPECT_FLOAT_EQ(i->getArea(0,4), 82.25* 4/7.046377671); 
+  EXPECT_FLOAT_EQ(i->getArea(13,17), 0.0);
+  EXPECT_FLOAT_EQ(i->getArea(2,2), 0.0);
 }
 
 TEST_F(IndividualTest, feedValidSoil){

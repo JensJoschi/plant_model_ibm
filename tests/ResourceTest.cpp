@@ -44,14 +44,14 @@ class ResourceTest : public ::testing::Test {
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.01},
         {"biomassAllocation", 0.5},
-        {"maxInvestment", 0.05},
+        {"maxBiomass", 1000},
         {"shadeFactor", 0.5}};
     nlohmann::json j2 = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.01},
         {"biomassAllocation", 0.5},
-        {"maxInvestment", 0.05},
+        {"maxBiomass", 1000},
         {"shadeFactor", 0.5}};
     const ResourceAlloc allocation{j};
     const ResourceAlloc allocation2{j2};
@@ -59,13 +59,43 @@ class ResourceTest : public ::testing::Test {
     PlantResource pr2{&allocation2};
 };
 
+TEST_F(ResourceTest, buildWithJson){
+    nlohmann::json goodParameters{
+        {"resources", 100},
+        {"biomass", 100}};
+    nlohmann::json missingBiomass{
+        {"resources", 100}};
+    nlohmann::json missingResources{
+        {"biomass", 100}};
+    nlohmann::json wrongType{
+        {"resources", "100"},
+        {"biomass", 100}};
+    nlohmann::json negativeResources{
+        {"resources", -100},
+        {"biomass", 100}};
+    nlohmann::json negativeBiomass{
+        {"resources", 100},
+        {"biomass", -100}};
+    nlohmann::json tooMuchBiomass{
+        {"resources", 100},
+        {"biomass", 1001}};
+    
+    ASSERT_NO_THROW(PlantResource(&allocation, goodParameters));
+    ASSERT_ANY_THROW(PlantResource(&allocation, missingBiomass));
+    ASSERT_ANY_THROW(PlantResource(&allocation, missingResources));
+    ASSERT_ANY_THROW(PlantResource(&allocation, wrongType));
+    ASSERT_ANY_THROW(PlantResource(&allocation, negativeResources));
+    ASSERT_ANY_THROW(PlantResource(&allocation, negativeBiomass));
+    ASSERT_ANY_THROW(PlantResource(&allocation, tooMuchBiomass));
+}
+
 TEST_F(ResourceTest, updateResource) {
     EXPECT_EQ(pr.resources, 0);
     pr.updateResource(0);
     EXPECT_EQ(pr.resources, 0);
     pr.updateResource(100);
     EXPECT_EQ(pr.resources, 100);
-    pr2.updateResource(100);        //different object!
+    pr2.updateResource(100);        //different object! half efficiency
     EXPECT_EQ(pr2.resources, 50); 
     pr2.updateResource(100, false); //soil is not suitable
     EXPECT_EQ(pr2.resources, 50);
@@ -77,17 +107,20 @@ TEST_F(ResourceTest, allocateResources) {
     EXPECT_EQ(seeds.second, 0);
     EXPECT_EQ(pr.getBiomass(), 100);
 
-    pr.updateResource(130);
-    seeds = pr.allocateResources();
-    EXPECT_EQ(seeds.first, true); 
-    EXPECT_EQ(seeds.second, 1); //1% of resource, after paying maintenance cost (10% of 120)
-    EXPECT_EQ(pr.getBiomass(), 105);  //maxinvestment is 5% of biomass
-    
-    
-    pr2.updateResource(10000000); 
-    seeds = pr2.allocateResources();
-    EXPECT_EQ(pr2.getBiomass(), 105); //max investment
-    EXPECT_EQ(seeds.second, 49999); //resource-limited only (seed allocation after maintenance costs)
+    nlohmann::json specificState{ 
+        {"resources", 30},
+        {"biomass", 100}};
+    PlantResource r(&allocation, specificState);
+    seeds = r.allocateResources();
+    EXPECT_EQ(r.getBiomass(), 110);  //resource-limited. 10 maintenance costs, 20*alloc = 10 growth
+
+    nlohmann::json specificState2{ 
+        {"resources", 10000000},
+        {"biomass", 100}};
+    PlantResource r2(&allocation, specificState2);
+    seeds = r2.allocateResources();
+    EXPECT_EQ(seeds.second, 99999); //potentially infinite, only limited by resource (not 100000 because of maintenance costs)
+    EXPECT_EQ(r2.getBiomass(), 130); //limited by square-root function. maxgrowth = 1000, current biomass = 100; 1000-100 = 900; sqrt(900) = 30
 }
 
 TEST_F(ResourceTest, disturb){
@@ -106,18 +139,16 @@ TEST_F(ResourceTest, disturb){
 }
 
 TEST_F(ResourceTest, depleteResources){
+    //0 resource at start (after constructing)
     EXPECT_EQ(pr.depleteResources(50), 50);
     pr.updateResource(40);
     EXPECT_EQ(pr.depleteResources(50), 10);
     pr.updateResource(100);
-    EXPECT_EQ(pr.depleteResources(50), 0);
-    pr.updateResource(80);
-    std::pair<bool, int> seeds = pr.allocateResources(); //see test AllocateResources with 130
-    EXPECT_EQ(seeds.second, 1); 
-    EXPECT_EQ(pr.getBiomass(), 105);
+    EXPECT_EQ(pr.depleteResources(70), 0); //30 resources left
+    std::pair<bool, int> seeds = pr.allocateResources(); 
+    EXPECT_EQ(pr.getBiomass(), 110);//see test AllocateResources, specificState
 }
 
 TEST_F(ResourceTest, getBiomass){
     EXPECT_EQ(pr.getBiomass(), 100);
-    EXPECT_EQ(pr.getBiomass(true), 50);
 }

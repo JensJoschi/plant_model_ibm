@@ -41,11 +41,12 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "PlantGrowth.h"
 #include "PlantResource.h"
 #include "HabSuit.h"
+#include "Soil.h"
+#include "plantShape.h"
 
 /** @cond */
 #include <string>
 #include <memory>
-#include <utility>
 /** @endcond */
 
 
@@ -55,32 +56,32 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \details 
  * Objectives:
  * This class simulates an individual plant. The individual has the following attributes:
-- it lives: it has a geometrical shape, it grows, reproduces and dies.
-- it uses light: it has a metabolically active (above-ground) biomass, which is used to collect light. Light resources are 
-   needed for growth and reproduction.
+- it lives: it grows, reproduces and dies.
+- it is photoautotrophic: it converts light into a (carbohydrate) resource; it lives from these resources
+- it has a shape: it has a geometric representation, being able to e.g. cast a shade 
 - it needs a place to live: the soil determines whether a plant can grow at all (habitat is suitable). Soil 
-   (or space) can be seen as a limiting resource.
-- it can be disturbed by the environment: Stressors can affect each of the above properties,
+   (or space) is a limiting resource.
+- it interacts with the environment: Stressors can affect each of the above properties,
    i.e. cause mortality, deplete resources or affec the soil.
 
-The four attributes (life, light, soil, disturbance) are implemented as separate classes. They are highly interdependent,
-however, and the Individual class takes care of their interaction. The interdependences are currently kept to a minimum, but should
-be extended in the future. In particular:
+The four attributes life, light, soil, disturbance are implemented as separate classes (shape is more like a trait than a class with state variables). 
+They are highly interdependent, however, and the Individual class takes care of their interaction. 
+The interdependences are currently kept to a minimum, but should be extended in the future. In particular:
 - Age and other life-history parameters do not affect seed biology (except onset of fecundity) or resource allocation 
   (except for height affecting the location of biomass), and are neither affected by soil nor by resources
   or seed attributes.
-- Resources do not affect heigth growth or seed attributes, and are not affected by soil.
+- Resources do not affect height growth or seed attributes, and are not affected by soil.
 - Soil is not conditioned in any way by the plants or seeds living in it, and it does not affect resource use, life history 
 or ungerminated seeds
 - disturbance is not fully implemented, and will anyway only affect resources and biomass, but not lifespan (height or 
 mortality), seeds or soil 
-
+- The plant area(or shade cast) is, however affected by height and biomass.
 
  * Implementation details:
  * The trait combination that makes up the plant's strategy (representing e.g, species, functional group or functional type) is encoded 
  * in the Traits class rather than using class inheritance patterns. Having a separate class allows traits to 
  * be read from file and easily updated (or used in an evolutionary model, though this is currently not planned). The traits class in turn 
- * is made up of the classes "ResourceAllocation", "SoilRequirements", "LifeHistory" and "SeedBiology". Changes to either functionality 
+ * is made up of the classes "ResourceAllocation", "PlantShape", "SoilRequirements", "LifeHistory" and "SeedBiology". Changes to either functionality 
  * (aging, resource allocation...) only requires changes to the according Trait subclass (possibly using inheritance patterns).
  
  //TO MOVE TO DISTURBANCE class:
@@ -97,38 +98,52 @@ mortality), seeds or soil
 */
 class Individual{
    friend class IndividualTest_builds_Test; //give unit test IndividualTest::builds access to private members
-      public:
+   public:
       /**
        * \brief create an individual (factory function)
        * \details creates an individual, but only if the soil is suitable. Otherwise returns a nullptr.
        * \param traits life history, resource allocation, disturbance and soil traits
        * \param soil soil on which Individual shall live
        */
-    static std::unique_ptr<Individual> create(const Traits* traits, std::shared_ptr<Soil> soil){
-      HabSuit habSuit(traits->soilReqs, soil);
-      if (habSuit.isSuitable()){
-           return std::unique_ptr<Individual>(new Individual(traits, soil));
-      }
-      else{
-           return nullptr;
-      }
-   }  
-private: 
+   static std::unique_ptr<Individual> create(const Traits* traits, std::weak_ptr<Soil> soilref){
+      return HabSuit::wouldBeSuitable(traits->soilReqs, soilref) ? std::unique_ptr<Individual>(new Individual(traits, soilref)) : nullptr;
+   }
+
+      /**
+       * \brief create an individual (factory function)
+       * \details creates an individual, but only if the soil is suitable. Otherwise returns a nullptr. Uses json information 
+       * to set individual to specific  height, biomass etc.
+       * \param traits life history, resource allocation, disturbance and soil traits
+       * \param soil soil on which Individual shall live
+       */
+   static std::unique_ptr<Individual> create (const Traits* traits, std::weak_ptr<Soil> soilref, nlohmann::json j){
+      return HabSuit::wouldBeSuitable(traits->soilReqs, soilref) ? std::unique_ptr<Individual>(new Individual(traits, soilref, j)) : nullptr;
+   }
+
+   private: 
       /**
        * \brief constructor
        * \details Individuals need to be created through Individual::create, which only constructs
        * Individual if soil is suitable.
        */
-    Individual(const Traits* traits, std::shared_ptr<Soil> soil);
+   Individual(const Traits* traits, std::weak_ptr<Soil> soilref);
+   
+         /**
+         * \brief constructor with exact state
+         * \details Individuals need to be created through Individual::create, which only constructs
+         * Individual if soil is suitable.Uses json information 
+       * to set individual to specific  height, biomass etc.
+         */
+   Individual(const Traits* traits, std::weak_ptr<Soil> soilref, nlohmann::json j);
 
-      public:
+   public:
     /**
      * \brief turn light into a resource
      * \details light is forwarded to the ResourcePool, which converts the light into resources
      * Resources can only be used if the soil is suitable.
      * \param light amount of light (in lux)
      */
-    void feed(const int light);
+   void feed(const int light);
 
     /**
      * \brief let plant be disturbed
@@ -140,31 +155,23 @@ private:
      * @return non-consumed disturbance
      * \note not yet implemented
      */
-    std::map<std::string, float> disturb(const std::map<std::string, float>& disturbances);
+   std::map<std::string, float> disturb(const std::map<std::string, float>& disturbances);
 
     /**
      * \brief let plant age
      * \details when aging, the plant allocates resources into growth, reproduction and maintenances
      * \return bool does the plant survive, int number of seeds produced (which may be zero)
      */
-    std::pair<bool, int> age();
-
-      /**
-      * \brief Get the current biomass
-      * \details Return biomass between two heigths; if shadingCorrected is true, it returns instead the shade 
-      * provided by the biomass
-      * \param from lower bound of the window
-      * \param to upper bound of the window
-      * @return int biomass in the window
-      */
-    int getBiomass(int from, int to, bool shadingCorrected = false) const;
+   std::pair<bool, int> age();
 
 
-    private:
+   float getArea(float from, float to) const;
+
+   private:
    std::unique_ptr<PlantResource> m_resource_ptr;
    std::unique_ptr<PlantGrowth> m_growth_ptr;
    std::unique_ptr<HabSuit> m_habSuit_ptr;
-
+   const PlantShape* const m_shape_ptr;  //no unique instantiation necessary, is more like a trait(like resAlloc) than a class with state variables (PlantResource) 
 };
 
 #endif //INDIVIDUAL_H

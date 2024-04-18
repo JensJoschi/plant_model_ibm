@@ -46,23 +46,21 @@ protected:
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json emptyTraits = {};
     nlohmann::json missingTraits = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8}
+        {"maxBiomass", 1000},
     };
     nlohmann::json excessTraits = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5},
+        {"maxBiomass", 1000},
         {"excess", 4.2123}
     };
     nlohmann::json wrongTypemaxInvest = {
@@ -70,128 +68,91 @@ protected:
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", "14.2"},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", "1000"}
     };
     nlohmann::json ConvEffInt = {
         {"conversionEfficiency", 1},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json ConvEffInt2 = {
         {"conversionEfficiency", 2},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json ConvEffNeg = {
         {"conversionEfficiency", -0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json maintCostNeg = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", -0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json seedAllocNeg = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", -0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json biomassAllocNeg = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", -0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
-    nlohmann::json maxInvestNeg = {
+    nlohmann::json maxBiomassNeg = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", -0.8},
-        {"shadeFactor", 0.5}
-    };
-    nlohmann::json shadeFactorNeg = {
-        {"conversionEfficiency", 0.5},
-        {"maintenanceCosts", 0.1},
-        {"seedAllocation", 0.2},
-        {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", -0.5}
+        {"maxBiomass", -1000}
     };
     nlohmann::json convEffLarge = {
         {"conversionEfficiency", 1.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json maintCLarge = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 1.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json seedAllocLarge = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 1.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
     nlohmann::json biomassAllocLarge = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 15.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
-    };
-    nlohmann::json maxInvestLarge = {
-        {"conversionEfficiency", 0.5},
-        {"maintenanceCosts", 0.1},
-        {"seedAllocation", 0.2},
-        {"biomassAllocation", 0.7},
-        {"maxInvestment", 231.8},
-        {"shadeFactor", 0.5}
-    };
-    nlohmann::json shadeFactorLarge = {
-        {"conversionEfficiency", 0.5},
-        {"maintenanceCosts", 0.1},
-        {"seedAllocation", 0.2},
-        {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 5.9}
+        {"maxBiomass", 1000}
     };
     nlohmann::json allocSum = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.9},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000}
     };
 
     void SetUp() override {
@@ -224,15 +185,12 @@ TEST_F(ResAllocTest, ValsOutOfRange) {
     ASSERT_THROW(ResourceAlloc r(maintCostNeg), std::invalid_argument);
     ASSERT_THROW(ResourceAlloc r(seedAllocNeg), std::invalid_argument);
     ASSERT_THROW(ResourceAlloc r(biomassAllocNeg), std::invalid_argument);
-    ASSERT_THROW(ResourceAlloc r(maxInvestNeg), std::invalid_argument);
-    ASSERT_THROW(ResourceAlloc r(shadeFactorNeg), std::invalid_argument);
+    ASSERT_THROW(ResourceAlloc r(maxBiomassNeg), std::invalid_argument);
 
     ASSERT_THROW(ResourceAlloc r(convEffLarge), std::invalid_argument);
     ASSERT_THROW(ResourceAlloc r(maintCLarge), std::invalid_argument);
     ASSERT_THROW(ResourceAlloc r(seedAllocLarge), std::invalid_argument);
     ASSERT_THROW(ResourceAlloc r(biomassAllocLarge), std::invalid_argument);
-    ASSERT_THROW(ResourceAlloc r(maxInvestLarge), std::invalid_argument);
-    ASSERT_THROW(ResourceAlloc r(shadeFactorLarge), std::invalid_argument);
 }
 TEST_F(ResAllocTest, SumAlloc) {
     ASSERT_THROW(ResourceAlloc r(allocSum), std::invalid_argument);

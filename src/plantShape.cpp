@@ -24,46 +24,47 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM);
+ // Jens Joschinski (IBM)
  // --------------------------------------------------------------------------
 
-#include "ResourceAlloc.h"
+#include "plantShape.h"
 
-/** @cond */
-#include "nlohmann/json.hpp"
-#include "easylogging++.h"
-/** @endcond */
-
-ResourceAlloc::ResourceAlloc(const nlohmann::json& traits) {
+PlantShape::PlantShape(const nlohmann::json& traits) {
     try {
-        conversionEfficiency = traits.at("conversionEfficiency");
-        maintenanceCosts = traits.at("maintenanceCosts");
-        seedAllocation = traits.at("seedAllocation");
-        biomassAllocation = traits.at("biomassAllocation");
-        maxBiomass = traits.at("maxBiomass");
+        m_density = traits.at("density");
         check();
     } catch (nlohmann::json::exception& e) {
-        LOG(DEBUG) << "fields in resource alloc file are: " << traits.dump(4);
-        LOG(ERROR) << "Exception when reading from json ResourceAlloc: " << e.what() << '\n';
+        LOG(DEBUG) << "fields in plant shape file are: " << traits.dump(4);
+        LOG(ERROR) << "Exception when reading from json PlantShape: " << e.what() << '\n';
         throw;
     } catch (std::invalid_argument& e) {
-        LOG(ERROR) << "Invalid argument when initializing ResourceAlloc: " << e.what() << '\n';
+        LOG(ERROR) << "Invalid argument when initializing PlantShape: " << e.what() << '\n';
         throw;
     }
-
 }
 
+float PlantShape::getArea(float biomass) const{
+    return(biomass / m_density);
+}
 
-void ResourceAlloc::check() {
-    if (conversionEfficiency < 0.0    || conversionEfficiency > 1.0 ||
-        maintenanceCosts < 0.0        || maintenanceCosts > 1.0     ||
-        seedAllocation < 0.0          || seedAllocation > 1.0       ||
-        biomassAllocation < 0.0       || biomassAllocation > 1.0    || 
-        maxBiomass < 0              ){
-        throw std::invalid_argument("Invalid values for ResourceAlloc traits");
-    }
+float PlantShape::getArea(float biomass, float height, float from, float to) const {
+    assert(false && "Calling shape base class. This function should be implemented in derived classes");
+}
 
-    if (seedAllocation + biomassAllocation + maintenanceCosts > 1.0) {
-        throw std::invalid_argument("Seed, biomass  and maintenance allocations may not be larger than 1");
+void PlantShape::check(){
+    if (m_density <= 0){
+        throw std::invalid_argument("Invalid values for PlantShape traits");
     }
 }
+
+PlantRectangle::PlantRectangle(const nlohmann::json& traits) : PlantShape(traits) {}
+
+float PlantRectangle::getArea(float biomass, float height, float from, float to) const {
+    assert(biomass >=0.0 && height >= 0.0);
+    assert(from >= 0.0 && from <= to);
+    assert(to <= height);
+    if (height == 0.0 || from == to) return 0.0f;
+    float proportion = (to - from) / height;
+    return (PlantShape::getArea(biomass) * proportion);
+}
+

@@ -49,11 +49,16 @@ If not, see <https://www.gnu.org/licenses/>. */
    \note one could also posit polyphenism, i.e. have two distinct seed pools
  */
 class SeedPool{
-    friend class SeedPoolTest_builds_Test; ////lets unit test "SeedPoolTest::builds" access this class
+  //this class has a setter, increase(), and a function age() that performs calculations, changes the objects internal state, 
+  //and returns the result. There is on purpose no getter. This ensures that all processes (germination, activation etc) happen in 
+  //the right order and nothing is forgotten. To ensure testing, the setter function is able to access the internal state of the class.
+  //the age function is tested only through the public interface, as usual.
     friend class SeedPoolTest_increaseDormant_Test;
     friend class SeedPoolTest_increaseActive_Test;
 
-    friend class SeedPoolTest_germinate_Test; //tests for private classes, will be removed eventually
+//tests for private classes, will be removed eventually
+    friend class SeedPoolTest_builds_Test; //not sure about keeping this one
+    friend class SeedPoolTest_germinate_Test; 
     friend class SeedPoolTest_decrease_Test;
     friend class SeedPoolTest_decreaseOnlyActive_Test;
 

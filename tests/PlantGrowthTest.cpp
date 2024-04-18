@@ -38,45 +38,58 @@ If not, see <https://www.gnu.org/licenses/>. */
 /** @endcond */
 
 class PlantGrowthTest : public ::testing::Test {
-    protected:
    protected:
     nlohmann::json j = {
         {"MaturationTime", 5},
         {"LifeSpan", 10},
         {"MaxHeight", 100}};
-    nlohmann::json j2 = {
-        {"MaturationTime", 5},
-        {"LifeSpan", 10},
-        {"MaxHeight", 3}};
     const LifeHistory traits{j};
-    const LifeHistory traits2{j2};
     PlantGrowth p{&traits};
-    PlantGrowth p2{&traits2};
 };
 
-TEST_F(PlantGrowthTest, age) {
-    EXPECT_TRUE(p.getHeight() == 0);
-    for (int i = 0; i < 5; i++) {
-        EXPECT_TRUE(p.age());
-    }
-    EXPECT_TRUE(p.getHeight() == 50);
-    for (int i = 0; i < 5; i++) {
-        EXPECT_TRUE(p.age());
-    }
-    EXPECT_FALSE(p.age());
-    EXPECT_TRUE(p.getHeight() == 99);//asymptotic growth
+TEST_F(PlantGrowthTest, buildWithJson){
+    nlohmann::json correctVariables = {
+        {"height", 3.2},
+        {"age", 4}};
+    nlohmann::json heightMissing = {
+        {"age", 4}};
+    nlohmann::json ageMissing = {
+        {"height", 3.2}};
+    nlohmann::json wrongType = {
+        {"height", "3.2"},
+        {"age", 4}};
+    nlohmann::json negativeHeight = {
+        {"height", -3.2},
+        {"age", 4}};
+    nlohmann::json negativeAge = {
+        {"height", 3.2},
+        {"age", -4}};
+    nlohmann::json ageExceedsLifespan = {
+        {"height", 3.2},
+        {"age", 11}};
+    nlohmann::json heightExceedsMaxHeight = {
+        {"height", 101.0},
+        {"age", 4}};
+    ASSERT_NO_THROW (PlantGrowth (&traits, correctVariables));
+    ASSERT_ANY_THROW(PlantGrowth (&traits, heightMissing));
+    ASSERT_ANY_THROW(PlantGrowth (&traits, ageMissing));
+    ASSERT_ANY_THROW(PlantGrowth (&traits, wrongType));
+    ASSERT_ANY_THROW(PlantGrowth (&traits, negativeHeight));
+    ASSERT_ANY_THROW(PlantGrowth (&traits, negativeAge));
+    ASSERT_ANY_THROW(PlantGrowth (&traits, ageExceedsLifespan));
+    ASSERT_ANY_THROW(PlantGrowth (&traits, heightExceedsMaxHeight));
 }
 
-TEST_F(PlantGrowthTest, getProportion){
-    EXPECT_TRUE(p.getHeight() == 0);
+TEST_F(PlantGrowthTest, grow) {
+    EXPECT_TRUE(p.getHeight() == 1);
     for (int i = 0; i < 5; i++) {
-        p.age();
+        EXPECT_TRUE(p.grow());
     }
     EXPECT_TRUE(p.getHeight() == 50);
-    EXPECT_FLOAT_EQ(p.getProportion(0, 50), 1.0);
-    EXPECT_FLOAT_EQ(p.getProportion(0, 25), 0.5);
-    EXPECT_FLOAT_EQ(p.getProportion(25, 50), 0.5);
-    EXPECT_FLOAT_EQ(p.getProportion(0, 100), 1.0);
-    EXPECT_FLOAT_EQ(p.getProportion(0, 23), 0.46);
-    EXPECT_FLOAT_EQ(p.getProportion(2, 23), 0.42);
+    for (int i = 0; i < 5; i++) {
+        EXPECT_TRUE(p.grow());
+    }
+    EXPECT_FALSE(p.grow());
+    EXPECT_TRUE(p.getHeight() > 99.0 && p.getHeight() < 100.0);//asymptotic growth
 }
+

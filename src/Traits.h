@@ -24,7 +24,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM);
  // --------------------------------------------------------------------------
 
 /*!
@@ -40,6 +40,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "LifeHistory.h"
 #include "SeedBiology.h"
 #include "SoilRequirements.h"
+#include "plantShape.h"
 
 /** @cond */
 #include <vector>
@@ -52,9 +53,9 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \brief Plant definition
  * \details 
  * This object stores all the parameters characterizing a plant. Parameters concern life history, allocation of resources,
- * seed biology and soil requirements.  
+ * seed biology and soil requirements, as well as their shape  
  * \note
- * The four pointers are public, but the classes they point to are on purpose inaccessible except by one specialized class each 
+ * The five pointers are public, but the classes they point to are on purpose inaccessible except by one specialized class each 
  * (e.g. ResourceAlloc is only available for PlantResource). Future (better) PlantResource versions thus do not need to rewrite Traits but only ResourceAlloc.
  */
 class Traits{
@@ -66,8 +67,10 @@ class Traits{
 	 * \param allocationTraits json object with all resource allocation traits (light conversion, allocation to growth and reproduction)
 	 * \param soilTraits json object with all soil traits (tolerance, depth requirements)
 	 * \param seedTraits json object with all seed traits (seed pool life spans, dormancy)
+	 * \param shapeTraits json object with all shape traits (currently only density)
 	 */
-	Traits(const nlohmann::json& lifeHistoryTraits, const nlohmann::json& allocationTraits, const nlohmann::json& soilTraits, const nlohmann::json& seedTraits);
+	Traits(const nlohmann::json& lifeHistoryTraits, const nlohmann::json& allocationTraits, 
+		const nlohmann::json& soilTraits, const nlohmann::json& seedTraits, const nlohmann::json& shapeTraits);
 /**
 	 * \brief Construct a new Traits object from json file
 	 * \param traits json object with all traits
@@ -78,6 +81,7 @@ class Traits{
 	const LifeHistory* const lifeHist;
 	const SeedBiology* const seedBiol;
 	const SoilRequirements* const soilReqs;
+	const PlantRectangle* const shape;
 };
 
 #endif // PFG_H

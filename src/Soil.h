@@ -27,43 +27,26 @@ If not, see <https://www.gnu.org/licenses/>. */
  // Jens Joschinski (IBM)
  // ----------------------------------------------------------------------------
 
- #include "HabSuit.h"
-#include "SoilRequirements.h"
-#include "Traits.h"
+/*!
+ * \file Soil.h
+ * \brief Soil attributes
+ * \details holds basic soil attributes. Some may change over time, others are constant.
+ */
+
+#ifndef SOIL_H
+#define SOIL_H
 /** @cond */
-#include <memory>
-#include <easylogging++.h>
+#include <string>
 /** @endcond */
 
-HabSuit::HabSuit(const SoilRequirements* const traits, std::weak_ptr<Soil> soil) : 
-    m_soilTraits_ptr(traits), m_soil_ptr(soil){
-    assert(m_soilTraits_ptr);
-    assert(!soil.expired());
-    std::shared_ptr<Soil> tempSoilAcess = m_soil_ptr.lock();
-    if (!wouldBeSuitable(m_soilTraits_ptr, m_soil_ptr)){
-        LOG(ERROR) << "Soil " << tempSoilAcess->m_name << " not suitable";
-        tempSoilAcess.reset();
-        throw std::runtime_error("Soil not suitable");
-    }
-    auto it = m_soilTraits_ptr->acceptedSoils.find(tempSoilAcess->m_name);
-    assert (it != m_soilTraits_ptr->acceptedSoils.end());
-    tempSoilAcess->m_space -= m_soilTraits_ptr->size;
-}
+class Soil{
+    public:
+    Soil(int capacity, int depth, const std::string& name): m_capacity(capacity), m_depth(depth), m_name(name), m_space(capacity){};
+    void updateSoilClass(const std::string& name){m_name = name;};
+    const int m_capacity;
+    const int m_depth;
+    std::string m_name;
+    int m_space;
+};
 
-
-HabSuit::~HabSuit(){
-    assert(!m_soil_ptr.expired());//Any habsuit should be destroyed before soil, because all Individuals must be erased before Community is erased
-    std::shared_ptr<Soil> tempSoilAcess = m_soil_ptr.lock();
-    tempSoilAcess->m_space += m_soilTraits_ptr->size;
-}
-
-bool HabSuit::isCurrentlySuitable() const {
-        std::shared_ptr<Soil> tempSoilAcess = m_soil_ptr.lock();
-        assert(tempSoilAcess);
-        auto it = m_soilTraits_ptr->acceptedSoils.find(tempSoilAcess->m_name);
-        if (it == m_soilTraits_ptr->acceptedSoils.end()) throw std::runtime_error("Soil not found in acceptedSoils");
-        assert (it != m_soilTraits_ptr->acceptedSoils.end());
-        bool typeFits = it->second;
-        bool depthFits = tempSoilAcess->m_depth >=  m_soilTraits_ptr->minDepth;
-        return (typeFits && depthFits);
-}
+#endif //SOIL_H

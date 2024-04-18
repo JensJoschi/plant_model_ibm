@@ -42,32 +42,39 @@ class SoilRequirementsTest : public ::testing::Test {
 protected:
     nlohmann::json validTraits = {
         {"minDepth", 10},
-        {"acceptedSoils", {{"sand", true}, {"clay", false}}}
+        {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     nlohmann::json emptyTraits = {};
     nlohmann::json missingTraits = {
-        {"minDepth", 10}
+        {"minDepth", 10},
+        {"size", 1}
     };
     nlohmann::json excessTraits = {
         {"minDepth", 10},
         {"acceptedSoils", {{"sand", true}, {"clay", false}}},
-        {"excess", 4.2123}
+        {"excess", 4.2123},
+        {"size", 1}
     };
     nlohmann::json wrongTypeDepth = {
         {"minDepth", 10.21},
-        {"acceptedSoils", {{"sand", true}, {"clay", false}}}
+        {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     nlohmann::json wrongTypeSoil = {
         {"minDepth", 10},
-        {"acceptedSoils", {{"sand", 1}, {"clay", false}}}
+        {"acceptedSoils", {{"sand", 1}, {"clay", false}}},
+        {"size", 1}
     };
     nlohmann::json emptySoilTraits = {
         {"minDepth", 10},
-        {"acceptedSoils", {}}
+        {"acceptedSoils", {}},
+        {"size", 1}
     };
     nlohmann::json invalidTraits = {
         {"minDepth", -10},
-        {"acceptedSoils", {{"sand", true}, {"clay", false}}}
+        {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
 
     void SetUp() override {

@@ -32,31 +32,41 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "Traits.h"
 /** @cond */
 #include <cmath>
+#include <nlohmann/json.hpp>
 /** @endcond */
 
-PlantGrowth::PlantGrowth(const LifeHistory* const traits): m_lifehist_ptr(traits),           m_height(0.0), m_age(0){}
-PlantGrowth::PlantGrowth(const Traits* const traits):      m_lifehist_ptr(traits->lifeHist), m_height(0.0), m_age(0){}
+PlantGrowth::PlantGrowth(const LifeHistory* const traits): m_lifehist_ptr(traits),           m_height(1.0), m_age(0){}
+PlantGrowth::PlantGrowth(const LifeHistory* const traits, nlohmann::json j): m_lifehist_ptr(traits){
+    try{
+        m_height = j.at("height");
+        m_age = j.at("age");
+    }catch(std::out_of_range& e){
+        throw std::invalid_argument("PlantGrowth: json does not contain height or age");
+    }
+    catch(nlohmann::json::type_error& e){
+        throw std::invalid_argument("PlantGrowth: age must be of type int, height must be of type float");
+    }
+    check();
+}
 
+void PlantGrowth::check() const{
+    if (m_height < 0.0 || m_age < 0) throw std::invalid_argument("PlantGrowth: height and age must be positive: " + std::to_string(m_height) + ", " + std::to_string(m_age));
+    if (m_age > m_lifehist_ptr->LifeSpan) throw std::invalid_argument("PlantGrowth: age must not exceed lifespan: " + std::to_string(m_lifehist_ptr->LifeSpan));
+    if (m_height > m_lifehist_ptr->HMax) throw std::invalid_argument("PlantGrowth: height must not exceed maximum height: " + std::to_string(m_lifehist_ptr->HMax));
+}
 
-int PlantGrowth::getHeight() const{
+float PlantGrowth::getHeight() const{
     return m_height;
 }
 
-float PlantGrowth::getProportion(int from, int to) const{
-    assert(from >= 0);
-    assert(to >= from);
-    if (to > m_height) to = m_height;
-    if (m_height == 0) return 0.0f;
-    return static_cast<float>(to - from) / m_height;
-}
-
-bool PlantGrowth::age(){
+bool PlantGrowth::grow(){
     if ((m_age+1) > m_lifehist_ptr->LifeSpan) return false;
     else{ 
         m_age ++;
         double x0 = m_lifehist_ptr->MatAge;
         double k = 1.0;
-        m_height = static_cast<int>(std::round(m_lifehist_ptr->HMax / (1 + exp(-k * (m_age - x0)))));
+        float newHeight = m_lifehist_ptr->HMax / (1 + exp(-k * (m_age - x0)));
+        m_height = std::max (m_height, newHeight); //newly germinated plants may be larger than predicted by growth function
         return true;
     }
 }

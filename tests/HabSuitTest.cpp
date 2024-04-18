@@ -54,60 +54,82 @@ TEST_F(HabSuitTest, allValid){
         nlohmann::json j = {
         {"minDepth", 10},
         {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     SoilRequirements soilReqs(j);
+    EXPECT_TRUE(HabSuit::wouldBeSuitable(&soilReqs, soil));
     h = new HabSuit(&soilReqs, soil);
-    EXPECT_TRUE(h->isSuitable());
+    EXPECT_TRUE(h->isCurrentlySuitable());
 }
 
 TEST_F(HabSuitTest, shallowSoil){
     nlohmann::json j = {
         {"minDepth", 50},
         {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     SoilRequirements soilReqs(j);
-    h = new HabSuit(&soilReqs, soil);
-    EXPECT_FALSE(h->isSuitable());
+    EXPECT_FALSE(HabSuit::wouldBeSuitable(&soilReqs, soil));
+    EXPECT_THROW(h = new HabSuit(&soilReqs, soil), std::runtime_error);
 }
 
 TEST_F(HabSuitTest, wrongSoil){
     nlohmann::json j = {
         {"minDepth", 10},
         {"acceptedSoils", {{"sand", false}, {"clay", false}}},
+        {"size", 1}
     };
     SoilRequirements soilReqs(j);
-    h = new HabSuit(&soilReqs, soil);
-    EXPECT_FALSE(h->isSuitable());
+    EXPECT_FALSE(HabSuit::wouldBeSuitable(&soilReqs, soil));
+    EXPECT_THROW(h = new HabSuit(&soilReqs, soil), std::runtime_error);
 }
 
 TEST_F(HabSuitTest, shallowAndWrongSoil){
     nlohmann::json j = {
         {"minDepth", 50},
         {"acceptedSoils", {{"sand", false}, {"clay", false}}},
+        {"size", 1}
     };
     SoilRequirements soilReqs(j);
-    h = new HabSuit(&soilReqs, soil);
-    EXPECT_FALSE(h->isSuitable());
+    EXPECT_FALSE(HabSuit::wouldBeSuitable(&soilReqs, soil));
+    EXPECT_THROW(h = new HabSuit(&soilReqs, soil), std::runtime_error);
 }
 
 TEST_F(HabSuitTest, soilChanges){
     nlohmann::json j = {
         {"minDepth", 10},
         {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     SoilRequirements soilReqs(j);
+    EXPECT_TRUE(HabSuit::wouldBeSuitable(&soilReqs, soil));
     h = new HabSuit(&soilReqs, soil);
-    EXPECT_TRUE(h->isSuitable());
+    EXPECT_TRUE(h->isCurrentlySuitable());
     soil->m_name = "clay";
-    EXPECT_FALSE(h->isSuitable());
+    EXPECT_FALSE(h->isCurrentlySuitable());
+
 }
 
 TEST_F(HabSuitTest, unknownSoil){
     nlohmann::json j = {
         {"minDepth", 10},
         {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     SoilRequirements soilReqs(j);
     soil->m_name = "loam";
+    EXPECT_THROW(HabSuit::wouldBeSuitable(&soilReqs, soil), std::runtime_error);// causes runtime error, does not even evaluate
+    EXPECT_THROW(h = new HabSuit(&soilReqs, soil), std::runtime_error);
+    soil->m_name = "sand";
+}
+
+TEST_F(HabSuitTest, veryLargePlant){
+    nlohmann::json j = {
+        {"minDepth", 10},
+        {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 100}
+    };
+    SoilRequirements soilReqs(j);
+    EXPECT_FALSE(HabSuit::wouldBeSuitable(&soilReqs, soil));
     EXPECT_THROW(h = new HabSuit(&soilReqs, soil), std::runtime_error);
 }

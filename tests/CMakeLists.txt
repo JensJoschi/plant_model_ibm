@@ -41,7 +41,9 @@ set(TEST_SOURCES  SoilReqsTest.cpp        HabSuitTest.cpp
                   SeedBiologyTest.cpp     SeedPoolTest.cpp
                   LifeHistoryTest.cpp     PlantGrowthTest.cpp
                   ResourceAllocTest.cpp   ResourceTest.cpp
+                  PlantShapeTest.cpp
                   TraitsTest.cpp          IndividualTest.cpp
+                  IlluminationTest.cpp    CommunityTest.cpp
                   
                 )
 

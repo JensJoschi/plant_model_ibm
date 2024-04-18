@@ -32,6 +32,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "PlantGrowth.h"
 #include "PlantResource.h"
 #include "HabSuit.h"
+#include "plantShape.h"
+#include "Soil.h"
 
 /** @cond */
 #include <iostream>
@@ -44,18 +46,33 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <cmath>
 /** @endcond */
 
-Individual::Individual(const Traits* traits, std::shared_ptr<Soil> soil): 
+Individual::Individual(const Traits* traits, std::weak_ptr<Soil> soil): 
     m_growth_ptr    (std::make_unique<PlantGrowth>  (traits->lifeHist)), 
     m_habSuit_ptr   (std::make_unique<HabSuit>      (traits->soilReqs, soil)), 
-    m_resource_ptr  (std::make_unique<PlantResource>(traits->allocation)){
+    m_resource_ptr  (std::make_unique<PlantResource>(traits->allocation)),
+    m_shape_ptr     (traits->shape){
     assert(m_growth_ptr);
     assert(m_habSuit_ptr);
     assert(m_resource_ptr);
+    assert(m_shape_ptr);
 }
+
+
+Individual::Individual(const Traits* traits, std::weak_ptr<Soil> soilref, nlohmann::json j):
+    m_growth_ptr    (std::make_unique<PlantGrowth>  (traits->lifeHist, j)), 
+    m_habSuit_ptr   (std::make_unique<HabSuit>      (traits->soilReqs, soilref)), 
+    m_resource_ptr  (std::make_unique<PlantResource>(traits->allocation, j)),
+    m_shape_ptr     (traits->shape){
+    assert(m_growth_ptr);
+    assert(m_habSuit_ptr);
+    assert(m_resource_ptr);
+    assert(m_shape_ptr);
+}
+
 
 void Individual::feed(const int light){
     assert(light >=0);
-    m_resource_ptr->updateResource(light, m_habSuit_ptr->isSuitable());
+    m_resource_ptr->updateResource(light, m_habSuit_ptr->isCurrentlySuitable());
 };
 
 std::map<std::string, float> Individual::disturb(const std::map<std::string, float>& disturbance){
@@ -64,7 +81,7 @@ std::map<std::string, float> Individual::disturb(const std::map<std::string, flo
 }
 
 std::pair<bool, int> Individual::age(){
-    bool diesOfAge = !m_growth_ptr->age();
+    bool diesOfAge = !m_growth_ptr->grow();
     if (diesOfAge){
         //add disturbance on dead plant (biomass can still be eaten)
         return std::make_pair(false, 0);
@@ -75,8 +92,13 @@ std::pair<bool, int> Individual::age(){
     }
 }
 
-int Individual::getBiomass(int from, int to, bool shadingCorrected) const{
-    assert(from >= 0);
+float Individual::getArea(float from, float to) const{
+    assert(from >= 0.0);
     assert(to >= from);
-    return std::round(m_resource_ptr->getBiomass(shadingCorrected) * m_growth_ptr->getProportion(from, to));
+    float biomass = m_resource_ptr->getBiomass();
+    float height = m_growth_ptr->getHeight();
+    if (height == 0.0 || from == to || from > height) return 0.0f;
+    if (height < to) to = height;
+    assert(to >= from);
+    return (m_shape_ptr->getArea(biomass, height, from, to));
 }

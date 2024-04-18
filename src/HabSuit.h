@@ -37,21 +37,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 #define HABSUIT_H
 
 
-#include <string>
-//to move in sep file
-class Soil{
-    public:
-    Soil(int capacity, int depth, const std::string& name): m_capacity(capacity), m_depth(depth), m_name(name){};
-    void updateSoilClass(const std::string& name){m_name = name;};
-    const int m_capacity;
-    const int m_depth;
-    std::string m_name;
-};
-
-
-
 #include "SoilRequirements.h"
 #include "Traits.h"
+#include "Soil.h"
 /** @cond */
 #include <memory>
 /** @endcond */
@@ -59,21 +47,53 @@ class Soil{
 /**
  * \brief Habitat suitability
  * \details This class determines if a plant can grow in a specific habitat. 
- * The habitat is mostly determined by soil attributes. Soil is a shared resource,
- * i.e., multiple plants have access and may modify/deplete the soil. Suitability is a 
- * boolean attribute (a habitat is either suitable or not) and currently only defined by
+ * The habitat is mostly determined by soil attributes. Biologically speaking, 
+ * soil is a shared resource, i.e., multiple plants have access and may modify/deplete the soil. 
+ * Suitability is a boolean attribute (a habitat is either suitable or not) and currently only defined by
  * soil type and depth. The soil type and depth are defined in the SoilRequirements class.
  * PlantResource, PlantGrowth, EnvEffects and Habsuit together make up an Individual.
+ * \note even though soil is biologically a shared resource, it is computationally a weak_ptr,
+ * because the Habitat Suitability class should not be responsible for the soil's lifetime.
+ * It may access and modify the soil attributes (shared biological resource), but not control the 
+ * memory allocation or deletion of soil (computational resource).
  */
 class HabSuit{
     public:
-    explicit HabSuit(const SoilRequirements* const traits, std::shared_ptr<Soil> soil);
-    explicit HabSuit(const Traits* const traits, std::shared_ptr<Soil> soil);
+    explicit HabSuit(const SoilRequirements* const traits, std::weak_ptr<Soil> soil);
+    ~HabSuit();
 
-    bool isSuitable() const;
+    /**
+     * \brief checks if current soil is still suitable
+     * \details a soil is suitable if it exceeds the minimum required depth 
+     * and if it is of a type that is accepted by the plant. To check whether a soil
+     * would in principle be suitable (including space left), use wouldBeSuitable.
+     */
+    bool isCurrentlySuitable() const;
+
+    /**
+     * \brief check if a soil would be suitable for a plant
+     * \details a soil is suitable if it exceeds the minimum required depth,
+     * is of a type that is accepted by the plant, and if there is enough space left.
+     * This static version should be used prior to creating an individual.
+     * For an indidual already living on a (changing) soil, use isCurrentlySuitable.
+     * \param traits 
+     * \param soil 
+     * @return true 
+     * @return false 
+     */
+    static bool wouldBeSuitable(const SoilRequirements* const soilReqs, std::weak_ptr<Soil> soil){
+        auto temporary = soil.lock();
+        auto it = soilReqs->acceptedSoils.find(temporary->m_name);
+        if (it == soilReqs->acceptedSoils.end()) throw std::runtime_error("Soil not found in acceptedSoils");
+        assert (it != soilReqs->acceptedSoils.end());
+        bool typeFits = it->second;
+        bool depthFits = temporary->m_depth >=  soilReqs->minDepth;
+        bool sizeFits = temporary->m_space >= soilReqs->size;
+        return (typeFits && depthFits && sizeFits); //temporary goes out of scope, resetting the shared_ptr.use_count
+    }
 
     private:
-    std::shared_ptr<Soil> const m_soil_ptr;
+    std::weak_ptr<Soil> const m_soil_ptr;
     const SoilRequirements* const m_soilTraits_ptr;
 };
 #endif //HABSUIT_H

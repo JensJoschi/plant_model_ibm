@@ -24,7 +24,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // ----------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM);
  // ----------------------------------------------------------------------------
 
 
@@ -47,7 +47,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \class LifeHistory
  * \brief Plant life History definition
  * \details 
- * This object stores all the parameters characterizing the life history a plant. Parameters concern life span, maturation time etc, size and shape etc.
+ * This object stores all the parameters characterizing the life history a plant. Parameters concern life span, maturation time etc.
  * \note
  * This class is on purpose inaccessible except by one specialized class (PlantGrowth). Makes it easier to maintain the code and to add new features.
  */
@@ -57,6 +57,10 @@ class LifeHistory{
 
 	/**
 	 * \brief Construct a new LifeHistory object from json file
+	 * \details The json file must contain the following entries:
+	 * - "MaturationTime": time until the plant is mature
+	 * - "LifeSpan": how long the plant lives
+	 * - "MaxHeight": maximum height the plant can reach
 	 * \param lifeHistoryTraits json object with all life history traits (maturity, lifespan etc)
 	 */
 	LifeHistory(const nlohmann::json& traits);

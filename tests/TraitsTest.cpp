@@ -42,22 +42,24 @@ class TraitsTest : public ::testing::Test {
     protected:
     nlohmann::json soilReqValid = {
         {"minDepth", 10},
-        {"acceptedSoils", {{"sand", true}, {"clay", false}}}
+        {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     nlohmann::json soilReqBroken = {
-        {"acceptedSoils", {{"sand", true}, {"clay", false}}}
+        {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     nlohmann::json soilReqInvalid = {
         {"minDepth", -10},
-        {"acceptedSoils", {{"sand", true}, {"clay", false}}}
+        {"acceptedSoils", {{"sand", true}, {"clay", false}}},
+        {"size", 1}
     };
     nlohmann::json resAllocValid = {
         {"conversionEfficiency", 0.5},
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000},
     };
     nlohmann::json resAllocBroken = {
         {"conversionEfficiency", 0.5},
@@ -70,8 +72,7 @@ class TraitsTest : public ::testing::Test {
         {"maintenanceCosts", 0.1},
         {"seedAllocation", 0.2},
         {"biomassAllocation", 0.7},
-        {"maxInvestment", 0.8},
-        {"shadeFactor", 0.5}
+        {"maxBiomass", 1000},
     };
     nlohmann::json seedBiologyValid = {
         {"Dormancy", false},
@@ -109,6 +110,15 @@ class TraitsTest : public ::testing::Test {
         {"LifeSpan", 10},
         {"MaxHeight", -100},
     };
+    nlohmann::json shapeValid = {
+        {"density", 2.0}
+    };
+    nlohmann::json shapeBroken = {
+        {"Density", 2.0}
+    };
+    nlohmann::json shapeInvalid = {
+        {"density", -2.0}
+    };
 
     void SetUp() override {
         el::Configurations conf("debuglog.conf");
@@ -117,26 +127,28 @@ class TraitsTest : public ::testing::Test {
 };
 
 TEST_F(TraitsTest, allValid){
-    EXPECT_NO_THROW(Traits(lifeHistValid, resAllocValid, soilReqValid, seedBiologyValid));
+    EXPECT_NO_THROW(Traits(lifeHistValid, resAllocValid, soilReqValid, seedBiologyValid, shapeValid));
 }
 
 TEST_F(TraitsTest, orderWrong){
-    EXPECT_THROW(Traits(seedBiologyValid, lifeHistValid, resAllocValid, soilReqValid), nlohmann::json::exception);
+    EXPECT_THROW(Traits(seedBiologyValid, lifeHistValid, resAllocValid, shapeValid, soilReqValid), nlohmann::json::exception);
 }
 
 TEST_F(TraitsTest, JsonBroken){
-    EXPECT_THROW(Traits(lifeHistBroken, resAllocValid, soilReqValid, seedBiologyValid), nlohmann::json::exception);
-    EXPECT_THROW(Traits(lifeHistValid, resAllocBroken, soilReqValid, seedBiologyValid), nlohmann::json::exception);
-    EXPECT_THROW(Traits(lifeHistValid, resAllocValid, soilReqBroken, seedBiologyValid), nlohmann::json::exception);
-    EXPECT_THROW(Traits(lifeHistValid, resAllocValid, soilReqValid, seedBiologyBroken), nlohmann::json::exception);
+    EXPECT_THROW(Traits(lifeHistBroken, resAllocValid,  soilReqValid,  seedBiologyValid,  shapeValid),  nlohmann::json::exception);
+    EXPECT_THROW(Traits(lifeHistValid,  resAllocBroken, soilReqValid,  seedBiologyValid,  shapeValid),  nlohmann::json::exception);
+    EXPECT_THROW(Traits(lifeHistValid,  resAllocValid,  soilReqBroken, seedBiologyValid,  shapeValid),  nlohmann::json::exception);
+    EXPECT_THROW(Traits(lifeHistValid,  resAllocValid,  soilReqValid,  seedBiologyBroken, shapeValid),  nlohmann::json::exception);
+    EXPECT_THROW(Traits(lifeHistValid,  resAllocValid,  soilReqValid,  seedBiologyValid,  shapeBroken), nlohmann::json::exception);
 
-    EXPECT_THROW(Traits(Int_Float_error, resAllocValid, soilReqValid, seedBiologyValid), std::runtime_error);
+    EXPECT_THROW(Traits(Int_Float_error, resAllocValid, soilReqValid, seedBiologyValid, shapeValid), std::runtime_error);
 }
 
 TEST_F(TraitsTest, TraitsInvalid){
-    EXPECT_THROW(Traits(lifeHistInvalid, resAllocValid, soilReqValid, seedBiologyValid), std::invalid_argument);
-    EXPECT_THROW(Traits(lifeHistValid, resAllocInvalid, soilReqValid, seedBiologyValid), std::invalid_argument);
-    EXPECT_THROW(Traits(lifeHistValid, resAllocValid, soilReqInvalid, seedBiologyValid), std::invalid_argument);
-    EXPECT_THROW(Traits(lifeHistValid, resAllocValid, soilReqValid, seedBiologyInvalid), std::invalid_argument);
+    EXPECT_THROW(Traits(lifeHistInvalid, resAllocValid,   soilReqValid,   seedBiologyValid,   shapeValid), std::invalid_argument);
+    EXPECT_THROW(Traits(lifeHistValid,   resAllocInvalid, soilReqValid,   seedBiologyValid,   shapeValid), std::invalid_argument);
+    EXPECT_THROW(Traits(lifeHistValid,   resAllocValid,   soilReqInvalid, seedBiologyValid,   shapeValid), std::invalid_argument);
+    EXPECT_THROW(Traits(lifeHistValid,   resAllocValid,   soilReqValid,   seedBiologyInvalid, shapeValid), std::invalid_argument);
+    EXPECT_THROW(Traits(lifeHistValid,   resAllocValid,   soilReqValid,   seedBiologyValid,   shapeInvalid), std::invalid_argument);
 }
 

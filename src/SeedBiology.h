@@ -24,7 +24,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // Jens Joschinski (IBM); rewrite of PFG class (RFATE/EPM)
+ // Jens Joschinski (IBM);
  // --------------------------------------------------------------------------
 
 
@@ -55,6 +55,11 @@ class SeedBiology{
 
 	/**
 	 * \brief Construct a new SeedBiology object from json file
+     * \details The json file must contain the following entries:
+     * - "Dormancy": can a seed be dormant?
+     * - "GerminationSuccess": germination rate
+     * - "MortalityDormant": The mortality of the seed when dormant (lower than Germinationsuccess)
+     * - "DormancyBreakRate": The rate at which dormancy is broken every year.
 	 * \param SeedBiologyTraits json object with all seed traits (mortality, dormancy etc)
 	 */
 	SeedBiology(const nlohmann::json& SeedBiologyTraits);

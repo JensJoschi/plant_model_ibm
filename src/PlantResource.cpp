@@ -36,9 +36,33 @@ If not, see <https://www.gnu.org/licenses/>. */
 /** @cond */
 #include <cassert>
 #include <utility>
+#include <cmath>
+#include <nlohmann/json.hpp>
 /** @endcond */
 
-PlantResource::PlantResource(const ResourceAlloc* const resAlloc_ptr): m_resAlloc_ptr(resAlloc_ptr), resources(0), biomass(100){}
+PlantResource::PlantResource(const ResourceAlloc* const resAlloc_ptr): m_resAlloc_ptr(resAlloc_ptr), resources(0.0), biomass(100.0){}
+PlantResource::PlantResource(const ResourceAlloc* const resAlloc_ptr, nlohmann::json j): m_resAlloc_ptr(resAlloc_ptr){
+    assert(j.size() > 0);
+    assert(m_resAlloc_ptr != nullptr);
+    try{
+        resources = j.at("resources");
+        biomass = j.at("biomass");
+    }catch(std::out_of_range& e){
+        throw std::invalid_argument("PlantResource: json does not contain resources or biomass");
+    }
+    catch(nlohmann::json::type_error& e){
+        throw std::invalid_argument("PlantResource: resources must be of type float, biomass must be of type float");
+    }
+    check();
+}
+
+void PlantResource::check() const{
+    if (biomass < 0.0 || resources < 0.0) throw std::invalid_argument("PlantResource: biomass and resources must be positive: " + std::to_string(biomass) + ", " + std::to_string(resources));
+    if (biomass > m_resAlloc_ptr->maxBiomass) throw std::invalid_argument("PlantResource: biomass must not exceed maximum biomass: " + std::to_string(m_resAlloc_ptr->maxBiomass));
+}
+
+
+
 PlantResource::~PlantResource(){}
 
 void PlantResource::updateResource(int light, bool soilIsSuitable){
@@ -49,48 +73,49 @@ void PlantResource::updateResource(int light, bool soilIsSuitable){
 }
 
 std::pair<bool, int> PlantResource::allocateResources(){
-    assert(biomass * m_resAlloc_ptr->maxInvestment >= 1); //small initial biomass may mean that plant is never able to grow (rounding/int conversion and low maxInvest)
     assert(m_resAlloc_ptr != nullptr);
-    assert(m_resAlloc_ptr->seedAllocation >= 0 && m_resAlloc_ptr->seedAllocation <= 1);
-    assert(m_resAlloc_ptr->biomassAllocation >= 0 && m_resAlloc_ptr->biomassAllocation <= 1);
+    assert(m_resAlloc_ptr->seedAllocation >= 0.0 && m_resAlloc_ptr->seedAllocation <= 1.0);
+    assert(m_resAlloc_ptr->biomassAllocation >= 0.0 && m_resAlloc_ptr->biomassAllocation <= 1.0);
 
     resources -= static_cast<int> (biomass * m_resAlloc_ptr->maintenanceCosts);
-    if (resources <= 0){
+    if (resources <= 0.0){
         return std::make_pair(false, 0);
     }
     else {
-        int seeds = static_cast<int> (resources * m_resAlloc_ptr->seedAllocation);
+        int seeds = static_cast<int> (resources * m_resAlloc_ptr->seedAllocation); //round down
         resources -= seeds;
-        int addBiomass = static_cast<int> (std::min(resources * m_resAlloc_ptr->biomassAllocation , biomass * m_resAlloc_ptr->maxInvestment));
+
+        double potentialGrowth = resources * m_resAlloc_ptr->biomassAllocation;
+        double maxGrowth = sqrt(m_resAlloc_ptr->maxBiomass - biomass);
+        float addBiomass = std::min(potentialGrowth, maxGrowth);
         biomass += addBiomass;
         resources -= addBiomass;
         return std::make_pair(true, seeds);
     }
 }
 
-int PlantResource::disturb(int amount){
-    assert(amount >= 0);
+float PlantResource::disturb(float amount){
+    assert(amount >= 0.0);
     biomass -= amount;
-    if (biomass < 0) {
+    if (biomass < 0.0) {
         int deficit(-biomass);
-        biomass = 0;
+        biomass = 0.0;
         return deficit;
     }
-    return 0;
+    return 0.0;
 }
 
-int PlantResource::depleteResources(int amount){
-    assert(amount >= 0);
+float PlantResource::depleteResources(float amount){
+    assert(amount >= 0.0);
     resources -= amount;
-    if (resources < 0) {
-        int deficit(-resources);
-        resources = 0;
+    if (resources < 0.0) {
+        float deficit(-resources);
+        resources = 0.0;
         return deficit;
     }
-    return 0;
+    return 0.0;
 }
 
-int PlantResource::getBiomass(bool shadingCorrected) const{
-    if (shadingCorrected) return biomass * m_resAlloc_ptr->shadeFactor;
-    else return biomass;
+float PlantResource::getBiomass() const{
+ return biomass;
 }
