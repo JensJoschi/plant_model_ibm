@@ -21,60 +21,46 @@ If not, see <https://www.gnu.org/licenses/>. */
  * Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen, Wilfried Thuiller 
  * For contributions to this particular file, see section "Authors and contributors".*/
 // --------------------------------------------------------------------------
-
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
- // RFate team (RFATE)
- // JJ: cleanup and removal of unused code (EPM)
+ // Jens Joschinski (IBM)
  // ----------------------------------------------------------------------------
 
-#include "PropPool.h"
+
+
+/*!
+ * \file SeedDistribution.h
+ * \brief Landscape-scale distribution of seed masses
+ * \details contains the seeds that are currently "in the air" and not yet settled in individual voxel cells. 
+ * This includes seeds that were produced in each cell, but also thos flying in from the region.
+ */
+
+#ifndef SEEDDISTRIBUTION_H
+#define SEEDDISTRIBUTION_H
+
+#include "Landscape.h"
 /** @cond */
-#include <cmath>
-#include "easylogging++.h"
+#include <string>
+#include <vector>
+#include <string_view>
+#include <map>
 /** @endcond */
 
 
-PropPool::PropPool(int size, bool declining, int dTime) : m_Size(size), m_Declining(declining), m_DTime(dTime){}
+class SeedDistribution{
+    public:
+    SeedDistribution(const std::vector<std::string_view>& types, const std::vector<std::string>& keys);
+    SeedDistribution() = default;
+    ~SeedDistribution();
+    void addSeeds(int number);
+    void addSeeds(int number, std::string_view type);
+    const std::map<std::string_view, int> getSeeds(const std::string& cell) const;
+    void disperse();
 
-/*----------------------------------------------------------------------------*/
+    private:
+    std::map<std::string_view, Landscape<int>> seeds;
 
-void PropPool::PutSeedInPool(int Inp){
-	if (Inp < m_Size){return;}
-	m_Size = Inp;
-	m_Declining = false;
-	m_DTime = 0;
-}
 
-void PropPool::EmptyPool(){
-	m_Size = 0;
-	m_Declining = false;
-	m_DTime = 0;
-}
+};
 
-void PropPool::AgePool1(int pl){
-	if (m_Size<=0){return;}
-
-	/* Seed mortality rate follow a linear relationship as a function of seed life */
-	/* size (n+1) = size (n) - size(n) * (1 / (pl + 1)) */
-
-	double decRate = 1.0 / static_cast<double>( pl + 1.0 ); // calculate decreasing rate
-	m_Declining = true; // new seeds, so the pool is declining
-	m_DTime = m_DTime + 1; // increase age of youngest seeds
-	m_Size = floor(m_Size - decRate * m_Size);
-
-	if (m_Size == 0){
-		m_Declining = false;
-		m_DTime = 0;
-	}
-}
-
-/*----------------------------------------------------------------------------*/
-
-void PropPool::show() const{
-	// logg.debug("Seed Pool : size = ", m_Size, ", declining = ", m_Declining,
-	// 					 ", age = ", m_DTime);
-}
-
-int  PropPool::getSize() const { return m_Size; }
-
+#endif // SEEDDISTRIBUTION_H

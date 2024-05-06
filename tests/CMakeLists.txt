@@ -25,8 +25,9 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+message(STATUS "\n\ncompiling tests\n")
 
-#get google test
+# -- get google test ---
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -36,7 +37,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-# list all tests here
+# --- find sources ---
 set(TEST_SOURCES  SoilReqsTest.cpp        HabSuitTest.cpp
                   SeedBiologyTest.cpp     SeedPoolTest.cpp
                   LifeHistoryTest.cpp     PlantGrowthTest.cpp
@@ -44,18 +45,50 @@ set(TEST_SOURCES  SoilReqsTest.cpp        HabSuitTest.cpp
                   PlantShapeTest.cpp
                   TraitsTest.cpp          IndividualTest.cpp
                   IlluminationTest.cpp    CommunityTest.cpp
-                  
                 )
 
 enable_testing()
 
-add_executable("Tests_${SUFFIX}"  ${TEST_SOURCES})
+set (JOINT  "${CMAKE_SOURCE_DIR}/include/jointModel/g_Data_BASE.cpp"    
+            "${CMAKE_SOURCE_DIR}/include/jointModel/g_GSP_BASE.cpp"
+            #these dependencies are not available as precompiled library yet
+)
 
+#easylogger requires initialization in some source file. Usually this would be done in main, but here we have no main.
+#it is arbitrarily done in LifeHistoryTest.cpp.
 
-target_link_libraries(Tests_${SUFFIX}  gtest_main "Plants_${SUFFIX}")
+if(NOT SRC_FILES)
+    message(FATAL_ERROR "list of source files is empty")
+endif()
+
+#debug info
+message(STATUS "tests:")
+foreach(T ${TEST_SOURCES})
+    message(STATUS "${T}")
+endforeach()
+# message(STATUS "source code:")
+# foreach(F ${SRC_FILES})
+#     message(STATUS "${F}")
+# endforeach()
+# message(STATUS "\nJOINT:")
+# foreach(JOINT_FILE ${JOINT})
+#     message(STATUS "${JOINT_FILE}")
+# endforeach()
+
+# ---- create binaries ----
+
+add_executable(Tests_${SUFFIX}  ${TEST_SOURCES}    
+                                ${SRC_FILES}
+                                ${CMAKE_SOURCE_DIR}/include/easylogging++.cc
+                                ${JOINT}
+ )
+
+target_link_libraries(Tests_${SUFFIX}  gtest_main )#"Plants_${SUFFIX}")
 target_include_directories(Tests_${SUFFIX}  PUBLIC
                              "${CMAKE_SOURCE_DIR}/include"
+                             "${CMAKE_SOURCE_DIR}/include/jointModel"
                              "${CMAKE_SOURCE_DIR}/src"
+                             "${PROJECT_SOURCE_DIR}"
 )
 
 include(GoogleTest)

@@ -1,17 +1,17 @@
 {
     "COMMENT": "THESE ARE GENERAL SIMULATION PARAMETERS",
-    "SimulDuration": 5,
-    "SaveYears": [1,2,4],
+    "SimulDuration": 50,
+    "SaveYears": [1,2,4,10,20,30,40,49],
 
     "NoStrata": 4,
     "VoxelArea": 100,
-    "VoxelHeight": 1,
+    "VoxelHeight": 100,
 
     "StartingPopSize": 10,
-    "InitialSeeds": 10,
+    "InitialSeeds": 20,
 
     "SoilCapacity": 100,
-    "SeedRain": 0,
+    "SeedRain": 5,
 
 
     "DoesDispersal": true,
@@ -22,7 +22,7 @@
 
 "C2": "-------------------------------------",
 "C3": "THESE ARE THE INPUT FILES. The following could also be in a separate file, e.g. data.json",
-  "InputDir": "IN/",
+  "InputDir": "verena/",
   "SaveDir": "RESULTS/",
 
   "MaskFile": "light.json",

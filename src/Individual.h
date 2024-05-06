@@ -166,6 +166,7 @@ class Individual{
 
 
    float getArea(float from, float to) const;
+   float getBiomass() const;
 
    private:
    std::unique_ptr<PlantResource> m_resource_ptr;

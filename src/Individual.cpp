@@ -102,3 +102,7 @@ float Individual::getArea(float from, float to) const{
     assert(to >= from);
     return (m_shape_ptr->getArea(biomass, height, from, to));
 }
+
+float Individual::getBiomass() const{
+    return m_resource_ptr->getBiomass();
+}

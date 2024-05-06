@@ -1,23 +1,36 @@
-/* Copyright (C) 2022 - present Studio Animal-Aided Design and TU Munich
- This file is part of the ECOLOPES JOINT MODEL.
 
- ECOLOPES JOINT MODEL is free software: you can redistribute it and/or modify 
- it under the terms of the GNU General Public License as published by the 
- Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+/*------------------------------------------------------------------------------
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
- ECOLOPES JOINT MODEL is distributed in the hope that it will be useful, 
- but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+This file is part of the INDIVIDUAL-BASED PLANT MODEL.
 
- You should have received a copy of the GNU General Public License along with ECOLOPES PLANT MODEL. 
- If not, see <https://www.gnu.org/licenses/>.
+INDIVIDUAL-BASED PLANT MODEL is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published by the 
+Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+INDIVIDUAL-BASED PLANT MODEL is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with INDIVIDUAL-BASED PLANT MODEL.
+If not, see <https://www.gnu.org/licenses/>. */
+
+// --------------------------------------------------------------------------
+ /* INDIVIDUAL-BASED PLANT MODEL is derived from the ECOLOPES PLANT MODEL, Copyright (C) 2022-present Studio Animal-Aided Design.
+
+ * ECOLOPES PLANT MODEL is derived, modified and extended from FATE, https://github.com/leca-dev/RFate.git/ 
+ * Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen, Wilfried Thuiller 
+ * For contributions to this particular file, see section "Authors and contributors".*/
+// --------------------------------------------------------------------------
+
+
+/* This particular file is derived and altered from the ECOLOPES JOINT MODEL, 
+ Copyright (C) 2022 - present Studio Animal-Aided Design and TU Munich
 
  ECOLOPES JOINT MODEL is based on:
  - the ECOLOPES PLANT MODEL, 2022 - present  Studio Animal-Aided Design
  - the ECOLOPES ANIMAL MODEL, Copyright (C) 2022 - present TU Munich
  - and the ECOLOPES SOIL MODEL,2022 - present  Studio Animal-Aided Design
-
-*/
 
 
  // --------------------------------------------------------------------------
@@ -25,7 +38,10 @@
  // JJ: Code and most content of this base class (partially based on FATE but heavily altered)
  // VC: splitting into general and submodel classes
  // JJ: inheritance and rewrite
+ // JJ(IBM): use json objects, removal of outdated capabilities. It is hoped that JOINT model
+ // will eventually merge and adopt those changes, and incorporate the new IBM model
  // --------------------------------------------------------------------------
+ */
 
 #include "g_GSP_BASE.h"
 #include "generalFunctions.h"
@@ -42,29 +58,25 @@
 GSP_BASE::GSP_BASE(): simulDuration(0){
 }
 
-GSP_BASE::GSP_BASE(const std::string& configFile){
-  nlohmann::json j = generalFunctions::readJsonFile(configFile);
-  LOG(INFO) << "Reading global simulation parameters from json file";
-  LOG(DEBUG) << SUBSECTIONBREAK << "Reading global simulation parameters from json file.";
+GSP_BASE::GSP_BASE(const nlohmann::json& configFile){
 
-  try{simulDuration = j.at("SimulDuration");}
-  catch(...) {LOG(FATAL) << "json::SimulDuration was not found.";}
+  try{simulDuration = configFile.at("SimulDuration");}
+  catch (const nlohmann::json::out_of_range& e) {LOG(FATAL) << "Error: Parameter SimulDuration not found in config file.";}
+  catch (const nlohmann::json::type_error& e) {LOG(FATAL) << "Error: Parameter SimulDuration is of wrong type.";}
+  catch (const nlohmann::json::exception& e) {LOG(FATAL) << "Error: Problem with SimulDuration: "<< e.what();}
 
   try {
-    m_saveYears = j["SaveYears"].get<std::vector<int>>();
+    m_saveYears = configFile["SaveYears"].get<std::vector<int>>();
     std::sort(m_saveYears.begin(), m_saveYears.end());
-  } catch(...) {
-    LOG(WARNING) << "Problem in SaveYears. Saving only last year of simulation run";
-    m_saveYears.emplace_back(simulDuration);
-  }
-
+  } 
+  catch (const nlohmann::json::out_of_range& e) {
+    LOG(WARNING) << "Parameter SaveYears not found in config file. Saving only last year of simulation run";
+    m_saveYears.emplace_back(simulDuration);}
+  catch (const nlohmann::json::type_error& e) {LOG(FATAL) << "Error: Parameter SaveYears is of wrong type.";}
+  catch (const nlohmann::json::exception& e) {LOG(FATAL) << "Error: Problem with SaveYears: "<< e.what();}
   checkContent();
 }
 
-void GSP_BASE::defaultBuild(){ //not in use but could be used as fallback option if something goes wrong in file reading.
-  LOG(INFO) << "using default global simulation parameters.";
-  simulDuration = 2;
-}
 
 
 void GSP_BASE::checkContent() const{

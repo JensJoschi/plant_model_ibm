@@ -27,6 +27,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 // Jens Joschinski: Code structure and content (ECOLOPES JOINT MODEL)
 // Victoria Culshaw: split class into submodel classes (ECOLOPES JOINT MODEL)
 // JJ Inheritance and restructuring (ECOLOPES JOINT MODEL/EPM)
+// JJ update to new model (IBM)
 // --------------------------------------------------------------------------
 
 
@@ -51,50 +52,28 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 
 
-Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gsp): 
-  Data_BASE(paramSimulFile, gsp){ 
+Data_PLANTS::Data_PLANTS(const nlohmann::json& j, const GSP_PLANTS& gsp): 
+  Data_BASE(j, gsp){ 
     assert(gsp.simulDuration > 0);
 
   LOG(INFO) << "Adding plant-specific data";
-  assert (paramSimulFile != "");
-
+  assert (!j.empty());
   //base ctor has already filled in m_inputDir etc. Now we read the file again to fill the remaining members
-  nlohmann::json j = generalFunctions::readJsonFile(paramSimulFile);
+
   try{logger = j.at("PlantLogger");}
   catch(nlohmann::json::out_of_range) {logger = "plantlog.conf";}
   catch(...){LOG(FATAL) << "uncaught exception in logger";}
-
-  LOG(INFO) << "--Functional Group Definitions";
-  //----------------------------------------------------------------------------------------
-
-  PFGDefinitions = PFGDefs();
-  std::string pfg_string;
-  std::string disturbance_string  ="";
-  try{
-    pfg_string = j.at("PFGDefsFile");
-    try{disturbance_string = j.at("DisturbanceDefsFile"); 
-        LOG (DEBUG) << "DisturbanceDefsFile found";
-        PFGDefinitions = PFGDefs(inputDir + pfg_string, inputDir + disturbance_string);
-        LOG(DEBUG) << "PFGDefs read (with disturbance).";
-        } catch (nlohmann::json::out_of_range) {
-          LOG(WARNING) << "DisturbanceDefsFile not found";
-          PFGDefinitions = PFGDefs(inputDir + pfg_string);
-          LOG(DEBUG) << "PFGDefs read (without disturbance).";
-        }
-  } catch (nlohmann::json::out_of_range) { LOG(FATAL) << "PFGDefsFile not found"; }
-    catch(...){LOG(FATAL) <<"uncaught exception in PFGDefs";}
-
   
   LOG(INFO) << "--Input Data";
   //----------------------------------------------------------------------------------------
 
-  if (gsp.doesShadingPercentages){
-    try{shading = readFile<double>(j, "ShadingFile", inputDir);}
+  // if (gsp.doesShadingPercentages){
+    try{light = readFile<double>(j, "LightFile", inputDir);}
       catch(nlohmann::json::out_of_range) {
-        LOG(WARNING) << "ShadingFile not found"; 
-        shading = Landscape<double>();
+        LOG(WARNING) << "LightFile not found"; 
+        light = Landscape<double>();
       }
-  }
+  // }
   if(gsp.doesSoilDepth){
     try{soilDepth = readFile<int>(j, "DepthFile", inputDir);}
       catch(nlohmann::json::out_of_range) { 
@@ -112,9 +91,14 @@ Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gs
   }
 
   if (gsp.doesDisturbance){
-    try{management = readFile<std::map<std::string, double>>(j, "Management", inputDir);}
+    try{management = readFile<std::map<std::string, double>>(j, "ManagementFile", inputDir);}
     catch(nlohmann::json::out_of_range) { LOG(FATAL) << "Management not found.";}
     }
+
+ if (gsp.doesRegionalModel){
+    try{allowedTypes = readFile<std::vector<std::string>>(j, "RegionalModelFile", inputDir);}
+    catch(nlohmann::json::out_of_range) { LOG(FATAL) << "RegionalModelFile not found.";}
+}
 
   checkContent(gsp);
 }
@@ -122,60 +106,28 @@ Data_PLANTS::Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gs
 
 void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
     LOG(INFO) << "--Performing checks for plant model data.";
-    //check if definitions are exactly equal with regional model, report if there is a mismatch
-    //mostly for debugging, issue warning only. Regional model is in fact sometimes a subset of PFGDefs
-    std::vector<std::string> defs = PFGDefinitions.getNames();
-    std::sort(defs.begin(), defs.end());
-    std::vector<std::string> reg = listPlantFunctionalGroups;
-    std::sort(reg.begin(), reg.end()); 
-    for (int i = 0; i<defs.size(); i++){
-      if (defs[i] ==reg[i]) continue;
-      else {
-        LOG(WARNING) << "Mismatch between regional model and PFG definitions detected.";
-        LOG(WARNING) << "-----first mismatch in position : " << i << " ----";
-        LOG(WARNING) << "PFGDefs: " << defs[i];
-        LOG(WARNING) << "inALL: " << reg[i];
-        break;
-      }
-    }
 
-    if (listPlantFunctionalGroups.size() < PFGDefinitions.size()) {
-      LOG(WARNING) << "Warning: Not all defined plants occur on site. Defined: " << 
-     PFGDefinitions.size() << "on site: "<<  listPlantFunctionalGroups.size();}
-    if (listPlantFunctionalGroups.size() > PFGDefinitions.size()) {
-      LOG(FATAL)  << "not all plants on site have been defined. Defined: "<< 
-     PFGDefinitions.size()<< "on site: " << listPlantFunctionalGroups.size();}
-    //temporary:
-    if (listPlantFunctionalGroups.size() !=PFGDefinitions.size()){
-      LOG(FATAL) << "regional model temporarily deactivated. "<<
-      "Please make sure that the number of PFGs in main is the same as GSP::no_PFG. Defined: "<< 
-      PFGDefinitions.size()<< "on site: "<<  listPlantFunctionalGroups.size();
-    }
-    
-    //todo here: check PFGDefs against global params. currently PFGDefs 
-    //could have three strata, but global could indicate 4.
-
-    if (gsp.doesShadingPercentages){
+    // if (gsp.doesShadingPercentages){
       LOG(DEBUG) << "light";
-      if (shading.getTotncell()== 0){
-        LOG(FATAL)  << "shading values: " << shading.getTotncell();
+      if (light.getTotncell()== 0){
+        LOG(FATAL)  << "no shading values.";
       }
-      for (const auto& it : shading){
-        if (it.second > 1.0 || it.second < 0.0) LOG(FATAL) << "Shading map contains values outside of [0,1]";
+      for (const auto& it : light){
+        if (it.second < 0.0) LOG(FATAL) << "light is negative in at least one cell.";
       }
-    }
+    // }
 
     if (gsp.doesSoilDepth){ 
       LOG(DEBUG) << "habsuit";
-      if(soilDepth.getTotncell() == 0) LOG (WARNING) << "soil depth map contains" << soilDepth.getTotncell() << "elements. not used.";
+      if(soilDepth.getTotncell() == 0) LOG (WARNING) << "soil depth map contains 0 elements.";
       for (const auto& it : soilDepth){
-        if (it.second < 0) { LOG(FATAL) << "Habsuit map contains values smaller than 0";}
+        if (it.second < 0) { LOG(FATAL) << "soil depth map contains values smaller than 0";}
       }
     }
 
     if(gsp.doesSoilClass){
       LOG(DEBUG) << "soil class";
-      if(soilClass.getTotncell() == 0) LOG (WARNING) << "soil class map contains" << soilClass.getTotncell() << "elements. not used.";
+      if(soilClass.getTotncell() == 0) LOG (WARNING) << "soil class map contains 0 elements.";
       for (const auto& it : soilClass){
         if (it.second == "") { LOG(FATAL) << "Soil class map contains empty strings";}
       }
@@ -183,21 +135,21 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
 
     if(gsp.doesDisturbance){
       LOG(DEBUG) << "Management";
-      if(management.getTotncell() == 0) LOG (ERROR) << "map of management wrong";
+      if(management.getTotncell() == 0) LOG (FATAL) << "map of management wrong";
     }
 
   LOG(INFO) << "***data checks for plant model done.";
 }
 
 bool Data_PLANTS::checkKeys(const GSP_PLANTS& gsp) const{
-  if (gsp.doesShadingPercentages && (shading.getTotncell() != keyList.getKeys().size())) return false; 
+  if (light.getTotncell() != keyList.getKeys().size()) return false; 
   if (gsp.doesSoilDepth && (soilDepth.getTotncell() != keyList.getKeys().size())) return false;
   if (gsp.doesSoilClass && (soilClass.getTotncell() != keyList.getKeys().size())) return false;
   if (gsp.doesDisturbance && (management.getTotncell() != keyList.getKeys().size())) return false;
 
   for (const auto& key : keyList.getKeys()){
     if (keyList.count(key) != 1) return false;
-    if (gsp.doesShadingPercentages && shading.count(key) != 1) return false;
+    if (light.count(key) != 1) return false;
     if (gsp.doesSoilDepth && soilDepth.count(key) != 1) return false;
     if (gsp.doesSoilClass && soilClass.count(key) != 1) return false;
     if (gsp.doesDisturbance && management.count(key) != 1) return false;

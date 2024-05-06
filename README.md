@@ -1,6 +1,6 @@
 # Version
 
-This readme concerns model version 1.0.4. Please make sure the documentation matches the version you would like to use. 
+This readme concerns model version 1.0.5. Please make sure the documentation matches the version you would like to use. 
 
 # Overview
 
@@ -45,27 +45,24 @@ Individual
 HabSuit  
 Community  
 Illumination  
+SeedDistribution
 
 The following classes are imported from PlantModel and have been altered:  
-none  
+GSP_PLANTS  
+Data_PLANTS  
+PlantModel  
 
 The following classes are imported from PlantModel and are used without alteration:  
-none  
+rng
 
 The following classes are imported from PlantModel but are not used (they will eventually be deleted or used with or without alteration):  
-rng  
-PropPool  
 plants  
-PlantModel  
 PFGDisturbance  
 PfgDefs  
 PFG  
 main  
-GSP_PLANTS  
-FuncGroup  
 FGUtils  
 dist  
-Data_PLANTS  
 cohort  
 Cell  
 Of these classes, the following are used with minor/no alteration from Fate: PropPool , FGUtils, FuncGroup  
@@ -84,14 +81,13 @@ The plant model aims to predict the presence and abundance of plant individuals 
 
 ## Spatial and temporal resolution  
 
-FATE did not constrain spatial extent, temporal extent, or spatial resolution in any way, but was designed as a landscape scale model with annual time scale.
-The ECOLOPES PLANT MODEL was originally built for use in urban environments, and it simulates community dynamics over the typical life time of a building envelope (annual time steps, 10-200 years, 1 m3 spatial resolution, 100x100x10 m spatial extent).
-This model does not constrain spatial extent, temporal extent or spatial resolution in any way, but it does not contain any functions to model seasonal change. 
+This model is meant to simulate plant communities in urban areas, in particular on building envelopes. While it does not constrain spatial extent, temporal extent or spatial resolution in any way, it is assumed that settings are around 10-200 time steps, 1m3 spatial resolution and 100 m x 100m spatial extent. Shading and plant competition might become unrealistic if lower spatial resolutions are used, and plants no longer fit into the cells if resolutions are higher. With much longer run times the model will require longer to run and create larger amounts of data, and very large spatial extents may cause memory issues.   
+The model does not contain any functions to model seasonal change.  
 
 ## Entities
 | Entity | Description |
 | ---    | --- |
-| Environment | (urban) habitat containing voxel cells, global simulation parameters |
+| Environment | (urban) habitat containing voxel cells; and seeds that are not (yet) settled in voxels|
 | voxel cell | a voxel cell containing a community of one or more plant individuals of different types (e.g. species); light; soil; and disturbances.|
 | Individual | composed of an (aboveground) biomass and a (belowground) resource. Biomass converts light into resource, resource is spent on growth (height and biomass) and reproduction. Indidividuals cast shade, and can be disturbed. Individuals of different types (e.g. species) differ in traits.
 | Traits | Each type of individual (e.g. species) contains a set of traits defining 1) Life history parameters, 2) resource allocation strategies, 3) seed biology, 4) disturbance response, 5) soil requirements and 6) shape.
@@ -102,7 +98,7 @@ The principle agent is an individual plant. The plant has two life stages: a see
 
 The individual has the following attributes:
 - it lives: it grows, reproduces and dies.
-- it is photoautotrophic: it converts light into a (carbohydrate) resource; it lives from these resources
+- it is photoautotrophic: it converts light into a (carbohydrate) resource; it lives from these resources and produces green (photosynthetically active) biomass
 - it has a shape: it has a geometric representation, being able to e.g. cast a shade 
 - it needs a place to live: the soil determines whether a plant can grow at all (habitat is suitable). Soil 
    (or space) is a limiting resource.
@@ -123,14 +119,14 @@ The attributes are highly interdependent. For example, light is often a limiting
 
 There is no single optimal strategy for life history, resource allocation and other attributes, rather the optimal strategy depends on the environment and the other individuals in the community. Hence, different trait combinations (strategies) have evolved. In this model, each individual belongs to a certain strategy type with fixed traits, i.e. there is no intraspecific trait variation, no evolution and no phenotypic plasticity. The trait types may be envisioned as species, but can also be genera, distinct subpopulations, functional groups or functional types.
  According to the attributes given above, traits that define an individual fall into 5 categories: 
- 1) Life history parameters. Life history determines general change of plant shape (e.g. height growth) and demographics (maturity onset, lifespan).
+ 1) Life history parameters. Life history determines key demographics (maturity onset, lifespan) and height growth.
  2) resource allocation strategies. Resource allocation determines the relative investment into seeds and biomass gain (e.g. light conversion efficiency, fecundity).
  3) soil requirements. Plants can only grow on certain types of soil, and the soil needs to meet some minimum requirements (minimum depth).
  4) disturbance response. Disturbance response defines which types of disturbance ("rabbit", "fire") affect the plant, and how strongly.
  5) seed biology. The seed biology determines the mortality of seeds, dormancy attributes, and germination rates.  
 
- In addition, the plant has a certain shape; the shape determines the amount of biomass at a specific height. 
- Shape does not change over time (a rectangular plant cannot become a lollipop tree), but its extent does (height, width)
+ In addition, the plant has a certain shape; the shape determines the amount of biomass growing at a specific height. Knowing the plant's general shape, its current fresh biomass (g), and the mean density of the plant(g/cm2), one can infer the plant's leaf surface area(cm2) within a certain height section. This variable is important for the calculation of light in a voxel cell (see below)
+ Shape does not change over time (a rectangular plant cannot become a lollipop tree), but its extent does (height, width). 
 
 There are a few implementation-specific notes affecting the general logic of the model:
 - Plant shape is simplified to a rectangular shape. 
@@ -139,23 +135,43 @@ There are a few implementation-specific notes affecting the general logic of the
 
 
 ### Voxel Cell
-A voxel contains a soil, a plant community, and light.  
-Soil is a shared resource, used by the Individuals (see above). It has a limited capacity to host plant individuals (individuals may differ in the space they occupy), a depth, and an identity. Depth is a fixed attribute, assigned at initialization of the simulation, while soil identity (soil class) is initially assigned but may change over the simulation.  
-For the purpose of light calculations, the voxel can be conceptualized as a stratified cuboid. The dimensions and number of strata, as well as the abiotic shade provided in each stratum (e.g. by buildings, cliffs) are fixed at model initialization. Light beams that hit the community at an angle of 90 degrees first hit the uppermost strata and plants therein. The light is then distributed to all plant individuals living in it, according to the surface area they cover. Any light that is not absorbed by the plants in the uppermost strata is passed on to the next strata, and so on. If there is abiotic shading, the light entering each stratum is reduced by a percentage. 
+A voxel is a three-dimensional object that is embedded in a 3D-landscape. In our model it contains a soil, a plant community, and light. 
+*Soil*  
+Soil is a shared resource, used by the Individuals (see above). It has a limited capacity to host plant individuals and its state may change over time. Some attributes are set at initialization and cannot change throughout the simulation run.  
+Soil is not represented as 2- or 3Dimensional object, but as an object with one-dimensional properties (depth, type, capacity); stratification of soil types is also not yet included.
+
+*Light*  
+For the purpose of light calculations, the voxel can be conceptualized as a stratified (2-Dimensional) rectangle. Light beams that hit the community at an angle of 90 degrees first hit the uppermost strata and plants therein. The light is then distributed to all plant individuals living in it. Any light that is not absorbed by the plants in the uppermost strata is passed on to the next strata, and so on.
 The logic of light calculation follows RFate and the ECOLOPES PLANT MODEL, but with some improvements:
-- like in ECOLOPES (but not RFate) the built environment reduces available light
 - light is an integer and not a factor, this allows converting watt/m2 into resources in joule (at least in principle; parametrization is required)
 - plants on the same stratum do compete for light; 
 - plants still do shade themselves, but as the upper and lower  parts share resources, they do not kill themselves. 
 
-The plant community can (still) outgrow the voxel cell. Plant biomass that spills into neighbouring voxels is considered lost (does not provide shade, does not collect light)
-In contrast to the ECOLOPES plant model, light no longer can pass through neighbouring voxel cells (see issue #8).
-For the correct setting of number of strata, see issue #10.
-Disturbance to add
+There is obviously a mismatch between the 2-Dimensional representation of plants and shading, and the 3-Dimensional nature of voxels.
+For this reason the voxel is cut into very thin strata (e.g. 5 cm high); the surface area of all plants growing in the stratum is used to calculate how much light each plant (segment) receives, and how much light is passed on to the next stratum.  
+Example: with 5 cm strata, a 1m x 1m x 1m voxel can harbour light for 20 * 100cm * 100cm = 200 000 cm2 surface area of plant material.
+see issue #10.   
 
-### Environment: microenvironment and management plans
+*The plant community*  
+The plant community is made up of the Individuals. The plant community can outgrow the voxel cell, i.e. the total amount of plant surface area in a stratum can become larger than a voxel cell's space. Plant biomass that spills into neighbouring voxels is considered lost (does not provide shade, does not collect light).  
+
+In contrast to the ECOLOPES plant model, light no longer can pass through neighbouring voxel cells (see issue #8).  
+
+Disturbance to add  
+
+### Environment
+The environment contains voxel cells in some specified spatial configuration; and seeds that are not yet settled in voxels. In each time step all individuals in each voxel are given the opportunity to produce seeds. These seeds do not immediately sink to the ground of the voxel cell, but are released into the environment. Here they are reshuffled and then distributed (randomly and uniformly) to voxel cells.  There is potentially additional seed input from the region in which the site is embedded
+Currently the spatial configuration of the voxels does not matter, but in the future a plant may outgrow its voxel cell and its biomass enters the neighrbouring voxel(s).  Also, more complex dispersal modes (e.g., exponential decrease) requires knowledge about the spatial configuration.  
 
 # 3. Process overview and scheduling
+- create PlantModel (environment): in this step all input data, configurations and plant trait definitions is read in. It is checked that all input is consistent, and voxel cells are created in the correct spatial configuration and filled with the correct input data. Plant communities are created according to input data and configurations. If a regional model was provided, that only individuals of the fitting plant groups can occur in each voxel cell.  
+- run time step:
+  - add seeds from the region. If enabled, a config::seedRain * number_of_voxels seeds of each plant type are added to the environment.
+  - add seeds to Voxels. The seeds that are in the environment settle in the assigned voxel cells.
+  - provide resources to voxels. Light is provided to each voxel cell, the amount being specified in the input data (light).
+  - aging in each voxel. Lets each individual age, die (e.g. if too old or resources are insufficient) and potentially produce seeds. New seeds are given to the environment.
+  - Dispersal: seeds in the environment are reshuffled (random, uniform).
+- save data. Total plant abundance, biomass, or abundance and biomass of certain groups is retrieved and saved. There are options to only save certain height intervals.  
 
 # 4. Design concepts
 
@@ -164,27 +180,17 @@ Disturbance to add
 ### Robust software engineering approach 
 
 FATE follows field-specific software engineering principles of ecological models. See (Scheller et al., 2010; Vedder et al., 2021) for an overview of common approaches, potential drawbacks and risks.
-The plant model improves on this and provides a platform prototype that is planned to be further extended in the future. It is, however, neither accurate nor correct ,as it inherits conceptual decisions from RFATE which may not work very well on a very high resolution.
->>>
+The plant model improves on this and provides a platform prototype that is planned to be further extended in the future. It is, however, neither accurate nor correct ,as it inherits conceptual decisions from RFATE which may not work very well on a very high resolution.  
 This implementation adds extensive testing, proper inheritance structures and similar software engineering approahces, making the model more maintainable in the future. Moreover, it adds Individuals, which is an improtant step towards higher accuracy and realism.
->>>
 
 
 ## Emergence and interaction 
 
-The key outcome of the simulation is the spatiotemporal change of community patterns, which emerges from the interaction of plants within each grid cell (particularly competition for light). On a landscape scale, abiotic factors (soil depth, soil class) impose a general community structure via habitat filtering, and these abiotic factors may be static (inputs) or dynamically changing (passed on from another model). The abiotic factors (shading, in particular) further affect some competition outcomes, leading to the emergence of complex environment-community relationships, but we consider these indirect effects secondary and weaker than those imposed by habitat filtering.*
+The key outcome of the simulation is the spatiotemporal change of community patterns, which emerges from the interaction of individuals within each voxel cell (particularly competition for light). On a landscape scale, abiotic factors (soil depth, soil class) impose a general community structure via habitat filtering, and these abiotic factors may be static (inputs) or dynamically changing (passed on from another model). The abiotic factors (shading, in particular) further affect some competition outcomes, leading to the emergence of complex environment-community relationships.*
 
 ## Adaptation 
 
-The plant model does not contain any direct objective-seeking mechanisms, i.e. the agents do not possess the ability to choose among two or more alternative behaviors e.g. via learning or condition-dependent rules (phenotypic plasticity). The rules by which agents respond to the environment (the "genotypes" of the plant types) are instead provided by the user (trait definitions).
-
 ## Objectives
-
-The plant model does not simulate adaptive behavior (fitness objectives). 
-
->>>
-Nevertheless, indices at higher organizational structure (richness, mean biomass of grid cells) show how good or bad a community copes with its surrounding. Such indices can be used as fitness objectives in evolutionary solvers (e.g. Wallacei), allowing to optimize environments or building designs (phenotypes) such that one or multiple community indicators are maximized. Note that this procedure optimizes the "fitness" of building designs; the use of evolutionary algorithms in this case has nothing to do with evolution in the biological sense (apart from copying algorithms). More generally, the model outcomes can be used to assess how "fit" a plant community is for a particular purpose, and the results can be used to adapt/manage the landscape with a particular objective in mind.
->>>
 
 ## Interaction
 
@@ -192,21 +198,12 @@ Individual plants interact with one another, directly or indirectly, especially 
 
 ## Stochasticity 
 
-In FATE, dispersal is random within "dispersal discs" that indicate how far seeds can travel. The radius of the dispersal discs (short-and long-distance dispersal) was an input parameter, and several distributions (neg exponential, uniform) can be used for the random dispersal.
-
->>>
-The ECOLOPES PLANT MODEL contains two sources of stochasticity:  
-
-At the end of the time step, all plant seeds are pooled and randomly redistributed over the simulation environment, together with the seeds that enter from the region (seed rain). This simplified form of dispersal was chosen over the pre-existing disc-based dispersal from FATE-HD, because the spatial extent of the site is expected to be smaller than the usual dispersal kernel of all PFGs. 
-
-The initialization seeds a random number of plants (aged 0-1 years) to each cell where the habitat is generally suitable. The number of plants per age group follows a random uniform distribution between 0 and 100. 
->>>
-
 stochasticity of this model to write.
 
 # 5. Input and Output Data
 
 Rewrite
+- classes are GSP_Plants, Data_PLANTS, Traits. Voxel data on landscape scale is saved in container class Landscape   
 
 # 6. Initialization
 
@@ -274,7 +271,15 @@ Seeds may be dormant or active; if dormant, they have a mortality of mortalityDo
 Seeds may be disturbed (affecting only acitve or in equal proportions active and dormant seeds), and new seeds (active or dormant) may be added to the seed pool.  
 
 ## Dispersal  
-to do
+random uniform redistribution of any newly produced seeds + input from region.
+
+## Illumination
+The voxel is represented as a stack of rectangles with the same area. Light hitting a voxel will first hit the uppoermost stratum. It will be equally distributed to all plants inhabiting the voxel at the height, in proportion of the surface area covered; light that does not hit the plants is passed on to the next stratum.  
+Warning: plants may outgrow the voxel,i.e. the area covered by plants may be larger than the voxel area. Light is nevertheless distributed equally among all plants, which can cause *all* plants to receive too little light and die.
+
+
+Disturbance to add
+
 
 
 # 8. Implementation

@@ -1,30 +1,47 @@
-/* Copyright (C) 2022 - present Studio Animal-Aided Design and TU Munich
- This file is part of the ECOLOPES JOINT MODEL.
+/*------------------------------------------------------------------------------
+Copyright (C)  2022 - present  Studio Animal-Aided Design
 
- ECOLOPES JOINT MODEL is free software: you can redistribute it and/or modify 
- it under the terms of the GNU General Public License as published by the 
- Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This file is part of the INDIVIDUAL-BASED PLANT MODEL.
 
- ECOLOPES JOINT MODEL is distributed in the hope that it will be useful, 
- but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+INDIVIDUAL-BASED PLANT MODEL is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published by the 
+Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
- You should have received a copy of the GNU General Public License along with ECOLOPES PLANT MODEL. 
- If not, see <https://www.gnu.org/licenses/>.
+INDIVIDUAL-BASED PLANT MODEL is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with INDIVIDUAL-BASED PLANT MODEL.
+If not, see <https://www.gnu.org/licenses/>. */
+
+// --------------------------------------------------------------------------
+ /* INDIVIDUAL-BASED PLANT MODEL is derived from the ECOLOPES PLANT MODEL, Copyright (C) 2022-present Studio Animal-Aided Design.
+
+ * ECOLOPES PLANT MODEL is derived, modified and extended from FATE, https://github.com/leca-dev/RFate.git/ 
+ * Copyright (C) 2021 Isabelle Boulangeat, Damien Georges, Maya Guéguen, Wilfried Thuiller 
+ * For contributions to this particular file, see section "Authors and contributors".*/
+// --------------------------------------------------------------------------
+
+
+/* This particular file is derived and altered from the ECOLOPES JOINT MODEL, 
+ Copyright (C) 2022 - present Studio Animal-Aided Design and TU Munich
 
  ECOLOPES JOINT MODEL is based on:
  - the ECOLOPES PLANT MODEL, 2022 - present  Studio Animal-Aided Design
  - the ECOLOPES ANIMAL MODEL, Copyright (C) 2022 - present TU Munich
  - and the ECOLOPES SOIL MODEL,2022 - present  Studio Animal-Aided Design
 
-*/
+
  // --------------------------------------------------------------------------
  // Authors and contributors to this file:
  // JJ: Code and most content of this base class (partially based on FATE but heavily altered)
  // VC: splitting into general and submodel classes
  // JJ: inheritance and rewrite
  // --------------------------------------------------------------------------
- 
+ // JJ(IBM): use json objects, removal of outdated capabilities. It is hoped that JOINT model
+ // will eventually merge and adopt those changes, and incorporate the new IBM model
+ // --------------------------------------------------------------------------
+ */
 
 /*!
  * \file Data_BASE.h
@@ -63,15 +80,11 @@
 */
 class Data_BASE{
   public:
-    explicit Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp);
+    explicit Data_BASE(const nlohmann::json& paramSimulFile, const GSP_BASE& gsp);
     Data_BASE() = default;
 
     std::string inputDir;        /*!< path to input files */
     std::string savingDir;       /*!< Saving directory path */
-
-    /* Regional model information */
-    //possibly move to Data_ECOLOPES
-    std::vector<std::string> listPlantFunctionalGroups;  // list of the PFG that may be present on ecolopesLand.
 
     /* Spatial data */
     //the data is stored as maps (Landscape class) whose key is 

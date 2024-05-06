@@ -1,0 +1,40 @@
+
+{
+"somespecies": {
+    "minDepth": 10,
+    "acceptedSoils": {"sand": true, "clay": false},
+    "size": 1,
+    "conversionEfficiency": 0.5,
+    "maintenanceCosts": 0.1,
+    "seedAllocation": 0.2,
+    "biomassAllocation": 0.7,
+    "maxBiomass": 1000,
+    "Dormancy": false,
+    "GerminationSuccess": 0.1,
+    "MortalityDormant": 0.05,
+    "DormancyBreakRate": 0.8,
+    "MaturationTime": 5,
+    "LifeSpan": 10,
+    "MaxHeight": 100,
+    "density": 2.0
+}, 
+
+"anotherspecies": {    
+    "minDepth": 10,
+    "acceptedSoils": {"sand": true, "clay": false},
+    "size": 1,
+    "conversionEfficiency": 0.5,
+    "maintenanceCosts": 0.1,
+    "seedAllocation": 0.2,
+    "biomassAllocation": 0.7,
+    "maxBiomass": 1000,
+    "Dormancy": false,
+    "GerminationSuccess": 0.1,
+    "MortalityDormant": 0.05,
+    "DormancyBreakRate": 0.8,
+    "MaturationTime": 5,
+    "LifeSpan": 10,
+    "MaxHeight": 100,
+    "density": 2.0
+}
+}

@@ -1,7 +1,16 @@
-update miro board,  position of Traits in code. Community doesn't require a Traits*
+run example and check results
+light gets 100% eaten by plants -> conversion efficency (shade tolerance) does not work
+
+light gets equally distributed among plants, which can cause all plants to have too little light and die.
+e.g. germinants cover 5* the area that is available, then each dies, and we have no offspring.
+should instead distribute light randomly: create a choosePlants function in Illuminaiton, have a vector ind* currentPlants 
+(which may be neighours in the future)
+
+GSP tests
+Data::checkContent vs gsp configs (!doesX)
 
 add function to output current community as json, run model in one cell and test
-
+try inputting all voxel data in one file
 build community with proper json: {soil: {...}, voxel: {...}, startPop: {...}}
 
 add Tests of Community: 
@@ -10,3 +19,5 @@ add Tests of Community:
 
 voxel volume and plant surface area: how many strata should be modelled, how much total surface area does a cell support?
 
+add regional model
+seedMass attribute missing

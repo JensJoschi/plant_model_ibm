@@ -45,6 +45,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <memory>
 #include <map>
 #include <string>
+#include <vector>
+#include <string_view>
+#include <nlohmann/json.hpp>
 /** @endcond */
 
 
@@ -140,7 +143,7 @@ class Community{
         * \param type type of individual
     */
     int getCount (int from, int to, std::string_view type = "") const;
-
+    float getBiomass(std::string_view type = "") const;
 
     private:
     std::multimap<std::string_view, std::unique_ptr<Individual>> m_individuals; //sorts the individuals in the community by type

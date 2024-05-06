@@ -37,7 +37,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "nlohmann/json.hpp"
 #include "easylogging++.h"
 /** @endcond */
-
+INITIALIZE_EASYLOGGINGPP
 
 class LifeHistoryTest : public ::testing::Test {
 protected:

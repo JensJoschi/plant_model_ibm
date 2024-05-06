@@ -25,6 +25,9 @@ cmake_minimum_required(VERSION 3.20)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+message(STATUS "compiling source code\n")
+
+## ---- find sources ----
 
 set (SRC "SeedPool.cpp"         "SeedBiology.cpp"    
          "PlantGrowth.cpp"      "LifeHistory.cpp"     
@@ -34,33 +37,58 @@ set (SRC "SeedPool.cpp"         "SeedBiology.cpp"
         "Individual.cpp"        "Traits.cpp"
         "Community.cpp"         "Illumination.cpp"
          "rng.cpp"
-#to update
-        "Data_PLANTS.cpp"  "GSP_PLANTS.cpp" 
-        "Cell.cpp"         "PlantModel.cpp"  
+         "Data_PLANTS.cpp"  "GSP_PLANTS.cpp" 
+         #to update
+        "PlantModel.cpp"  
+        "SeedDistribution.cpp"
         "PFGDefs.cpp"  "PFGdisturbance.cpp"
 #to remove
         "PFG.cpp"             
-        "FGUtils.cpp"       "FuncGroup.cpp"  
-        "PropPool.cpp" 
+        "FGUtils.cpp"
+)
+if(NOT SRC)
+    message(FATAL_ERROR "SRC is empty")
+endif()
+
+#set also in parent scope so that tests can find them. Requires adding proper path:
+set(DIR "${CMAKE_SOURCE_DIR}/src/")
+foreach(SRC_FILE ${SRC})
+    list(APPEND SRC_FILES "${DIR}${SRC_FILE}")
+endforeach()
+set (SRC_FILES ${SRC_FILES} PARENT_SCOPE)
+
+set (JOINT  "${CMAKE_SOURCE_DIR}/include/jointModel/g_Data_BASE.cpp"    
+            "${CMAKE_SOURCE_DIR}/include/jointModel/g_GSP_BASE.cpp"
+            #these dependencies are not available as precompiled library yet
 )
 
-set (JOINT  "${CMAKE_SOURCE_DIR}/include/jointModel/g_Data_BASE.cpp"    "${CMAKE_SOURCE_DIR}/include/jointModel/g_GSP_BASE.cpp")
+#debug info
+message(STATUS "SRC_FILES:")
+foreach(SRC_FILE ${SRC_FILES})
+    message(STATUS "${SRC_FILE}")
+endforeach()
+message(STATUS "\nJOINT:")
+foreach(JOINT_FILE ${JOINT})
+    message(STATUS "${JOINT_FILE}")
+endforeach()
 
-add_library("Plants_${SUFFIX}" SHARED   ${SRC} 
-                                        plants.cpp 
-                                        ${CMAKE_SOURCE_DIR}/include/easylogging++.cc
-                                        ${JOINT})
+# ---- create binaries ----
+
+# add_library("Plants_${SUFFIX}" SHARED   ${SRC} 
+#                                         plants.cpp 
+#                                         ${CMAKE_SOURCE_DIR}/include/easylogging++.cc
+#                                         ${JOINT})
 
 add_executable("Model_${SUFFIX}"    ${SRC} 
                                     main.cpp 
                                     ${CMAKE_SOURCE_DIR}/include/easylogging++.cc
                                     ${JOINT})
 
-target_include_directories("Plants_${SUFFIX}" PUBLIC
-                            "${CMAKE_SOURCE_DIR}/include"
-                            "${CMAKE_SOURCE_DIR}/include/jointModel"
-                            "${PROJECT_SOURCE_DIR}"
-                           )
+# target_include_directories("Plants_${SUFFIX}" PUBLIC
+#                             "${CMAKE_SOURCE_DIR}/include"
+#                             "${CMAKE_SOURCE_DIR}/include/jointModel"
+#                             "${PROJECT_SOURCE_DIR}"
+#                            )
 
 target_include_directories("Model_${SUFFIX}" PUBLIC
                            "${CMAKE_SOURCE_DIR}/include"

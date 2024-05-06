@@ -30,6 +30,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  //     added error checking, json integration (ECOLOPES JOINT MODEL)
  // VC: split global params class into subclasses (ECOLOPES JOINT MODEL)
  // JJ: inheritance and rewrite (ECOLOPES JOINT MODEL/EPM)
+ // JJ (IBM): adjust to new parameters
  // --------------------------------------------------------------------------
 
  /*!
@@ -48,7 +49,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-#include <string>
 /** @endcond */
 
 /*!
@@ -60,35 +60,23 @@ If not, see <https://www.gnu.org/licenses/>. */
 */
 class GSP_PLANTS: public GSP_BASE{
   public:
-    explicit GSP_PLANTS(const std::string& paramSimulFile);
+    explicit GSP_PLANTS(const nlohmann::json& paramSimulFile);
     GSP_PLANTS();
-
-     /* plant Modules activation */
-    // bool m_DoShading;  /*!< if this is switched off, plants do not shade each other */ This one is a bit difficult to implement
-      bool doesNeighbourinfluence; /*!< if this is switched off, light passes at 90° to a stratum (standard FATE-HD) rather than at an angle */
-      bool doesShadingPercentages; /*!< if this is switched off, cells will not differ in shading percentages*/
-    bool doesHabSuitability;    /*!< if this is switched off, all plants can live everywhere */
-      bool doesSoilClass;         /*!< if this is switched off, the attribute "soil class" is ignored */
-      bool doesSoilDepth;         /*!< if this is switched off, the attribute "soil depth" is ignored */
-    bool doesPlantDispersal;    /*!< if this is switched off, the plants are unable to disperse */
-    bool doesDisturbance;       /*!< if this is switched off, the plants are unable to react to disturbances */
-
-    /*  global parameters*/
-    int potentialFecundity; /*!< Potential Fecundity of mature plants (maximum value of seeds produced in optimal conditions) */
+    /*  general parameters*/
     int noStrata;           /*!< Number of height strata */
-    std::vector<int> strataHeight; /*!< Height of each strata */
-    int maxAbundLow;        /*!< Maximum abundance or space a PFG can occupy : low value */
-    int maxAbundMedium;     /*!< Maximum abundance or space a PFG can occupy : medium value */
-    int maxAbundHigh;       /*!< Maximum abundance or space a PFG can occupy : high value */
+    float voxelHeight;      /*!< Height of a voxel */
+    float voxelArea;        /*!< Area of a voxel */
+    int startingPopSize;
+    int initialSeeds;
+    int seedRain;             /*!< Number of seeds coming in from the region every time step */
+    int soilCapacity;
 
-    //dispersal
-    int seedInput;       /*!< Number of seeds introduced during seeding */
-
-    // shading
-    int lightThreshLow;    /*!< Threshold to transform PFG abundances into Low light resources */
-    int lightThreshMedium; /*!< Threshold to transform PFG abundances into Medium light resources */
-    int lightAngle;        /*!< Angle of the sun in degrees, range 0-90 (90 = zenith) */
-    //disturbance
+     /* plant Modules */
+    bool doesDisturbance;       /*!< if this is switched off, the plants are unable to react to disturbances */
+    bool doesSoilClass;         /*!< if this is switched off, the attribute "soil class" is ignored */
+    bool doesSoilDepth;         /*!< if this is switched off, the attribute "soil depth" is ignored */
+    bool doesDispersal;         /*!< if this is switched off, the seeds are unable to disperse */
+    bool doesRegionalModel;     /*!< allows specifying where each plant group can occur*/
 
 
 
@@ -98,7 +86,7 @@ class GSP_PLANTS: public GSP_BASE{
      * \param configFile input file (json format; may be same as for GSP_BASE)
      * \details This function reads in the plant parameters from the json file and adds them to the GSP
      */
-    void addSpecificParams(const std::string& configFile);
+    void addSpecificParams(const nlohmann::json& j);
 
     /**
      * \brief check GSP entries for consistency
@@ -106,13 +94,5 @@ class GSP_PLANTS: public GSP_BASE{
      * Checks are onl performed on the new plant-specific parameters
      */
     virtual void checkContent() const override;
-
-    public:
-    /**
-     * \brief provides useful defaults for all parameters
-     * \details This function provides defaults for plant-specific parameters only.
-     * \note currently not in use. Set to public so unit tests can use it though.
-     */
-    virtual void defaultBuild() override;
 };
 #endif

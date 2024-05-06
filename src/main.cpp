@@ -22,9 +22,9 @@ If not, see <https://www.gnu.org/licenses/>. */
  * For contributions to this particular file, see section "Authors and contributors".*/
 // --------------------------------------------------------------------------
 
- // ----------------------------------------------------------------------------
- // Authors and contributors to this file:
- // Jens Joschinski (EPM)
+// ----------------------------------------------------------------------------
+// Authors and contributors to this file:
+// Jens Joschinski (EPM)
 // ----------------------------------------------------------------------------
 
 /*! \mainpage Plant Model
@@ -39,6 +39,10 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "g_Data_BASE.h"
 #include "g_GSP_BASE.h"
 #include "PlantModel.h"
+#include "Community.h"
+#include "Traits.h"
+#include "LifeHistory.h"
+#include "generalFunctions.h"
 
 /** @cond */
 #include <string>
@@ -110,21 +114,27 @@ std::cout << "Plant model version " << VERSION << std::endl;
   LOG(INFO) << SECTIONBREAK << SECTIONBREAK << SECTIONBREAK;
 
   //............model............
-  GSP_BASE config{WD+input_file};
+  GSP_PLANTS config{generalFunctions::readJsonFile(WD+input_file)};
+  Data_PLANTS data{generalFunctions::readJsonFile(WD+input_file), config};
+  
 
   LOG(INFO) << SECTIONBREAK << "CREATE PLANT MODEL";
-  PlantModel Plantmodel(WD+input_file, "", fix_RNG);
-
-  Plantmodel.initialize(5);
-  Plantmodel.saveAll(0);
+  nlohmann::json g {generalFunctions::readJsonFile(WD+input_file)};
+  nlohmann::json v {generalFunctions::readJsonFile(WD+input_file)};
+  nlohmann::json t {generalFunctions::readJsonFile(WD+"verena/plantSpecies.json")};
+  PlantModel Plantmodel(g, v, t, "", fix_RNG);
 
   if (config.simulDuration == 0){ LOG(INFO) << "Warning: model only initialized, not running, because simulDuration == 0"; return 0; }
   else LOG(INFO) << SECTIONBREAK << "RUN MODEL";
 
   for(int tplus1=1; tplus1< config.simulDuration; ++tplus1){
-    Plantmodel.TPlusOne_JJ();
+    Plantmodel.TPlusOne();
     LOG(INFO) << "SAVING";
-    Plantmodel.saveAll(tplus1);
+
+    Landscape<std::map<std::string, int>> foo = Plantmodel.getNumber(2, 100);
+    foo.write_json(WD + std::to_string(tplus1) + "_abundance.json" );
+    Landscape<std::map<std::string, float>> bar = Plantmodel.getBiomass();
+    bar.write_json(WD + std::to_string(tplus1) + "_biomass.json" );
   }
 
   //............outputs............

@@ -125,7 +125,15 @@ Community::~Community(){
 
 void Community::rainSeeds(const std::map<std::string_view, int>& seeds) {
     for (const auto& name : seeds) {
-        m_seeds.at(name.first)->increase(name.second);
+        if (m_traits.find(name.first) == m_traits.end()) {//m_traits contains names of all suitable species
+            continue;
+        } else if (m_seeds.find(name.first) == m_seeds.end()){ //suitable but not yet present
+            int number = std::min(name.second, 100 * m_soil->m_capacity);
+            std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(m_traits.at(name.first), number);
+            m_seeds.insert({name.first, std::move(sp)});
+        }else{
+            m_seeds.at(name.first)->increase(name.second);
+        }
     }
 }
 
@@ -140,11 +148,23 @@ int Community::getCount(int from, int to, std::string_view type) const {
                  std::make_pair(m_individuals.begin(), m_individuals.end()) : 
                  m_individuals.equal_range(type);
     for (auto i = range.first; i != range.second; ++i) {
-        if (i->second->getArea(from, to) >= 0.0) {
+        if (i->second->getArea(from, to) > 0.0) {
             ++count;
         }
     }
     return count;
+}
+
+float Community::getBiomass(std::string_view type) const{
+    float biomass = 0.0;
+    auto range = (type == "") ? 
+                 std::make_pair(m_individuals.begin(), m_individuals.end()) : 
+                 m_individuals.equal_range(type);
+    for (auto i = range.first; i != range.second; ++i) {
+        biomass += i->second->getBiomass();
+    }
+    return biomass;
+
 }
 
 void Community::provideResources(int light){

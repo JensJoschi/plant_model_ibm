@@ -1,0 +1,175 @@
+{
+    "BellisPerennis": {
+        "MaxHeight": 15,
+        "LifeSpan": 36,
+        "MaturationTime": 1,
+        "minDepth": 5,
+        "size": 2,
+
+        "acceptedSoils": {"sand": true, "clay": true},
+
+        "biomassAllocation": 0.7,
+        "maxBiomass": 20,
+
+        "GerminationSuccess": 0.5,
+        "density": 1.0,
+        "seedAllocation": 0.2,
+
+        "germinationTiming": 3,
+
+        "maintenanceCosts": 0.1,
+        "conversionEfficiency": 0.5,
+        "Dormancy": false,
+        "MortalityDormant": 0.05,
+        "DormancyBreakRate": 0.8
+    }, 
+
+    "ArtemisiaVulgaris": {
+        "MaxHeight": 100,
+        "LifeSpan": 36,
+        "MaturationTime": 5,
+        "minDepth": 8,
+        "size": 5,
+
+        "acceptedSoils": {"sand": true, "clay": true},
+
+        "biomassAllocation": 0.7,
+        "maxBiomass": 150,
+
+        "GerminationSuccess": 0.5,
+        "density": 0.8,
+        "seedAllocation": 0.2,
+
+        "germinationTiming": 3,
+
+        "maintenanceCosts": 0.1,
+        "conversionEfficiency": 0.5,
+        "Dormancy": false,
+        "MortalityDormant": 0.05,
+        "DormancyBreakRate": 0.8
+
+    },
+    "MedicagoSativa": {
+        "MaxHeight": 100,
+        "LifeSpan": 36,
+        "MaturationTime": 5,
+        "minDepth": 60,
+        "size": 4,
+
+        "acceptedSoils": {"sand": true, "clay": true},
+
+        "biomassAllocation": 0.5,
+        "maxBiomass": 100,
+
+        "GerminationSuccess": 0.5,
+        "density": 1.0,
+        "seedAllocation": 0.2,
+
+        "germinationTiming": 4,
+
+        "maintenanceCosts": 0.1,
+        "conversionEfficiency": 0.7,
+        "Dormancy": false,
+        "MortalityDormant": 0.05,
+        "DormancyBreakRate": 0.8
+    },
+    "LinumPerenne":{
+        "MaxHeight": 50,
+        "LifeSpan": 36,
+        "MaturationTime": 5,
+        "minDepth": 10,
+        "size": 3,
+
+        "acceptedSoils": {"sand": true, "clay": false},
+
+        "biomassAllocation": 0.3,
+        "maxBiomass": 30,
+
+        "GerminationSuccess": 0.5,
+        "density": 0.7,
+        "seedAllocation": 0.2,
+
+        "germinationTiming": 4,
+
+        "maintenanceCosts": 0.1,
+        "conversionEfficiency": 0.5,
+        "Dormancy": false,
+        "MortalityDormant": 0.05,
+        "DormancyBreakRate": 0.8
+    },
+    "PapaverRhoeas": {
+        "MaxHeight": 30,
+        "LifeSpan": 18,
+        "MaturationTime": 3,
+        "minDepth": 60,
+        "size": 2,
+
+        "acceptedSoils": {"sand": false, "clay": true},
+
+        "biomassAllocation": 0.7,
+        "maxBiomass":30,
+
+        "GerminationSuccess": 0.5,
+        "density": 1.3,
+        "seedAllocation": 0.2,
+
+        "germinationTiming": 4,
+
+        "maintenanceCosts": 0.1,
+        "conversionEfficiency": 0.5,
+        "Dormancy": false,
+        "MortalityDormant": 0.05,
+        "DormancyBreakRate": 0.8
+    },
+
+    "TropaeolumPeregrinum":{
+        "MaxHeight": 100,
+        "LifeSpan": 9,
+        "MaturationTime": 6,
+        "minDepth": 15,
+        "size": 4,
+
+        "acceptedSoils": {"sand": true, "clay": false },
+
+        "biomassAllocation": 0.7,
+        "maxBiomass":200,
+
+        "GerminationSuccess": 0.5,
+        "density": 0.4,
+        "seedAllocation": 0.2,
+
+        "germinationTiming": 4,
+
+        "maintenanceCosts": 0.1,
+        "conversionEfficiency": 0.5,
+        "Dormancy": false,
+        "MortalityDormant": 0.05,
+        "DormancyBreakRate": 0.8
+    },
+
+    "PolypodiumVulgare": {
+        "MaxHeight": 30,
+        "LifeSpan": 36,
+        "MaturationTime": 4,
+        "minDepth": 40,
+        "size": 3,
+
+        "acceptedSoils": {"sand": true, "clay": true},
+
+        "biomassAllocation": 0.3,
+        "maxBiomass": 60,
+
+        "GerminationSuccess": 0.5,
+        "density": 0.5,
+        "seedAllocation": 0.2,
+
+        "germinationTiming": 3,
+
+        "maintenanceCosts": 0.1,
+        "conversionEfficiency": 0.7,
+        "Dormancy": false,
+        "MortalityDormant": 0.05,
+        "DormancyBreakRate": 0.8
+    }
+}
+    

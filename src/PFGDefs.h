@@ -51,7 +51,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "PFG.h"
 #include "FGUtils.h"
 #include "PFGdisturbance.h"
-#include "FuncGroup.h"
  /*!
  * \class PFGDefs
  * \brief lists all Plant Functional Groups

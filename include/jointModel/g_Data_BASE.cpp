@@ -44,30 +44,25 @@
 #include "generalFunctions.h"
 #include "Landscape.h"
 
-Data_BASE::Data_BASE(const std::string& paramSimulFile, const GSP_BASE& gsp){
-  LOG(DEBUG) << SUBSECTIONBREAK << "Reading basic data from json file.";
-  LOG(INFO) << "Reading basic data from json file.";
+Data_BASE::Data_BASE(const nlohmann::json& paramSimulFile, const GSP_BASE& gsp){
+  LOG(INFO) << SUBSECTIONBREAK << "Reading basic data from json file.";
 
   //----------------------------------------------------------------------------
   LOG(DEBUG) << "--Data sources";
-  nlohmann::json j = generalFunctions::readJsonFile(paramSimulFile);
 
-  try{inputDir = j.at("InputDir");}
+  try{inputDir = paramSimulFile.at("InputDir");}
     catch(nlohmann::json::out_of_range) { LOG(WARNING) << "InputDir not found. Set to 0-INPUT/"; inputDir = "0-INPUT/";}
-  try{savingDir = j.at("SaveDir");}
-    catch(nlohmann::json::out_of_range) {  LOG(WARNING) << "Saving dir not found. Using 0-RESULTS/"; savingDir = "0-RESULTS/";}
+    catch(nlohmann::json::type_error) { LOG(FATAL) << "InputDir variable has wrong type.";}
+    catch(nlohmann::json::exception& e) { LOG(FATAL) << "InputDir error: " << e.what();}
+
+  try{savingDir = paramSimulFile.at("SaveDir");}
+    catch(nlohmann::json::out_of_range) { LOG(WARNING) << "Saving dir not found. Using 0-RESULTS/"; savingDir = "0-RESULTS/";}
+    catch(nlohmann::json::type_error) { LOG(FATAL) << "SavingDir variable has wrong type.";}
+    catch(nlohmann::json::exception& e) { LOG(FATAL) << "SavingDir error: " << e.what();}
   
-  //----------------------------------------------------------------------------
-  LOG(DEBUG) << "--regional model information";
-//temporary, in reality it should check if regional model has been provided
-//ideally it should also compare against PFG/AFG/soil definitions, but it does not know them 
-  try{listPlantFunctionalGroups = j.at("listPlantFunctionalGroups");}
-    catch(nlohmann::json::out_of_range) {  LOG(FATAL) << "listPlantFunctionalGroups not found";}
-  
-  std::sort(listPlantFunctionalGroups.begin(), listPlantFunctionalGroups.end());
   //----------------------------------------------------------------------------------------
   LOG(DEBUG) << "--Input Data";
-  try{keyList = readFile<double>(j, "MaskFile" , inputDir);}
+  try{keyList = readFile<double>(paramSimulFile, "MaskFile" , inputDir);}
   catch(nlohmann::json::out_of_range) {   
      LOG(FATAL) <<"MaskFile not found"; 
   }

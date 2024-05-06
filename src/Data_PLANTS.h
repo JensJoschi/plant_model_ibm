@@ -28,6 +28,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 // Jens Joschinski: Code structure and content (ECOLOPES JOINT MODEL)
 // Victoria Culshaw: split class into submodel classes (ECOLOPES JOINT MODEL)
 // JJ Inheritance and restructuring (ECOLOPES JOINT MODEL/EPM)
+// JJ update to new model (IBM)
 // --------------------------------------------------------------------------
 
 
@@ -37,7 +38,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "GSP_PLANTS.h"
 #include "g_Data_BASE.h"
 
-#include "PFGDefs.h"
 #include "Landscape.h"
 
 /** @cond */
@@ -50,20 +50,19 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \class Inputs
  * \brief contains plant-specific input
  * \details derives from Data_BASE and complements it by plant-specific input
- * This input is currently the PFG definitions,  shading and soil depth. Soil depth is in cm and shading is a percentage
 */
 class Data_PLANTS: public Data_BASE{
   public:
-    explicit Data_PLANTS(const std::string& paramSimulFile, const GSP_PLANTS& gsp);
+    explicit Data_PLANTS(const nlohmann::json& j, const GSP_PLANTS& gsp);
     Data_PLANTS() = default;
 
     std::string logger = "plantlog.conf";       // name of the logger configuration file
-    PFGDefs PFGDefinitions;                    // plant functional group definition. Contains life history attributes (lifespan etc.)
-    Landscape<double> shading;                 // percentage of shade cover in each grid cell;Expected content: dbl, 0-1; 0.0 = sun-exposed, 1.0 = darkness.
+  
+    Landscape<double> light;                  // amount of light in each voxel cell;
     Landscape<int>    soilDepth;               // depth of soil in cm, integers only. Expected int, 0-100 cm
-    Landscape<std::string> soilClass;          // soil class as string, describes what "kind" of soil is available in each cell (e.g. "sand", "unstructured_acidic_loam"). String must match PFGdefs soil requirements
-    Landscape<std::map<std::string, double>> management; // management information for each cell. Contains information on grazing, mowing, etc. as defined in the management file.
-
+    Landscape<std::string> soilClass;          // soil class as string, describes what "kind" of soil is available in each cell (e.g. "sand", "unstructured_acidic_loam").
+    Landscape<std::map<std::string, double>> management; // management information for each cell. Contains information on grazing, mowing, etc.
+    Landscape<std::vector<std::string>> allowedTypes; // enumerates which plants are allowed in each cell.
     /**
     * \brief check data coordinates for consistency
     * 
@@ -78,14 +77,7 @@ class Data_PLANTS: public Data_BASE{
    * \brief check plant-specific inputs
    * \details checks plant-specific inputs for errors. called by constructor. 
    * the base ctor has already checked the base inputs, so we only need to check the plant-specific inputs here.
-   * In particular, the function checks that all shading values are between 0.0 and 1.0, all depth values >= 0, and that 
-   * the PFG definitions are consistent with regional model information.
    * 
-   * PFG definitions may be a file with all plants that could theoretically occur; sometimes taken from
-   * a different project, or using a globally valid all-purpose file
-   * listPlantFunctionalGroups, on the other hand, is a subset (up to 100%) of the PFGDefinitions which occurs on site.
-   * Accordingly, PFGDefs may contain more PFGs than listPlantFunctionalGroups, but all PFGs in listPlantFunctionalGroups
-   * must be contained in PFGDefs.
    * \param gsp the GSP_PLANT version of global parameters. 
    */
     virtual void checkContent(const GSP_PLANTS& gsp) const;
