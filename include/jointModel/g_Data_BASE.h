@@ -86,11 +86,11 @@ class Data_BASE{
     std::string inputDir;        /*!< path to input files */
     std::string savingDir;       /*!< Saving directory path */
 
-    /* Spatial data */
-    //the data is stored as maps (Landscape class) whose key is 
-    //usually a coordinate (string) and the values are the data (int, double, string, etc.)
-    Landscape<double> keyList;    /*!< used only to extract the keys of the site (coordinates). */
-    
+    std::vector<Coordinates> keyList;    /*!<contains coordinates, in order of original json file. */
+
+    //classes that inherit from base shall also contain spatial data.
+    //Landscape <int> someData;  essentially a std::map<Coordinate, Int>, see Landscape.h
+
   /**
    * \brief check if keys are consistent
    * \details This function checks if the keys of all spatial data inputs are consistent . 
@@ -102,31 +102,33 @@ class Data_BASE{
    virtual bool checkKeys( const GSP_BASE& config) const; 
 
     /**
-     * \brief Read a json value and return a Landscape object
-     * \details the json file (e.g. filenames.json, test.json) contains multiple filenames. Entries can be of form 
+     * \brief find input data and return a Landscape object
+     * \details the json file (e.g. test.json) contains multiple filenames. Entries can be of form 
      * "ShadingFile": "shading.json", or "ShadingFile": ["inputs.json", "SHADING"]. In the latter case inputs.json contains 
      * information from various sources (e.g. shading, soil depth), and only SHADING is read from that file.
-     * \note not very sensible yet because there is only one dataset; but inherited classes may have more
-     * 
-     * \tparam T usually double or int
-     * \param j the json object, containing s
-     * \param s key to read (e.g. "filename: "foo.json"; here s would be "filename")
+     * For example, j = {"ShadingFile": "shading.json", "DepthFile": "d.json"}, s = "ShadingFile", 
+     * shading.json = {"(4, 1, 2)": 0.6, "(0, 2, 3)": 0.4}. Landscape<double> will contain 2 entries.
      */
     template <typename T>
-    Landscape<T> readFile(const nlohmann::json& j, const std::string& s, std::string inpdir){
+    Landscape<T> readFile(const nlohmann::json& j, const std::string& s, const std::string& inpdir){
+      nlohmann::json content;
       if(j.at(s).is_string()){
           std::string fileString  = j.at(s);
-       return Landscape<T>(inpdir + fileString);
+          std::ifstream file(inpdir + fileString);
+          if (!file.good()) {LOG(FATAL) << "Problem with file " << inpdir+fileString << ". File not found.";}
+          content = nlohmann::json::parse(file);
       } else if(j.at(s).is_array()){
         std::vector<std::string> fileVector = j.at(s);
         if (fileVector.size() != 2) {LOG(FATAL) << "Problem with file " << s << ". Too many arguments (" << fileVector.size() <<").";}
-        return Landscape<T>(inpdir + fileVector[0], fileVector[1]);
+        std::ifstream file(inpdir + fileVector[0]);
+        if (!file.good()) {LOG(FATAL) << "Problem with file " << inpdir+fileVector[0] << ". File not found.";}
+        content = nlohmann::json::parse(file);
       }
       else{
        LOG(FATAL) << "ERROR: " << s << " must be either a string or an array of strings";
-       return Landscape<T>();
+        content = nlohmann::json::parse("{}");
       }
-
+      return Landscape<T>(content);
     }
   
   private:

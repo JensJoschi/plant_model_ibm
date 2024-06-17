@@ -12,8 +12,8 @@
 
     "SoilCapacity": 100,
     "SeedRain": 5,
-
-
+    "LightDistributionFactor": 10,
+    "Diffusion": 0.1,
     "DoesDispersal": true,
     "DoesSoilClass": true,
     "DoesSoilDepth": true,

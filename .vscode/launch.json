@@ -8,8 +8,8 @@
             "name": "debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/out/Model_Darwin_1.0.4",
-            "args": ["-r"],
+            "program": "${workspaceFolder}/out/Model_Darwin_1.1.0",
+            "args": ["-r", "-f", "verena.json"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",  
             "environment": [],
@@ -20,7 +20,7 @@
             "name": "debug unit tests",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/out/Tests_Darwin_1.0.4",
+            "program": "${workspaceFolder}/out/Tests_Darwin_1.1.0",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}/Tests",  
@@ -29,52 +29,16 @@
             "MIMode": "lldb"
         },
         {
-            "name": "test run",
+            "name": "actual Building",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/model",
-            "args": ["-f", "test.json", "-r"],
+            "program": "${workspaceFolder}/out/Model_Darwin_1.1.0",
+            "args": ["-r", "-f", "building.json"],
             "stopAtEntry": false,
-            "cwd": "${workspaceRoot}/src",  
+            "cwd": "${workspaceRoot}",  
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
         },
-        {
-            "name": "animal only",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/model",
-            "args": ["-f", "0-filenames-global_params_ALL.json"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceRoot}/src",  
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
-        },
-        {
-            "name": "verena",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/model",
-            "args": ["-f", "verena.json"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceRoot}/src",  
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
-        },
-        {
-            "name": "laura",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/model",
-            "args": ["-f", "laura.json"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceRoot}/src",  
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
-        }
     ]
 }

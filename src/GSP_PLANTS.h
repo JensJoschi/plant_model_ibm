@@ -70,6 +70,8 @@ class GSP_PLANTS: public GSP_BASE{
     int initialSeeds;
     int seedRain;             /*!< Number of seeds coming in from the region every time step */
     int soilCapacity;
+    int lightDistributionFactor; /*!< determines how much the light is distributed among plants when TotalArea > voxelArea. 1 = single plant may take all  */
+    float diffusion;              /*!< the percentage of light that is diffused and bypasses the strata */
 
      /* plant Modules */
     bool doesDisturbance;       /*!< if this is switched off, the plants are unable to react to disturbances */

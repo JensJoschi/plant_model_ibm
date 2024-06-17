@@ -36,7 +36,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <map>
 /** @endcond */
 
-SeedDistribution::SeedDistribution(const std::vector<std::string_view>& types, const std::vector<std::string>& keys) {
+SeedDistribution::SeedDistribution(const std::vector<std::string_view>& types, const std::vector<Coordinates>& keys) {
 	for (const auto& type : types) {
 		Landscape<int> l {keys};
 		seeds.insert(std::pair<std::string_view, Landscape<int>>(type, l));
@@ -50,13 +50,9 @@ SeedDistribution::~SeedDistribution() {
 
 void SeedDistribution::addSeeds(int number, std::string_view type) {
 	Landscape<int>& current = seeds.at(type);
-	std::vector<std::string> keys = current.getKeys(); //not very nice but works for now.
-	for (auto cell : keys) {
-		current.setValue(cell, current.at(cell) + number);
+	for (auto& cell : current){
+		cell.second += number;
 	}
-	//better: change landscape so one can use:
-	//for auto& cell : current {
-		// cell.second += number;
 }
 
 void SeedDistribution::addSeeds(int number) {
@@ -65,10 +61,10 @@ void SeedDistribution::addSeeds(int number) {
         }
     }
 
-const std::map<std::string_view, int> SeedDistribution::getSeeds(const std::string& cell) const{
+const std::map<std::string_view, int> SeedDistribution::getSeeds(const Coordinates& c) const{
 	std::map<std::string_view, int> result;
 	for (const auto& t : seeds){
-		result.insert(std::pair<std::string_view, int>(t.first, t.second.at(cell)));
+		result.insert(std::pair<std::string_view, int>(t.first, t.second.at(c)));
 	}
 	return result;
 }
@@ -76,8 +72,12 @@ const std::map<std::string_view, int> SeedDistribution::getSeeds(const std::stri
 void SeedDistribution::disperse() {
 	std::map<std::string_view, Landscape<int>> newValues;
 	auto oneMap = seeds.begin();
-	std::uniform_int_distribution<> ls{ 0, static_cast<int>(oneMap->second.getTotncell() - 1)};
-	std::vector<std::string> keys = oneMap->second.getKeys(); //same for all maps anyway
+	std::uniform_int_distribution<> ls{ 0, static_cast<int>(oneMap->second.size() - 1)};
+	std::vector<Coordinates> keys;
+	for (auto& it : oneMap->second){
+		keys.push_back(it.first);
+	}
+
 	for (auto& t : seeds){
 		Landscape<int>& current = t.second;
 		int totalSeeds = 0;
@@ -85,17 +85,17 @@ void SeedDistribution::disperse() {
 			totalSeeds += cell.second;
 		}
 
-		int seedsPerBatch = totalSeeds > (5 * oneMap->second.getTotncell()) ? totalSeeds / (5 * oneMap->second.getTotncell()) : 1;
+		int seedsPerBatch = totalSeeds > (5 * oneMap->second.size()) ? totalSeeds / (5 * oneMap->second.size()) : 1;
 		int batches = totalSeeds / seedsPerBatch;
 		int remainder = totalSeeds % seedsPerBatch;
 
 		Landscape<int> temp(keys);
 		for (int s = 0; s < batches; s++){
-			const std::string& key = keys[ls(RNGs::mersenne)];
+			const Coordinates& key = keys[ls(RNGs::mersenne)];
 				temp.setValue(key, temp.at(key) + seedsPerBatch);
 		}
 		if (remainder > 0){
-			const std::string& key = keys[ls(RNGs::mersenne)];
+			const Coordinates& key = keys[ls(RNGs::mersenne)];
 			temp.setValue(key, temp.at(key) + remainder);
 		}
 		newValues.insert(std::pair<std::string_view, Landscape<int>>(t.first, temp));

@@ -38,6 +38,7 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include "easylogging++.h"
+#include <set>
 /** @endcond */
 
 
@@ -61,11 +62,23 @@ Data_BASE::Data_BASE(const nlohmann::json& paramSimulFile, const GSP_BASE& gsp){
     catch(nlohmann::json::exception& e) { LOG(FATAL) << "SavingDir error: " << e.what();}
   
   //----------------------------------------------------------------------------------------
-  LOG(DEBUG) << "--Input Data";
-  try{keyList = readFile<double>(paramSimulFile, "MaskFile" , inputDir);}
-  catch(nlohmann::json::out_of_range) {   
+  LOG(DEBUG) << "--KeyList";
+  std::string fileName; 
+  try{
+    fileName = paramSimulFile.at("MaskFile");
+  } catch(nlohmann::json::out_of_range) {   
      LOG(FATAL) <<"MaskFile not found"; 
   }
+  std::ifstream file(inputDir + fileName);
+    if (!file.is_open()) {
+        LOG(FATAL) << "Unable to open file: " << inputDir + fileName;
+  }
+  nlohmann::ordered_json j;
+    file >> j;
+    for (nlohmann::ordered_json::iterator it = j.begin(); it != j.end(); ++it) {
+      Coordinates c {it.key()};
+      keyList.push_back(c);
+    }
   checkContent(gsp);
 }
 
@@ -75,11 +88,19 @@ void Data_BASE::checkContent(const GSP_BASE& gsp) const{
   LOG(DEBUG) << "--Performing checks";
   std::filesystem::create_directory(inputDir);  //will not create a new one if already present
   std::filesystem::create_directory(savingDir);
+  if (!checkKeys(gsp)) LOG (FATAL) << "Key check failed";
 
   LOG(DEBUG) << "--All checks done";
 }
 
 
 bool Data_BASE::checkKeys(const GSP_BASE& config) const{
+    std::set<Coordinates> seenKeys;
+    for (const auto& key : keyList){
+        if (!seenKeys.insert(key).second) {
+            LOG(WARNING) << "Duplicate key encountered: " << key;
+            return false;
+        }
+    }
     return true;
 }

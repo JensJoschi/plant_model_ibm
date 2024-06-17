@@ -71,10 +71,10 @@ class IlluminationTest : public ::testing::Test {
         traits = new Traits(j);
         soil = std::make_shared<Soil>(4,10,"sand");
 
-        strata.push_back({0, 1, 150, 0});
-        strata.push_back({1, 2, 150, 0});
-        strata.push_back({2, 3, 150, 0});
-        strata.push_back({3, 4, 150, 0});
+        strata.push_back({0, 1, 150});
+        strata.push_back({1, 2, 150});
+        strata.push_back({2, 3, 150});
+        strata.push_back({3, 4, 150});
     }
     static void TearDownTestSuite() {
     delete traits;
@@ -92,7 +92,7 @@ TEST_F(IlluminationTest, smallPlantNoShade){//stratum 0 only
     std::multimap<std::string_view, std::unique_ptr<Individual>> individuals;
     individuals.insert({"test", std::move(i)});
     EXPECT_TRUE (individuals.find("test")->second);
-    Illumination illu {individuals, strata};
+    Illumination illu {individuals, strata, 1, 0.1};
     std::pair<bool,int> result = individuals.find("test")->second->age();
     EXPECT_FALSE(result.first);
     illu.sendLightBeam(0);
@@ -117,7 +117,7 @@ TEST_F(IlluminationTest, largePlantNoShade){
     std::multimap<std::string_view, std::unique_ptr<Individual>> individuals;
     individuals.insert({"test", std::move(i)});
     EXPECT_TRUE (individuals.find("test")->second);
-    Illumination illu {individuals, strata};
+    Illumination illu {individuals, strata,1, 0.1};
     result = individuals.find("test")->second->age();
     EXPECT_FALSE(result.first);
     illu.sendLightBeam(1000);

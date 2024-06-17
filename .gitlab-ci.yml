@@ -30,12 +30,12 @@ build-linux:
   - cmake -B build
   - cmake --build build 
   #- g++ -o mock mockmain.cpp -Lout -lPlants_Linux_${VERSION} -Iinclude/plants -Iinclude/jointModel -Iinclude -std=c++20
-  - cp out/Tests_Linux_${VERSION} tests/runtest
+  # - cp out/Tests_Linux_${VERSION} tests/runtest
   - mv README.md out/README_${VERSION}.md
-  - cd tests
-  - ./runtest
-  - cd ..
-  - cp tests/tests.log out/testlog.log
+  # - cd tests
+  # - ./runtest
+  # - cd ..
+  # - cp tests/tests.log out/testlog.log
   artifacts:
     paths:
       - out

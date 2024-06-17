@@ -86,10 +86,13 @@ std::pair<bool, int> PlantResource::allocateResources(){
         resources -= seeds;
 
         double potentialGrowth = resources * m_resAlloc_ptr->biomassAllocation;
+        assert ( m_resAlloc_ptr->maxBiomass >= biomass);
         double maxGrowth = sqrt(m_resAlloc_ptr->maxBiomass - biomass);
-        float addBiomass = std::min(potentialGrowth, maxGrowth);
+        float addBiomass =  std::min(std::min(potentialGrowth, maxGrowth), static_cast<double> (m_resAlloc_ptr->maxBiomass - biomass));
         biomass += addBiomass;
         resources -= addBiomass;
+        assert (biomass >= 0.0 && biomass <= m_resAlloc_ptr->maxBiomass);
+        assert(resources >= 0.0);
         return std::make_pair(true, seeds);
     }
 }

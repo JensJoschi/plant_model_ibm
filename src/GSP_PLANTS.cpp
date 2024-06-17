@@ -83,6 +83,16 @@ void GSP_PLANTS::addSpecificParams(const nlohmann::json& j){
   catch(nlohmann::json::type_error)   { LOG(FATAL) << "json::InitialSeeds not integer.";}
   catch(nlohmann::json::exception& e) { LOG(FATAL) << "json::InitialSeeds error: " << e.what();}
 
+  try{lightDistributionFactor = j.at("LightDistributionFactor");}
+  catch(nlohmann::json::out_of_range) { LOG(FATAL) << "json::LightDistributionFactor not found.";}
+  catch(nlohmann::json::type_error)   { LOG(FATAL) << "json::LightDistributionFactor not integer.";}
+  catch(nlohmann::json::exception& e) { LOG(FATAL) << "json::LightDistributionFactor error: " << e.what();}
+
+  try{diffusion = j.at("Diffusion");}
+  catch(nlohmann::json::out_of_range) { LOG(FATAL) << "json::Diffusion not found.";}
+  catch(nlohmann::json::type_error)   { LOG(FATAL) << "json::Diffusion not float.";}
+  catch(nlohmann::json::exception& e) { LOG(FATAL) << "json::Diffusion error: " << e.what();}
+
   try{doesSoilClass = j.at("DoesSoilClass");}
   catch(nlohmann::json::out_of_range) { LOG(FATAL) << "json::DoesSoilClass not found.";}
   catch(nlohmann::json::type_error)   { LOG(FATAL) << "json::DoesSoilClass not boolean.";}

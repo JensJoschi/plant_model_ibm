@@ -103,6 +103,9 @@ float Individual::getArea(float from, float to) const{
     return (m_shape_ptr->getArea(biomass, height, from, to));
 }
 
-float Individual::getBiomass() const{
+
+float Individual::getBiomass(bool excludeGerminants) const{
+    if (excludeGerminants && m_growth_ptr->getAge() == 0) return 0.0;
+    else
     return m_resource_ptr->getBiomass();
 }

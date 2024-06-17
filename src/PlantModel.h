@@ -44,7 +44,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "Landscape.h"
 #include "GSP_PLANTS.h"
 #include "Data_PLANTS.h"
-#include "Community.h"
+#include "Voxel.h"
 #include "SeedDistribution.h"
 
 /** @cond */
@@ -95,20 +95,22 @@ class PlantModel{
 	// Landscape<double> getBiomass(const std::string& type) const;
 	Landscape<int> getNumber(const std::string& type) const;
 	// Landscape<nlohmann::json> getInfo (const std::string& type) const;
-
+	Landscape<float> getArea() const;
 	Landscape<std::map<std::string, int>> getNumber() const;
 	//this overload allows ignoring the layer of 0cm, i.e. non-germinated seeds
 	Landscape<std::map<std::string, int>> getNumber(int from, int to) const;
 	Landscape<std::map<std::string, float>> getBiomass() const;
+
+	void save	 (int t, const std::string& fileName = "",bool sum = true, bool ordered = true) const;
+	void saveArea(int t, const std::string& fileName = "") const;
 //==============================================================================
 	private:
 
 	const GSP_PLANTS m_settings;
 	const Data_PLANTS m_voxelData;
 	const std::map<std::string, Traits> m_traits;
-
 	SeedDistribution m_seeds;
-	Landscape <Community*> m_cells;
+	Landscape <Voxel*> m_cells;
 
 	/*!
 	*  \brief Do dispersal model within each voxel

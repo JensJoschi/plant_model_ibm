@@ -170,6 +170,30 @@
         "Dormancy": false,
         "MortalityDormant": 0.05,
         "DormancyBreakRate": 0.8
+    }, 
+    "veryLargeTree": {
+        "MaxHeight": 100,
+        "LifeSpan": 100,
+        "MaturationTime": 1,
+        "minDepth": 200,
+        "size": 2,
+
+        "acceptedSoils": {"sand": true, "clay": true},
+
+        "biomassAllocation": 1.8,
+        "maxBiomass": 200,
+
+        "GerminationSuccess": 0.9,
+        "density": 0.1,
+        "seedAllocation": 0.1,
+
+        "germinationTiming": 3,
+
+        "maintenanceCosts": 0.1,
+        "conversionEfficiency": 0.5,
+        "Dormancy": false,
+        "MortalityDormant": 0.05,
+        "DormancyBreakRate": 0.8
     }
 }
     

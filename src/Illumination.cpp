@@ -28,6 +28,7 @@ If not, see <https://www.gnu.org/licenses/>. */
  // ----------------------------------------------------------------------------
  
 #include "Illumination.h"
+#include "Voxel.h"
 #include "Individual.h"
 
 /** @cond */
@@ -36,45 +37,124 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <algorithm>
 /** @endcond */
 
-Illumination::Illumination(std::multimap<std::string_view, std::unique_ptr<Individual>>& individuals, const std::vector<Stratum>& strata) : 
-            individual_refs(individuals), strata(strata) {}
+Illumination::Illumination( const std::vector<Stratum>& strata, int lightDistributionFactor, float diffusion): 
+    strata(strata), lightDistributionFactor(lightDistributionFactor), diffusion(diffusion) {
+        assert(diffusion >= 0.0f && diffusion <= 1.0f);
+        assert (lightDistributionFactor > 0);
+    }
+
+void Illumination::distributeIndividuals(Community& comm){
+    std::vector<std::weak_ptr<Individual>> i = comm.getIndividuals(); 
+    for (auto& stratum : strata){
+        for (auto& ind : i){
+            std::shared_ptr<Individual> currIndividual = ind.lock();
+            assert(currIndividual);
+            float plantArea = currIndividual->getArea(stratum.from, stratum.to);
+            if (plantArea>0.0f){
+                IndivArea_t indArea = {currIndividual, plantArea};
+                addHereOrElsewhere(indArea, stratum);
+            }
+        }
+    }
+}
 
 void Illumination::sendLightBeam(int light){
     assert(light >= 0);
+    int bypassing = std::round(light * diffusion);
+    light -= bypassing;
     for (int i = strata.size()-1; i >= 0; --i){
-        light = distributeLightStratum(light, strata[i]);
+        choosePlants(strata[i]);
+        light = distributeLightToIndividuals(light + std::round(static_cast<float>(bypassing)/strata.size()), strata[i]);
     }
+}
+
+void Illumination::addNeighbours(const std::vector<Illumination*>& n_illumin){
+    for (auto& ill : n_illumin){
+        neighbours.push_back(ill);
+    }
+}
+
+float Illumination::getPlantCover() const{
+    float totalArea = 0.0f;
+    for (auto& [stratum, individuals] : surfaceAreas){
+        for (auto& [individual, area] : individuals){
+            if (!individual.expired())  totalArea += area;
+        }
+    }
+    return totalArea;
 }
 
 //--PRIVATE FUNCTIONS--//
 
+void Illumination::addHereOrElsewhere(IndivArea_t individual, const Stratum& stratum){
+    // if (std::find(surfaceAreas[stratum].begin(), surfaceAreas[stratum].end(), individual)!= surfaceAreas[stratum].end()){
+    //     return; //this recursive function may loop over the neighbour's neighbours, thus returing back to cells
+    //     //already visited. In such cases, skip
+    // } //requires find_if
+    if (individual.second <= stratum.area){
+        this->surfaceAreas[stratum].emplace_back(individual);
+    } else {
+        IndivArea_t amountThatFits = {individual.first, stratum.area};
+        this->surfaceAreas[stratum].emplace_back(amountThatFits);
+        assert(neighbours.size() > 0);
+        IndivArea_t overflow = {individual.first, (individual.second - stratum.area)/neighbours.size()};
+        for (auto& n : neighbours){
+            n->addHereOrElsewhere(overflow, stratum);
+        }
+    }
+}
+void Illumination::choosePlants(const Stratum& stratum){
+    float totalArea = 0.0f;
+    auto& areaS = surfaceAreas[stratum];
+    areaS.erase(std::remove_if(areaS.begin(), areaS.end(),
+                 [](const IndivArea_t& i) { return i.first.expired(); }),
+                areaS.end());
+    for (auto& i : areaS){
+        assert(i.second >= 0.0);
+        totalArea += i.second;
+    }
+    float reduceBy = (totalArea - stratum.area)/lightDistributionFactor;
+    float tolerance = 0.001f; //to deal with floating point precision errors
+    while ((totalArea - stratum.area) > tolerance){
+        int index = rand() % areaS.size(); 
+        //use proper RNG here instead
+        auto chosen = std::next(areaS.begin(), index);
+        assert (chosen->second >= 0.0f && !chosen->first.expired());
+        float area = chosen->second;
 
-int Illumination::distributeLightStratum(int light, const Stratum& stratum, bool strict){
+        if (area > reduceBy){
+            chosen->second -= reduceBy;
+            totalArea -= reduceBy;
+        } else {
+            totalArea -= area;
+            areaS.erase(chosen);
+        }
+    }
+}
+
+int Illumination::distributeLightToIndividuals(int light, const Stratum& stratum){
     assert(light >= 0);
     assert(stratum.from >= 0.0f && stratum.to > stratum.from);
-    assert(stratum.shading >= 0.0f && stratum.shading <= 1.0f);
     assert(stratum.area >= 0.0f);
-
-    //shading by buildings etc:
-    light = light * (1.0f-stratum.shading);
-    if (light == 0){
-        return 0;
-    }
-    //find out how much light misses the individuals, handle case where community grows out of voxel
     float totalArea = 0.0f;
-    for (auto& i : individual_refs){
-        totalArea += i.second->getArea(stratum.from, stratum.to);
-    }
-    if ( strict && totalArea >= stratum.area) {throw std::runtime_error("Illumination::send light Beam: total Area >= stratum Area");}
+    for (auto& i : surfaceAreas[stratum]) totalArea += i.second;
+    float tolerance = 0.001f; //to deal with floating point precision errors
+    assert(totalArea <= (stratum.area + tolerance) && totalArea >= 0.0f);
+    if (totalArea > stratum.area + tolerance) totalArea = stratum.area;
+    if (totalArea == 0.0f) return light;
+
     float amountThatHitsPlants = std::min (light * (totalArea/stratum.area), static_cast<float> (light));
     assert(amountThatHitsPlants <= light);
-    //actual attribution of light resources
-    for (auto& i : individual_refs){
-        float area = i.second->getArea(stratum.from, stratum.to);
-        float share = totalArea != 0.0f ? area/totalArea : 0.0f;
+ 
+    for (auto& [individual, area] : surfaceAreas[stratum]){
+        assert(!individual.expired());
+        float share = area/totalArea;
         int resources = std::round (share * amountThatHitsPlants);
-        i.second->feed(resources);
+        assert(resources>=0);
+       individual.lock()->feed(resources);
     }
     return light - amountThatHitsPlants;
 }
+
+
 

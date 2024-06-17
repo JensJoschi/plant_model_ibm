@@ -75,9 +75,9 @@ class CommunityTest : public ::testing::Test {
 
     };
     traits = new Traits(j);
-    Stratum s1{0, 2, 100, 0};
-    Stratum s2{2, 4, 100, 0};
-    Stratum s3{4, 6, 100, 0};
+    Stratum s1{0, 2, 100};
+    Stratum s2{2, 4, 100};
+    Stratum s3{4, 6, 100};
     strata = new std::vector<Stratum>{s1, s2, s3};
 
     }
@@ -95,7 +95,7 @@ TEST_F(CommunityTest, builds){
     std::map<std::string_view, const Traits*> traitlist;
     traitlist["species"] = traits;
 
-    c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100, *strata);
+    c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100, *strata, 1, 0.1);
     ASSERT_TRUE(c != nullptr);
     c.reset();
 }
@@ -112,7 +112,7 @@ TEST_F(CommunityTest, buildsWithJson){
 
     std::map<std::string_view, const Traits*> traitlist;
     traitlist["species"] = traits;
-    c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100, *strata, j);
+    c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100, *strata,1,0.1, j);
     ASSERT_TRUE(c != nullptr);
     c.reset();
     // j["unknownSpecies"] = correctVariables;

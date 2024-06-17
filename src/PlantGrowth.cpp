@@ -58,6 +58,9 @@ void PlantGrowth::check() const{
 float PlantGrowth::getHeight() const{
     return m_height;
 }
+int PlantGrowth::getAge() const{
+    return m_age;
+}
 
 bool PlantGrowth::grow(){
     if ((m_age+1) > m_lifehist_ptr->LifeSpan) return false;

@@ -32,13 +32,16 @@ If not, see <https://www.gnu.org/licenses/>. */
  * \file Illumination.h
  * \brief Light calculations
  * \details Contains all variables and functions to calculate the light that reaches individuals Plants.
- * Part of the components that make up a community
+ * Part of the components that make up a Voxel
  */
 
 #ifndef ILLUMINATION_H
 #define ILLUMINATION_H
 
 #include "Individual.h"
+#include "Community.h"
+class Voxel;
+class Community;
 
 /** @cond */
 #include <vector>
@@ -49,61 +52,99 @@ struct Stratum{
     float from; /**< The lower bound of the stratum */
     float to;   /**< The upper bound of the stratum */
     float area; /**< The area of the stratum */
-    float shading;  /**< Shading by buildings etc, range 0-1 where 1 == full shade, blocks 100% of incoming light */
+
+     bool operator<(const Stratum& other) const {
+        return from < other.from;
+    }
 };
 
 /*!
  * \class Illumination
- * \brief Plant community in a cell
+ * \brief Light calculations of a Voxel
  * \details 
  * Contains all variables and functions to calculate the light that reaches individuals Plants.
- * In this basic version, the community is stratified; light beams that hit the community at an 
+ * The voxel is stratified; light beams that hit the voxel at an 
  * angle of 90 degrees first hit the uppermost strata and plants therein. Any light that is not
  * absorbed by the plants in the uppermost strata is passed on to the next strata, and so on.
  * The remaining light leaving a stratum is diffused and homogenized over the full area of the next stratum. This means that
  * the plant shades itself partially but not completely. Example:
- * If a plant covers the whole length of a stratum, it will receive all 100% of the light; if it has 2/3 of its area in the uppermost
- * and 1/3 in the next, it receives 66% of the light in the uppermost, and 33% of the *remaining* light (11%) in the next, so 77% in total. 
- * The lower part  is therefore shaded and less efficient; and 33%*66% = 22% of the light passes through without hitting the plant. 
+ * If a plant covers 2/3 of the uppermost stratum's area, and 1/3 of the area in the next stratum, it receives 66% of the light
+ * in the upper stratum. The remaining third of the light gets passed on to the next stratum. There, the plant receives  
+ * 33% of the *remaining* light (11%). The remainder(22%) passes through the stratum without hitting the plant. 
  * Without the homogenization the uppermost part would receive 66%, but the lower part would be entirely shaded and receive nothing; 
  * and 33% of the light would be lost.  
+ * Plant growth is not directly controlled by the voxel/illumination model. The sum of all plant material (from many small plants) 
+ * may be larger than what the voxel can accomodate, or an individual plant may grow larger than the voxel.
+ * When a single plant covers an area larger than the voxel Area, its excess area is split into equal parts and distributed
+ * to the neighbouring cells. The material from neighbours is accordingly also added to this voxel's area and may also receive light
+ * When there is too much material in the voxel (both from plants growing here and spilling over from neighbours), a top layer 
+ * of plant material is randomly selected and receives light. The number of draws is a parameter (lightDistributionFactor).
  * This class associates with individuals and is responsible for feeding them with light.
- * \note some resemblance to RFate and the ECOLOPES PLANT MODEL, but in this version
- * - light is an integer and not a factor;
- * - plants on the same stratum do compete for light; 
- * - plants still do shade themselves, but as the upper and lower  parts share resources, they do not kill themselves. 
  * \note ECOLOPES PLANT MODEL allows for angular light input, this is not yet implemented. See issue #8
- * \note the plant community may grow larger than the illuminated area (i.e. they grow out of the voxel cell). Pieces growing outwards
- * are entirely ignored (do not cause shade on neighbours, do not receive light from neighbour cells). See issue #9
  * */
 class Illumination{
+    typedef std::pair<std::weak_ptr<Individual>, float> IndivArea_t;
     public:
-        Illumination(std::multimap<std::string_view, std::unique_ptr<Individual>>& individuals, const std::vector<Stratum>& strata);
-        /**
-         * \brief direct light to plant individuals
-         * \details light is distributed to the individuals in the community, starting with the uppermost stratum.
-         * light enters at 90 degree angle, and any plant material growing outside the voxel cell is ignored.
-         * \param light 
-         */
-        void sendLightBeam(int light);
+    Illumination(const std::vector<Stratum>& strata, int lightDistributionFactor, float diffusion);
+
+    /**
+     * \brief distributes individuals to this and neighbouring voxels
+     * \details a maximum of stratum.size area is distributed to this voxel, the rest is passed on to neighbours
+     */
+    void distributeIndividuals (Community& community);
+
+    /**
+     * \brief direct light to plant individuals
+     * \details light is distributed to the individuals living here, starting with the uppermost stratum.
+     * light enters at 90 degree angle
+     */
+    void sendLightBeam(int light);
+
+    /**
+     * \brief add neighbouring voxels
+     * \details neighbouring voxels may spill over light and plant material
+     */
+    void addNeighbours(const std::vector<Illumination*>& m_illumin);
+
+    /**
+     * \brief Get plant surface area
+     * \details returns total plant surface of any material in this voxel (including spillover from neighbours)
+     * @return float 
+     */
+    float getPlantCover() const;
 
     private:
-        std::multimap<std::string_view, std::unique_ptr<Individual>>& individual_refs; /**< Reference to the individuals in the community */
-        const std::vector<Stratum> strata; /**<contains information about the stratification (number and size of each stratum, shading by buildings)*/
+    const std::vector<Stratum> strata; /**<contains information about the stratification (number and size of each stratum, shading by buildings)*/
+    int lightDistributionFactor; /**< determines how much the light is distributed among plants when TotalArea > voxelArea. 1 = single plant may take all */
+    float diffusion; /**< the percentage of light that is diffused and bypasses the strata */
+    std::map<Stratum, std::vector<IndivArea_t>> surfaceAreas; /**< list of individuals and the area they cover in each stratum*/
+    std::vector<Illumination*> neighbours; //light calculation of neighbouring cells. Plants may spill over.
 
-        /**
-         * \brief distribute light resources to individuals in a stratum
-         * \details Light resources are distributed to all biomass that occuring in one stratum. 
-         * The resources are distributed among all individuals living here, in proportion to the area they cover within the stratum. 
-         * If the individual areas do not sum to stratum->Area, unspent resources are returned. 
-         * If plants are larger than illumArea and strict == true, the function will throw an error.
-         * \param light number of light resources
-         * \param stratum stratum to distribute light to
-         * \param strict throw error if plants are larger than stratum?
-         * @return int unspent light resources
-         */
-        int distributeLightStratum(int light, const Stratum& stratum, bool strict = false);
+    /**
+    * \brief choose which plants receive light
+    * \details When there is too much material in the voxel (both from plants growing here and spilling over 
+    * from neighbours), a top layer  of plant material is randomly selected to receive light. 
+    * Light is distributed in batches, the number of batches is controlled by lightDistributionFactor.
+    * \param stratum 
+    */
+    void choosePlants(const Stratum& stratum);
 
+    /**
+     * \brief distribute light resources to individuals in a stratum
+     * \details Light resources are distributed to the individuals living here (see also distributeIndividuals()
+     * The resources are distributed in proportion to the area they cover within the stratum. 
+     * If the individual areas do not sum to stratum->Area, unspent resources are returned; 
+     * if the sum is larger, winners are drawn randomly (see choosePlants). 
+     * @return int unspent light resources
+     */
+    int distributeLightToIndividuals(int light, const Stratum& stratum);
+
+    /**
+     * \brief add individual area to this or neighbouring voxels
+     * \details recursive function. Attempts to add to this voxel. If the area is too large,
+     * calls itself on neighbouring voxels. the area is split into equal parts and distributed to the neighbours.
+     * If neighbour was visited before, it is skipped.
+     */
+    void addHereOrElsewhere(IndivArea_t individual, const Stratum& stratum);
 };
-
 #endif //ILLUMINATION_H

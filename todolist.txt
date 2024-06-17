@@ -1,23 +1,17 @@
-run example and check results
-light gets 100% eaten by plants -> conversion efficency (shade tolerance) does not work
+Plants grow into neighbour, from there into their neighbours, i.e. back into original. This is not as intended and may cause infinite recursion.
 
-light gets equally distributed among plants, which can cause all plants to have too little light and die.
-e.g. germinants cover 5* the area that is available, then each dies, and we have no offspring.
-should instead distribute light randomly: create a choosePlants function in Illuminaiton, have a vector ind* currentPlants 
-(which may be neighours in the future)
+Unit tests are broken and need an update. Proper testing is needed to check that neighbouring growth is as expected. 
 
-GSP tests
-Data::checkContent vs gsp configs (!doesX)
+Unit testing requires different output functions. Currently the biomass output for one cell sums ALL biomass of the individuals growing in the cell, including the stuff that grows into the neighbours. To repair, Individuals need to know of which type they are (Traits does not contain a string Name, so the Individuals cannot know) 
 
-add function to output current community as json, run model in one cell and test
-try inputting all voxel data in one file
+proper randomization using rng.h is missing
+
+traits file is hardcoded in main, needs to be written into json
+
+refactor saving function, its ugly.
+
 build community with proper json: {soil: {...}, voxel: {...}, startPop: {...}}
 
-add Tests of Community: 
-- build community with one or more starting populations and varying starting conditions
-- test rainseeds, age etc with nice starting population
-
-voxel volume and plant surface area: how many strata should be modelled, how much total surface area does a cell support?
-
 add regional model
+
 seedMass attribute missing

@@ -7,12 +7,12 @@ This readme concerns model version @PROJECT_VERSION@. Please make sure the docum
 This repository hosts the IBM-Plant model (name to be decided)
 
 The folder /doc contains figures relevant for this documentation. 
-The folder /include contains dependencies: nlohmann::json, easylogging++, and a few files from the ECOLOPES ECOLOGICAL MODEL. It also includes the public header file of the model library (the output of this repo).
-The folder /out contains the binary files (including the library) constructed by this repo.
+The folder /include contains dependencies: nlohmann::json, easylogging++, and a few files from the ECOLOPES ECOLOGICAL MODEL.
+The folder /out contains the binary files constructed by this repo.
 The folder /rscripts contains a few rscripts to generate inputs or analyse outputs. More like scribbled notes than anything useful.
-The folder /src contains all source files of the model, and a CMake file that compiles the model as executable.  
+The folder /src contains all source files of the model, and a CMake file that compiles the model.
 The folder /tests includes unit tests, a CMake file to build them, and all inputs for a test run
-root further contains a master CMake file that compiles the binaries (library, executable and tests), a doxyfile for documentation of the code(click on the download button ->documentation, or go to CICD->pipelines and download there) and a logger configuration file (see easylogging help). Root further contains this README file and a separrate USER GUIDE. 
+root further contains a master CMake file that compiles the binaries (executable and tests), a doxyfile for documentation of the code(click on the download button ->documentation, or go to CICD->pipelines and download there) and a logger configuration file (see easylogging help). Root further contains this README file and a separrate USER GUIDE. 
 
 # COPYRIGHT notice
 
@@ -24,49 +24,17 @@ root further contains a master CMake file that compiles the binaries (library, e
 > A copy of the license is included in the section entitled "GNU  
 > Free Documentation License".  
 
+This readme file has been written by Jens Joschinski. Parts of it are derived from the ECOLOPES PLANT MODEL readme, https://gitlab.com/ecolopes-team/plantmodel .
+
 # Authorship  
 
-This readme file has been written by Jens Joschinski. It is derived from the ECOLOPES PLANT MODEL readme.
+The precursor of this model is the ECOLOPES PLANT MODEL, https://gitlab.com/ecolopes-team/plantmodel. To add plant Individuals and to revise the calculation of light, the majority of classes and code was rewritten. The following classes(plus their tests) have been written from scratch:  
+Traits; SoilRequirements; Soil; Seed Pool; Seed Biology; ResourceAlloc; PlantShape; PlantResource; PlantGrowth; LifeHistory; Individual; HabSuit; Community; Voxel; Illumination; SeedDistribution  
+The only classes which are imported from Plantmodel (but strongly altered) are: GSP_PLANTS; Data_PLANTS; PlantModel; rng (no changes here). This amounts to about 1240 out of 6073 lines of code.
 
-The IBM-Plant model is derived from the ECOLOPES PLANT MODEL, which in turn is derived from Fate/RFate.
 The "Authorship" section of individual files mentions the main contributor(s) to each file. If there is only a sole author or author group mentioned, then this person/group developed almost all (>90%) of the code. If there are further parties mentioned, their contributions are listed in detail in mostly chronological order. If an authorship statement is missing, all content was written by Jens Joschinski. 
-The following classes have been written from scratch for the individual-based-model:  
-Traits  
-SoilRequirements  
-Soil  
-Seed Pool  
-Seed Biology  
-ResourceAlloc  
-PlantShape  
-PlantResource  
-PlantGrowth  
-LifeHistory  
-Individual  
-HabSuit  
-Community  
-Illumination  
-SeedDistribution
 
-The following classes are imported from PlantModel and have been altered:  
-GSP_PLANTS  
-Data_PLANTS  
-PlantModel  
-
-The following classes are imported from PlantModel and are used without alteration:  
-rng
-
-The following classes are imported from PlantModel but are not used (they will eventually be deleted or used with or without alteration):  
-plants  
-PFGDisturbance  
-PfgDefs  
-PFG  
-main  
-FGUtils  
-dist  
-cohort  
-Cell  
-Of these classes, the following are used with minor/no alteration from Fate: PropPool , FGUtils, FuncGroup  
-The following were written from scratch for the Ecolopes Plant Model: rng, plants, PFGDisturbance, Data_Plants, GSP_Plants, main, PFGDefs  
+The include/jointModel folder includes classes that were originally written for the joint model (plantModel and the other ECOLOPES models derive from them). The base and container classes were modified in the IBM model.
 
 # 0 Preface
 
@@ -75,14 +43,16 @@ agent-based models (Grimm et al. 2006), as updated by Grimm et al. (2020).
 
 # 1 Purpose and Patterns
 
-The plant model aims to predict the presence and abundance of plant individuals from multiple species or types. In contrast to the ECOLOPES PLANT MODEL, it includes Individuals, each with their specific resource and particular needs.
+The model aims to predict the presence and temporal change of plant communities in 3dimensional environments. It tracks the biomass and number of plant individuals from multiple species or types. It improves upon the ECOLOPES PLANT MODEL and includes Individuals, each with their own state including a resource pool. 
+The outcome of the model outcome should reflect the community succession of plants, as affected by competition for light and space. In the worst case, the model should provide a phenomenological description by producing outcomes that can be used for relative comparisons among species, largely tracking the onset and demise of individual species in the correct order. With reasonable parametrization, the model should however also produce correct results in absolute terms, i.e. abundances and biomasses and their vertical distribution that can be verified with real-world data. 
+The model is not expected to perform well in highly stochastic environments (e.g. erratic herbivore pressure) or in environments under soil nutrient limitation, as these processes are not included in the model.
 
 # 2 Entities, state variables, and scales 
 
 ## Spatial and temporal resolution  
 
-This model is meant to simulate plant communities in urban areas, in particular on building envelopes. While it does not constrain spatial extent, temporal extent or spatial resolution in any way, it is assumed that settings are around 10-200 time steps, 1m3 spatial resolution and 100 m x 100m spatial extent. Shading and plant competition might become unrealistic if lower spatial resolutions are used, and plants no longer fit into the cells if resolutions are higher. With much longer run times the model will require longer to run and create larger amounts of data, and very large spatial extents may cause memory issues.   
-The model does not contain any functions to model seasonal change.  
+This model simulates plant communities in urban areas, in particular on building envelopes. While it does not constrain spatial extent, temporal extent or spatial resolution in any way, it is assumed that settings are around 10-200 time steps, 1m3 spatial resolution and 100 m x 100m spatial extent. Shading and plant competition might become unrealistic if lower spatial resolutions (coarser) are used. With much longer temporal extent, the model will require longer to run and create larger amounts of data, and very large spatial extents may cause memory issues.   
+A time step could in principle be a year or a week, depending on the parametrization (growth rates, light conversion, units of light inputs). The model does, however, not contain any functions to model seasonal change, nor does it include leaf senescence (this is assumed to be part of maintenance costs). When assuming annual time steps, please mind that these make no sense for annual plants. The transition from seed to young plant becomes also difficult - how big should the plant be 1 year after germinating? The starting size is currently hardcoded in PlantResource constructor.
 
 ## Entities
 | Entity | Description |
@@ -100,10 +70,8 @@ The individual has the following attributes:
 - it lives: it grows, reproduces and dies.
 - it is photoautotrophic: it converts light into a (carbohydrate) resource; it lives from these resources and produces green (photosynthetically active) biomass
 - it has a shape: it has a geometric representation, being able to e.g. cast a shade 
-- it needs a place to live: the soil determines whether a plant can grow at all (habitat is suitable). Soil 
-   (or space) is a limiting resource.
-- it interacts with the environment: Stressors can affect each of the above properties,
-   i.e. cause mortality, deplete resources or affect the soil.
+- it needs a place to live: the soil determines whether a plant can grow at all (habitat is suitable). Soil (or space) is a limiting resource.
+- it interacts with the environment: Stressors can affect each of the above properties, i.e. cause mortality, deplete resources or affect the soil.
 
 The seeds have the following attributes:
 - they live: they can die, or they can be converted into individuals
@@ -128,20 +96,22 @@ There is no single optimal strategy for life history, resource allocation and ot
  In addition, the plant has a certain shape; the shape determines the amount of biomass growing at a specific height. Knowing the plant's general shape, its current fresh biomass (g), and the mean density of the plant(g/cm2), one can infer the plant's leaf surface area(cm2) within a certain height section. This variable is important for the calculation of light in a voxel cell (see below)
  Shape does not change over time (a rectangular plant cannot become a lollipop tree), but its extent does (height, width). 
 
-There are a few implementation-specific notes affecting the general logic of the model:
-- Plant shape is simplified to a rectangular shape. 
-- Soil: soil has a capacity to simulate competition for space, but no other attributes that may be depleted. Hence, plants of different types compete for the same singular resource.
-- disturbance: limited to depleting either the plant's biomass or its resources.  
+For details on the state variables, see section 7 ("submodels") or UML diagram.
 
+There are a few implementation-specific notes affecting the general logic of the model:
+- The model is written with extensibility in mind. Replacing one section (e.g. resource calculation) should have minimal effects on the functionality of the remaining model
+- Plant shape is currently simplified to a rectangular shape. Further shapes can be added later
+- Soil: soil has a capacity to simulate competition for space, but no other attributes that may be depleted. Hence, plants of different types compete for the same singular resource.
+- disturbance: limited to depleting either the plant's biomass or its resources. Mostly not implemented yet.
 
 ### Voxel Cell
-A voxel is a three-dimensional object that is embedded in a 3D-landscape. In our model it contains a soil, a plant community, and light. 
+A voxel is a three-dimensional object that is embedded in a 3D-landscape. In our model it contains a soil, a plant community, and light (and disturbance, to add). 
 *Soil*  
 Soil is a shared resource, used by the Individuals (see above). It has a limited capacity to host plant individuals and its state may change over time. Some attributes are set at initialization and cannot change throughout the simulation run.  
-Soil is not represented as 2- or 3Dimensional object, but as an object with one-dimensional properties (depth, type, capacity); stratification of soil types is also not yet included.
+Soil is not represented as 2- or 3Dimensional object, but as an object with one-dimensional properties (depth, type, capacity); stratification of soil types is  not yet included.
 
 *Light*  
-For the purpose of light calculations, the voxel can be conceptualized as a stratified (2-Dimensional) rectangle. Light beams that hit the community at an angle of 90 degrees first hit the uppermost strata and plants therein. The light is then distributed to all plant individuals living in it. Any light that is not absorbed by the plants in the uppermost strata is passed on to the next strata, and so on.
+For the purpose of light calculations, the voxel can be conceptualized as a stratified (2-Dimensional) rectangle. Light beams that hit the community at an angle of 90 degrees first hit the uppermost strata and plants therein. The light is then distributed to all plant individuals living in this stratum. Any light that is not absorbed by the plants in the uppermost strata is passed on to the next strata, and so on.
 The logic of light calculation follows RFate and the ECOLOPES PLANT MODEL, but with some improvements:
 - light is an integer and not a factor, this allows converting watt/m2 into resources in joule (at least in principle; parametrization is required)
 - plants on the same stratum do compete for light; 
@@ -153,31 +123,32 @@ Example: with 5 cm strata, a 1m x 1m x 1m voxel can harbour light for 20 * 100cm
 see issue #10.   
 
 *The plant community*  
-The plant community is made up of the Individuals. The plant community can outgrow the voxel cell, i.e. the total amount of plant surface area in a stratum can become larger than a voxel cell's space. Plant biomass that spills into neighbouring voxels is considered lost (does not provide shade, does not collect light).  
-
+The plant community is made up of the Individuals and seeds. Although the plant community and all its individuals have their home in the Voxel Cell, they can outgrow it, i.e. the total amount of plant material in a stratum can become larger than a voxel cell's (or rather, stratum's) space. Plant biomass that spills into neighbouring voxels will reduce the neighbor's light levels, while still collecting light for the individual at home. Neighbour cells in this sense are the 2-dimensional neighbour cells of the "home" voxel cell. Vertical outgrowth of a voxel cell is not supported yet.  
 In contrast to the ECOLOPES plant model, light no longer can pass through neighbouring voxel cells (see issue #8).  
 
-Disturbance to add  
+*Disturbance* to add  
 
 ### Environment
 The environment contains voxel cells in some specified spatial configuration; and seeds that are not yet settled in voxels. In each time step all individuals in each voxel are given the opportunity to produce seeds. These seeds do not immediately sink to the ground of the voxel cell, but are released into the environment. Here they are reshuffled and then distributed (randomly and uniformly) to voxel cells.  There is potentially additional seed input from the region in which the site is embedded
-Currently the spatial configuration of the voxels does not matter, but in the future a plant may outgrow its voxel cell and its biomass enters the neighrbouring voxel(s).  Also, more complex dispersal modes (e.g., exponential decrease) requires knowledge about the spatial configuration.  
+The spatial configuration of the environment determines where (in which cell) plants end up when they outgrow their home cell. Plants currently grow only into their home voxel's immediate 2D neighbour cells.
 
 # 3. Process overview and scheduling
 - create PlantModel (environment): in this step all input data, configurations and plant trait definitions is read in. It is checked that all input is consistent, and voxel cells are created in the correct spatial configuration and filled with the correct input data. Plant communities are created according to input data and configurations. If a regional model was provided, that only individuals of the fitting plant groups can occur in each voxel cell.  
 - run time step:
   - add seeds from the region. If enabled, a config::seedRain * number_of_voxels seeds of each plant type are added to the environment.
   - add seeds to Voxels. The seeds that are in the environment settle in the assigned voxel cells.
-  - provide resources to voxels. Light is provided to each voxel cell, the amount being specified in the input data (light).
-  - aging in each voxel. Lets each individual age, die (e.g. if too old or resources are insufficient) and potentially produce seeds. New seeds are given to the environment.
+  - distribute biomass. Calculates the plant material that outgrows a home voxel and registeres its biomass in the neighbour cells.
+  - provide resources to voxels. Light is provided to each voxel cell, the amount being specified in the input data (light). The individuals living (partially) in the cells receive the light resource.
+  - aging in each voxel. Lets each individual age, die (e.g. if too old or resources are insufficient) and potentially produce seeds. Also recruits new individuals from the current seed pool (but not from newly produced seeds). New seeds then are given to the environment.
   - Dispersal: seeds in the environment are reshuffled (random, uniform).
 - save data. Total plant abundance, biomass, or abundance and biomass of certain groups is retrieved and saved. There are options to only save certain height intervals.  
+
+The order ensures that new seeds may land in a cell and germinate in the same time step; but that the plant cannot additionally grow the same time step. It is also ensured that newly produced seeds disperse, but cannot germinate in the same time step.
 
 # 4. Design concepts
 
 ## Basic principles
-
-### Robust software engineering approach 
+The model combines habitat filtering approaches with process-based modelling, with particular focus on competition for light. The soil and nutrient balance as well as disturbance are on purpose left as simple and general as possible. The model is, however, written in a way that allows later extension.
 
 FATE follows field-specific software engineering principles of ecological models. See (Scheller et al., 2010; Vedder et al., 2021) for an overview of common approaches, potential drawbacks and risks.
 The plant model improves on this and provides a platform prototype that is planned to be further extended in the future. It is, however, neither accurate nor correct ,as it inherits conceptual decisions from RFATE which may not work very well on a very high resolution.  
@@ -186,26 +157,34 @@ This implementation adds extensive testing, proper inheritance structures and si
 
 ## Emergence and interaction 
 
-The key outcome of the simulation is the spatiotemporal change of community patterns, which emerges from the interaction of individuals within each voxel cell (particularly competition for light). On a landscape scale, abiotic factors (soil depth, soil class) impose a general community structure via habitat filtering, and these abiotic factors may be static (inputs) or dynamically changing (passed on from another model). The abiotic factors (shading, in particular) further affect some competition outcomes, leading to the emergence of complex environment-community relationships.*
+The key outcome of the simulation is the spatiotemporal change of community patterns, which emerges from the interaction of individuals within each voxel cell (particularly competition for light). On a landscape scale, plant material outgrowing a voxel (i.e., large trees) can also cause very localized patterning. Abiotic factors (soil depth, soil class) further impose a general community structure via habitat filtering. The abiotic factors (shading, in particular) further affect some competition outcomes, leading to the emergence of complex environment-community relationships.
 
-## Adaptation 
+## Adaptation
+
+The  model does not contain any direct objective-seeking mechanisms, i.e. the agents do not possess the ability to choose among two or more alternative behaviors e.g. via learning or condition-dependent rules (phenotypic plasticity).
 
 ## Objectives
+
+The model does not simulate adaptive behavior (fitness objectives). The rules by which agents respond to the environment (the "genotypes" or traits) are instead provided by the user.
 
 ## Interaction
 
 Individual plants interact with one another, directly or indirectly, especially in the competition for light, which is explained in detail in the submodel section. Briefly, growth and death of plants continually changes light conditions, and, subject to light tolerances, plants may be outcompeted and die. This leads to turnover of plant communities. 
+There is further simple competition for soil as a shared resource.
 
 ## Stochasticity 
 
-stochasticity of this model to write.
+The model contains the following stochastic processes:
+1) at initialization, plant individuals are picked randomly from the pool of suitable types, until each cell's capacity is reached. Their initial biomass is fixed (non-random).
+2) when the total plant biomass exceeds a voxel's capacity, a random set of plant material is chooosen to lie "on top" and receive the light. The granularity of the draw (how much plant material to choose per draw/number of draws) can be adjusted by the user.
+3) At the end of the time step, all plant seeds are pooled and randomly redistributed over the simulation environment, together with the seeds that enter from the region (seed rain). 
 
 # 5. Input and Output Data
-
-Rewrite
+Largely copied from the Ecolopes Plant Model, only adjusted contents.
 - classes are GSP_Plants, Data_PLANTS, Traits. Voxel data on landscape scale is saved in container class Landscape   
 
 # 6. Initialization
+At initalization each cell is filled with the according input data and with a starting Community. The Community created by randomly drawing from a list of suitable types until the capacity (or starting population) size is reached; an according seed pool is also created. Individuals are created with a fixed initial biomass, often 5.0 or 100.0 (see PlantResource.cpp, contstructor)
 
 # 7. Submodels
 
@@ -274,9 +253,10 @@ Seeds may be disturbed (affecting only acitve or in equal proportions active and
 random uniform redistribution of any newly produced seeds + input from region.
 
 ## Illumination
-The voxel is represented as a stack of rectangles with the same area. Light hitting a voxel will first hit the uppoermost stratum. It will be equally distributed to all plants inhabiting the voxel at the height, in proportion of the surface area covered; light that does not hit the plants is passed on to the next stratum.  
-Warning: plants may outgrow the voxel,i.e. the area covered by plants may be larger than the voxel area. Light is nevertheless distributed equally among all plants, which can cause *all* plants to receive too little light and die.
-
+The voxel is represented as a stack of rectangles with the same area. Light hitting a voxel will first hit the uppermost stratum. It will be distributed to all plants inhabiting the voxel at the height. The remaining light leaving a stratum is diffused and homogenized over the full area of the next stratum. This ensures that the plant shades not only itself but also its competitors. Exampöe:
+If a plant covers 2/3 of the uppermost stratum's area, and 1/3 of the area in the next stratum, it receives 66% of the light in the upper stratum. The remaining third of the light gets passed on to the next stratum. There, the plant receives 1 third of the remaining light (11%). The remainder(22%) may be distributed to other plants, or passes through the stratum without hitting the plant. 
+Without the homogenization the uppermost part would receive 66%, but the lower part would be entirely shaded and receive nothing; and 33% of the light would be lost. 
+The illumination submodel includes both the plants originating in a voxel, and material spilling over from neighrbour voxels (see "Plant Community") When there is too much material in the voxel (both from plants growing here and spilling over from neighbours), a top layer  of plant material is randomly selected and receives light. The number of draws is a parameter (lightDistributionFactor).
 
 Disturbance to add
 
@@ -292,13 +272,6 @@ Disturbance to add
 | Precursors | FATE-HD, RFate; ECOLOPES PLANT MODEL; some code (data containers, inputs) shared with joint ECOLOPES models |
 
 
-## Compiling as library or executable
-
-The model can be compiled as a library (.dll or .dylib), so that it can easily be #include'd into another program. This requires copying the library file and the header file "plantmodel.h" to the target directory (or its "include" folder) and linking against it. The folder src contains all plant model source files, as well a CMake file that helps building the library.  The CMake file in the root directory (together with the main in root) provide a demonstration (**to do**).
-
-There is furthermore a "tests" subfolder, in which unit tests according to the GoogleTest framework are conducted. The test procedure is also included in the cmake files. 
-Alternatively, one can compile the source files together with a main.cpp (in src folder) to create a full executable. 
-
 Because this is work in progress, it currently only works on macOS and linux.
 
 ## Dependencies and requirements
@@ -308,11 +281,9 @@ All dependencies are included in the /include folder (ECOLOPES joint model for d
 
 ## Implementation overview
 
+![UML] (doc/UML.jpg)
+
 ## Ideas for the future 
 
-*Light calculation and 3D in the plant model* 
-
-The plant model is, strictly speaking, only correct when all cells are horizontal and light enters at a 90° angle. This is unrealistic, in reality light comes in at a variety of angles (changing over the course of the day), and the distribution of angles is latitude dependent. When the cell is tilted, the distribution of angles is strongly affected by the aspect (north/east/south/west) of the cell. When light enters at an angle, it does not pass through all strata of a cell, but partly through strata of a neighbouring cell.
-A solution to above problem is raytracing, I.e. following the sun rays and checking with which cells they collide. 
 
 *addition of other shapes* 

@@ -121,7 +121,11 @@ std::cout << "Plant model version " << VERSION << std::endl;
   LOG(INFO) << SECTIONBREAK << "CREATE PLANT MODEL";
   nlohmann::json g {generalFunctions::readJsonFile(WD+input_file)};
   nlohmann::json v {generalFunctions::readJsonFile(WD+input_file)};
-  nlohmann::json t {generalFunctions::readJsonFile(WD+"verena/plantSpecies.json")};
+
+    //FOR TESTING
+  nlohmann::json t {generalFunctions::readJsonFile(WD+"building2/onetree.json")};
+
+
   PlantModel Plantmodel(g, v, t, "", fix_RNG);
 
   if (config.simulDuration == 0){ LOG(INFO) << "Warning: model only initialized, not running, because simulDuration == 0"; return 0; }
@@ -129,17 +133,9 @@ std::cout << "Plant model version " << VERSION << std::endl;
 
   for(int tplus1=1; tplus1< config.simulDuration; ++tplus1){
     Plantmodel.TPlusOne();
-    LOG(INFO) << "SAVING";
-
-    Landscape<std::map<std::string, int>> foo = Plantmodel.getNumber(2, 100);
-    foo.write_json(WD + std::to_string(tplus1) + "_abundance.json" );
-    Landscape<std::map<std::string, float>> bar = Plantmodel.getBiomass();
-    bar.write_json(WD + std::to_string(tplus1) + "_biomass.json" );
+    Plantmodel.save(tplus1);
+    Plantmodel.saveArea(tplus1);
   }
-
-  //............outputs............
-  LOG(INFO) << SECTIONBREAK << "COMBINE OUTPUT FILES";
- //combine function required
 
   //............end............
   LOG(INFO) << SECTIONBREAK << "*************Finished.************";

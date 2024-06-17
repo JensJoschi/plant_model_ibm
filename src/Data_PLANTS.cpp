@@ -36,7 +36,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "g_Data_BASE.h"
 #include "Data_PLANTS.h"
 #include "GSP_PLANTS.h"
-#include "PFGDefs.h"
 
 #include "Landscape.h"
 #include "generalFunctions.h"
@@ -54,18 +53,16 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 Data_PLANTS::Data_PLANTS(const nlohmann::json& j, const GSP_PLANTS& gsp): 
   Data_BASE(j, gsp){ 
-    assert(gsp.simulDuration > 0);
+  assert(gsp.simulDuration > 0);
 
   LOG(INFO) << "Adding plant-specific data";
   assert (!j.empty());
-  //base ctor has already filled in m_inputDir etc. Now we read the file again to fill the remaining members
 
   try{logger = j.at("PlantLogger");}
   catch(nlohmann::json::out_of_range) {logger = "plantlog.conf";}
   catch(...){LOG(FATAL) << "uncaught exception in logger";}
   
   LOG(INFO) << "--Input Data";
-  //----------------------------------------------------------------------------------------
 
   // if (gsp.doesShadingPercentages){
     try{light = readFile<double>(j, "LightFile", inputDir);}
@@ -109,7 +106,7 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
 
     // if (gsp.doesShadingPercentages){
       LOG(DEBUG) << "light";
-      if (light.getTotncell()== 0){
+      if (light.size()== 0){
         LOG(FATAL)  << "no shading values.";
       }
       for (const auto& it : light){
@@ -119,7 +116,7 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
 
     if (gsp.doesSoilDepth){ 
       LOG(DEBUG) << "habsuit";
-      if(soilDepth.getTotncell() == 0) LOG (WARNING) << "soil depth map contains 0 elements.";
+      if(soilDepth.size() == 0) LOG (WARNING) << "soil depth map contains 0 elements.";
       for (const auto& it : soilDepth){
         if (it.second < 0) { LOG(FATAL) << "soil depth map contains values smaller than 0";}
       }
@@ -127,7 +124,7 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
 
     if(gsp.doesSoilClass){
       LOG(DEBUG) << "soil class";
-      if(soilClass.getTotncell() == 0) LOG (WARNING) << "soil class map contains 0 elements.";
+      if(soilClass.size() == 0) LOG (WARNING) << "soil class map contains 0 elements.";
       for (const auto& it : soilClass){
         if (it.second == "") { LOG(FATAL) << "Soil class map contains empty strings";}
       }
@@ -135,20 +132,19 @@ void Data_PLANTS::checkContent(const GSP_PLANTS& gsp) const {
 
     if(gsp.doesDisturbance){
       LOG(DEBUG) << "Management";
-      if(management.getTotncell() == 0) LOG (FATAL) << "map of management wrong";
+      if(management.size() == 0) LOG (FATAL) << "map of management wrong";
     }
 
   LOG(INFO) << "***data checks for plant model done.";
 }
 
 bool Data_PLANTS::checkKeys(const GSP_PLANTS& gsp) const{
-  if (light.getTotncell() != keyList.getKeys().size()) return false; 
-  if (gsp.doesSoilDepth && (soilDepth.getTotncell() != keyList.getKeys().size())) return false;
-  if (gsp.doesSoilClass && (soilClass.getTotncell() != keyList.getKeys().size())) return false;
-  if (gsp.doesDisturbance && (management.getTotncell() != keyList.getKeys().size())) return false;
+  if (light.size() != keyList.size()) return false; 
+  if (gsp.doesSoilDepth && (soilDepth.size() != keyList.size())) return false;
+  if (gsp.doesSoilClass && (soilClass.size() != keyList.size())) return false;
+  if (gsp.doesDisturbance && (management.size() != keyList.size())) return false;
 
-  for (const auto& key : keyList.getKeys()){
-    if (keyList.count(key) != 1) return false;
+  for (const auto& key : keyList){
     if (light.count(key) != 1) return false;
     if (gsp.doesSoilDepth && soilDepth.count(key) != 1) return false;
     if (gsp.doesSoilClass && soilClass.count(key) != 1) return false;

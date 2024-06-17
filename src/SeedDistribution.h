@@ -49,12 +49,12 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 class SeedDistribution{
     public:
-    SeedDistribution(const std::vector<std::string_view>& types, const std::vector<std::string>& keys);
+    SeedDistribution(const std::vector<std::string_view>& types, const std::vector<Coordinates>& keys);
     SeedDistribution() = default;
     ~SeedDistribution();
     void addSeeds(int number);
     void addSeeds(int number, std::string_view type);
-    const std::map<std::string_view, int> getSeeds(const std::string& cell) const;
+    const std::map<std::string_view, int> getSeeds(const Coordinates& cell) const;
     void disperse();
 
     private:

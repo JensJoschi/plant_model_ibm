@@ -12,7 +12,7 @@
 
     "SoilCapacity": 100,
     "SeedRain": 0,
-
+    "LightDistributionFactor": 10,
 
     "DoesDispersal": true,
     "DoesSoilClass": true,

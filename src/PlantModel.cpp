@@ -38,7 +38,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "Data_PLANTS.h"
 #include "rng.h"
 #include "config.h"
-#include "Community.h"
+#include "Voxel.h"
 
 /** @cond */
 #include <vector>
@@ -62,7 +62,7 @@ PlantModel::PlantModel(	const nlohmann::json& globalParams,
 			const std::string& logConfig, bool FixRNG): 
 			m_settings(globalParams), m_voxelData(voxelData, m_settings), 
 			m_traits(fillTraits(TraitDefinitions)),
-			m_cells(m_voxelData.keyList.getKeys()){
+			m_cells(m_voxelData.keyList){
 	assert(m_settings.noStrata > 0);
 	assert(m_traits.size() > 0);
 	el::Configurations conf;
@@ -89,20 +89,22 @@ PlantModel::PlantModel(	const nlohmann::json& globalParams,
 		for (auto it = m_traits.begin(); it != m_traits.end(); ++it){
 			types.push_back(it->first);
 		}
-		m_seeds = SeedDistribution(types, m_voxelData.keyList.getKeys());
+		m_seeds = SeedDistribution(types, m_voxelData.keyList);
 	} //else: keep empty (not zero). Empty maps ensure assertion failures if used.
 
-	//Cell/Community object
-	for (auto it = m_voxelData.keyList.begin(); it != m_voxelData.keyList.end(); ++it){  
+	//Voxel object
+	for (const auto& coord : m_voxelData.keyList){  
 		int capacity = m_settings.soilCapacity;
-		int depth = m_voxelData.soilDepth.at(it->first);
-		const std::string& soilName = m_voxelData.soilClass.at(it->first);
+		int depth = m_voxelData.soilDepth.at(coord);
+		const std::string& soilName = m_voxelData.soilClass.at(coord);
 		int maxIndividuals = m_settings.startingPopSize;
 		int initialSeeds = m_settings.initialSeeds;
+		int lightDistributionFactor = m_settings.lightDistributionFactor; 
+		float diffusion = m_settings.diffusion;
 
 		std::map<std::string_view, const Traits*> traits;
 		if (m_settings.doesRegionalModel){
-			const std::vector<std::string>& availableTypes = m_voxelData.allowedTypes.at(it->first);
+			const std::vector<std::string>& availableTypes = m_voxelData.allowedTypes.at(coord);
 			for (auto type = availableTypes.begin(); type != availableTypes.end(); ++type){
 				traits.emplace(*type, &m_traits.at(*type));
 			} 
@@ -117,10 +119,14 @@ PlantModel::PlantModel(	const nlohmann::json& globalParams,
 		for (int i = 0; i < m_settings.noStrata; i++){
     		float from = i * sizePerStratum;
     		float to = from + sizePerStratum;
-			voxel.emplace_back(Stratum{from, to, m_settings.voxelArea, 0.0 }); //stratum-specific shading not implemented
+			voxel.emplace_back(Stratum{from, to, m_settings.voxelArea });
 		}
 
-		m_cells.setValue(it->first, new Community(capacity, depth, soilName, traits, maxIndividuals, initialSeeds, voxel));
+		m_cells.setValue(coord, new Voxel(capacity, depth, soilName, traits, maxIndividuals, 
+						initialSeeds, voxel, lightDistributionFactor, diffusion));
+	}
+	for (const auto& coord : m_voxelData.keyList){  
+			m_cells.at(coord)->addNeighbours(m_cells.getNeighbourValues2D(coord));
 	}
 	// to do:
 	// 	int depth = m_plantInputs_ptr->config.doesSoilDepth ? m_plantInputs_ptr->data.soilDepth.at(*it) : 0;
@@ -158,7 +164,8 @@ void PlantModel::TPlusOne(){
 	LOG(DEBUG) << "--Succession";
 	for (auto cell: m_cells){//this seems like an ideal place for parallelization.
 		cell.second->rainSeeds(m_seeds.getSeeds(cell.first));
-		cell.second->provideResources(m_voxelData.light.at(cell.first));
+		cell.second->distributeArea();
+		cell.second->sendLightBeam(m_voxelData.light.at(cell.first));
 		cell.second->age(); //returns seeds
 	}
 
@@ -171,7 +178,7 @@ void PlantModel::TPlusOne(){
 //--------------------------------------------------------------------------
 
 Landscape<int> PlantModel::getNumber(const std::string& type) const{
-	Landscape<int> out(m_voxelData.keyList.getKeys());
+	Landscape<int> out(m_voxelData.keyList);
 	for (auto cell: m_cells){
 		out.setValue(cell.first, cell.second->getCount(type));
 	}
@@ -179,7 +186,7 @@ Landscape<int> PlantModel::getNumber(const std::string& type) const{
 }
 
 Landscape<std::map<std::string, int>> PlantModel::getNumber() const{
-	Landscape<std::map<std::string, int>> out(m_voxelData.keyList.getKeys());
+	Landscape<std::map<std::string, int>> out(m_voxelData.keyList);
 	for (auto cell: m_cells){
 		std::map<std::string, int> contentOfACell;
 		for (auto it = m_traits.begin(); it != m_traits.end(); ++it){
@@ -189,9 +196,15 @@ Landscape<std::map<std::string, int>> PlantModel::getNumber() const{
 	}
 	return out;
 }
-
+Landscape<float> PlantModel::getArea() const{
+	Landscape<float> out(m_voxelData.keyList);
+	for (auto cell: m_cells){
+		out.setValue(cell.first, cell.second->getPlantCover());
+	}
+	return out;
+}
 Landscape<std::map<std::string, int>> PlantModel::getNumber(int from, int to) const{
-	Landscape<std::map<std::string, int>> out(m_voxelData.keyList.getKeys());
+	Landscape<std::map<std::string, int>> out(m_voxelData.keyList);
 	for (auto cell: m_cells){
 		std::map<std::string, int> contentOfACell;
 		for (auto it = m_traits.begin(); it != m_traits.end(); ++it){
@@ -203,7 +216,7 @@ Landscape<std::map<std::string, int>> PlantModel::getNumber(int from, int to) co
 }
 
 Landscape<std::map<std::string, float>> PlantModel::getBiomass() const{
-	Landscape<std::map<std::string, float>> out(m_voxelData.keyList.getKeys());
+	Landscape<std::map<std::string, float>> out(m_voxelData.keyList);
 	for (auto cell: m_cells){
 		std::map<std::string, float> contentOfACell;
 		for (auto it = m_traits.begin(); it != m_traits.end(); ++it){
@@ -214,6 +227,89 @@ Landscape<std::map<std::string, float>> PlantModel::getBiomass() const{
 	return out;
 }
 
+
+void PlantModel::saveArea(int t, const std::string& fileName) const {
+	auto& saveYears = m_settings.m_saveYears;
+	if (std::find(saveYears.begin(), saveYears.end(), t) != saveYears.end()){
+		std::string prefix = fileName.empty() ? "" : fileName + "_";
+		std::string fileName = prefix + "area_" + std::to_string(t) + ".json";
+		Landscape<float> area = getArea();
+		nlohmann::ordered_json orderedArea;
+		for (auto cell: m_voxelData.keyList){
+			orderedArea[cell.to_string()] = area.at(cell);
+		}
+		std::ofstream fileArea(m_voxelData.savingDir + fileName);
+		fileArea << orderedArea.dump(4);
+		fileArea.close();
+	}
+	else {LOG(DEBUG) << "not saving";}
+}
+void PlantModel::save(int t, const std::string& fileName, bool sum, bool ordered) const{
+	auto& saveYears = m_settings.m_saveYears;
+	if (std::find(saveYears.begin(), saveYears.end(), t) != saveYears.end()){
+		std::string prefix = fileName.empty() ? "" : fileName + "_";
+		std::string fileNameBM = prefix + "biomass_" + std::to_string(t) + ".json";
+		std::string fileNameAB = prefix + "abundance_" + std::to_string(t) + ".json";
+		std::string fileNameSumBM = prefix + "summed_biomass_" + std::to_string(t) + ".json";
+		std::string fileNameSumAB = prefix + "summed_abundance_" + std::to_string(t) + ".json";
+
+		LOG(INFO) << "SAVING";
+		Landscape<std::map<std::string, int>> abundance = getNumber(2, m_settings.voxelHeight);
+		Landscape<std::map<std::string, float>> biomass = getBiomass();
+		Landscape<int> summedAbundance{m_voxelData.keyList};
+		Landscape<float> summedBiomass{m_voxelData.keyList};
+		if (sum){
+			for (auto cell: m_voxelData.keyList){
+				int sumAbundance = 0;
+				float sumBiomass = 0;
+				const std::map<std::string, int>& cellAbundance = abundance.at(cell);
+				const std::map<std::string, float>& cellBiomass = biomass.at(cell);
+				for (auto it = cellAbundance.begin(); it != cellAbundance.end(); ++it){
+					sumAbundance += abundance.at(cell).at(it->first);
+				}
+				for (auto it = cellBiomass.begin(); it != cellBiomass.end(); ++it){
+					sumBiomass += biomass.at(cell).at(it->first);
+				}
+				summedAbundance.setValue(cell, sumAbundance);
+				summedBiomass.setValue(cell, sumBiomass); 
+			}
+		}
+
+		if (ordered){
+			nlohmann::ordered_json orderedAbundance;
+			nlohmann::ordered_json orderedBiomass;
+			for (auto cell: m_voxelData.keyList){
+				orderedAbundance[cell.to_string()] = abundance.at(cell);
+				orderedBiomass[cell.to_string()] = biomass.at(cell);
+			}
+            std::ofstream fileAB(m_voxelData.savingDir + fileNameAB);
+            fileAB << orderedAbundance.dump(4);
+            fileAB.close();
+            
+            std::ofstream fileBM(m_voxelData.savingDir + fileNameBM);
+            fileBM << orderedBiomass.dump(4);
+            fileBM.close();
+
+			if (sum){
+				nlohmann::ordered_json orderedSummedAbundance;
+				nlohmann::ordered_json orderedSummedBiomass;
+				for (auto cell: m_voxelData.keyList){
+					orderedSummedAbundance[cell.to_string()] = summedAbundance.at(cell);
+					orderedSummedBiomass[cell.to_string()] = summedBiomass.at(cell);
+				}
+				std::ofstream fileSumAB(m_voxelData.savingDir + fileNameSumAB);
+				fileSumAB << orderedSummedAbundance.dump(4);
+				fileSumAB.close();
+				std::ofstream fileSumBM(m_voxelData.savingDir + fileNameSumBM);
+				fileSumBM << orderedSummedBiomass.dump(4);
+				fileSumBM.close();
+			}
+		} else {
+			assert(false && "not implemented yet");
+		}
+	}
+	else {LOG(DEBUG) << "not saving";}
+}
 
 // void PlantModel::createInputMaps(const Landscape<std::string>& soils, const Landscape<std::map<std::string, double>>& disturbance, bool init){
 // 	LOG(INFO) << "Creating habitat suitability";

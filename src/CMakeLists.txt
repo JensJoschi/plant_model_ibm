@@ -29,22 +29,21 @@ message(STATUS "compiling source code\n")
 
 ## ---- find sources ----
 
-set (SRC "SeedPool.cpp"         "SeedBiology.cpp"    
-         "PlantGrowth.cpp"      "LifeHistory.cpp"     
-         "HabSuit.cpp"          "SoilRequirements.cpp" 
-         "PlantResource.cpp"    "ResourceAlloc.cpp"
-         "plantShape.cpp"
-        "Individual.cpp"        "Traits.cpp"
-        "Community.cpp"         "Illumination.cpp"
-         "rng.cpp"
-         "Data_PLANTS.cpp"  "GSP_PLANTS.cpp" 
-         #to update
-        "PlantModel.cpp"  
-        "SeedDistribution.cpp"
-        "PFGDefs.cpp"  "PFGdisturbance.cpp"
-#to remove
-        "PFG.cpp"             
-        "FGUtils.cpp"
+set (SRC 
+    "PlantModel.cpp"
+    "SeedDistribution.cpp"
+    "Data_PLANTS.cpp"  "GSP_PLANTS.cpp" 
+    "Voxel.cpp"
+        "Illumination.cpp"
+        #soil is a struct
+        "Community.cpp"
+            "SeedPool.cpp"         "SeedBiology.cpp"    
+            "Individual.cpp"        "Traits.cpp"
+                "PlantGrowth.cpp"      "LifeHistory.cpp"     
+                "HabSuit.cpp"          "SoilRequirements.cpp" 
+                "PlantResource.cpp"    "ResourceAlloc.cpp"
+                "plantShape.cpp"
+    "rng.cpp"
 )
 if(NOT SRC)
     message(FATAL_ERROR "SRC is empty")

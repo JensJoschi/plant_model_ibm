@@ -31,7 +31,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 /*!
  * \file Community.h
  * \brief Plant community in a cell
- * \details Contains all individuals that live in a habitat(cell), sorted by type (species, functional group)
+ * \details Contains all individuals that live in a habitat(usually a voxel cell), sorted by type (species, functional group)
  */
 
 #ifndef COMMUNITY_H
@@ -39,13 +39,11 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 #include "Individual.h"
 #include "SeedPool.h"
-#include "Illumination.h"
 
 /** @cond */
 #include <memory>
 #include <map>
 #include <string>
-#include <vector>
 #include <string_view>
 #include <nlohmann/json.hpp>
 /** @endcond */
@@ -59,8 +57,6 @@ If not, see <https://www.gnu.org/licenses/>. */
  * types (species, functional group), defining their growth characteristics, reosource use, seed biology etc. 
  * The community is responsible for managing the individuals and seeds, and for updating the community state.
  * The community lives on a soil - it has a max capacity and (in the future) may be depleted
- * 
- * Cell size, disturbance and light to add here.
  * */
 class Community{
     friend class CommunityTest_rainSeeds_Test; //typical workflow of community is rainseeds() => age() => getBiomass of adult individuals; 
@@ -70,9 +66,8 @@ class Community{
     /**
      * \brief Construct a new Community object
      * \details creates a Community of plants
-     * The soil attributes capacity, depth, name indicate on what soil the community (initially) lives
+     * The constructor creates a number of suitable individuals, and seeds. 
      * The traits define which types of Individuals may be created in this community.
-     * The constructor creates soil, a number of suitable individuals, and seeds. 
      * The community is filled with individuals of random types (species etc., see Traits class), but only those for which 
      * the habitat is suitable. The number of individuals is maxIndividuals, unless soil::capacity is reached before; or zero
      * if no suitable individuals are found. 
@@ -80,40 +75,34 @@ class Community{
      * for individuals, but it is assumed that many more seeds than individuals can be stored), and are initially filled with 
      * maxSeeds seeds (unless this exceeds SeedPool::capacity).
      * Soil is - biologically speaking - a shared resource, i.e., all individuals have access and may modify/deplete the soil.
-     * \note the individuals have a weak_ptr to soil, as they are not responsible for the lifetime or memory allocation (biological
-     * resource sharing does not imply shared responsibility for memory management). Only the community shall own the soil and be responsible
-     * for its deletion. Nevertheless I need to use a shared_ptr here because weak ptrs don't work together with unique_ptrs, and the only
-     * alternative i see would be direct instantiation in community, and dumb pointers in the individuals (which is also not good). 
-
-     * \param soil capacity of the soil
-     * \param depth depth of the soil
-     * \param name name of the soil
+     * \note community and the individuals have a weak_ptr to soil, as they are not responsible for the lifetime or memory 
+     * allocation (biological resource sharing does not imply shared responsibility for memory management). Only the Voxel 
+     * owns the soil and is responsible for its deletion.
      * \param traits traits define the types of individuals that may be created
      * \param maxIndividuals maximum number of individuals that will be created
-     * \param maxSeeds maximum number of seeds that will be created
+     * \param initialseeds maximum number of seeds that will be created
      */
-     Community(int capacity, int depth, const std::string& name, 
-                std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
-                const std::vector<Stratum>& voxel);
+     Community(std::weak_ptr<Soil> soil, 
+        std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds);
      
     ~Community();
-    Community(int capacity, int depth, const std::string& name, 
-            std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
-            const std::vector<Stratum>& voxel,
-            const nlohmann::json& individuals);
+    /**
+     * \brief json-based community constructor
+     * \details see other constructor for more details.
+     * This constructor additionally contains a json with all neccessary information to create an individual
+     * (e.g., age, biomass, but not life span or resource allocation stratgies)
+     */
+    Community(std::weak_ptr<Soil> soil,
+        std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
+        const nlohmann::json& individuals);
     
     /**
      * \brief add seeds to Pool
-     * \details Additional seeds are deposited to the seedPool. These seeds may have dispersed from neighbouring cells, for example.
-     * seeds of unknown type will cause an error
+     * \details Additional seeds are deposited to the seedPool. These seeds may have dispersed from neighbouring cells, 
+     * for example. Seeds of unknown type will cause an error
      * \param seeds list of seeds, named by type
      */
     void rainSeeds(const std::map<std::string_view, int>& seeds);
-
-    /**
-     * \brief distribute light resources to individuals
-     */
-    void provideResources(int light);
 
     /**
      * \brief let the community age
@@ -137,20 +126,22 @@ class Community{
     /**
         * \brief Get the number of individuals of a certain type in a certain height range
         * \details If type is empty, returns the total number of individuals in the height range
-        * This function is based only on indiviudals with a height>0 and an area (seedlings may have no height or biomass yet)
+        * This function is based only on indiviudals with a age>0 and an area (seedlings may have no biomass yet)
         * \param from lower bound of height section
         * \param to upper bound of height section
         * \param type type of individual
     */
     int getCount (int from, int to, std::string_view type = "") const;
-    float getBiomass(std::string_view type = "") const;
+    
+    float getBiomass(std::string_view type = "") const; //age 0 excluded
+   
+   std::vector<std::weak_ptr<Individual>> getIndividuals() const;
 
     private:
-    std::multimap<std::string_view, std::unique_ptr<Individual>> m_individuals; //sorts the individuals in the community by type
+    std::multimap<std::string_view, std::shared_ptr<Individual>> m_individuals; //sorts the individuals in the community by type
     std::map<std::string_view, std::unique_ptr<SeedPool>>  m_seeds; //sorts the seeds in the community by type
     std::map<std::string_view, const Traits*> m_traits;             //traits of all types (species, PFGs etc) that may occur in this community
-    std::shared_ptr<Soil> m_soil; //soil that the community lives on (biologically a shared resource; but not computationally. See notes)
-    Illumination m_illumination; //Ccontains all variables and functions to calculate the light that reaches individuals Plants.
+    std::weak_ptr<Soil> m_soil; //soil that the community lives on (biologically a shared resource; but not computationally. See notes)
     /**
      * \brief create individuals from seeds
      */

@@ -63,6 +63,7 @@ class PlantGrowth{
     explicit PlantGrowth(const LifeHistory* const traits, nlohmann::json j);
 
     float getHeight() const;
+    int getAge() const;
 
     /**
      * \brief let plant age and grow

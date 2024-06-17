@@ -32,6 +32,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "Individual.h"
 #include "Soil.h"
 #include "Illumination.h"
+#include "rng.h"
 
 /** @cond */
 #include <memory>
@@ -44,19 +45,17 @@ If not, see <https://www.gnu.org/licenses/>. */
 /** @endcond */
 
 
-Community::Community(int capacity, int depth, const std::string& name, 
-        std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
-        const std::vector<Stratum>& voxel): m_illumination(m_individuals, voxel){
-    assert(capacity > 0 && depth > 0 && maxIndividuals > 0);
-    assert(name != "");
+Community::Community(std::weak_ptr<Soil> soil, 
+        std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds):
+        m_soil(soil){
+    assert(!soil.expired());
+    assert( maxIndividuals > 0);
     assert (traits.size() > 0);
     assert (initialSeeds >= 0);
-    m_soil = std::make_shared<Soil>(capacity, depth, name);
-    std::weak_ptr<Soil> sharedSoil = m_soil;
     int individuals = 0;
     std::vector<std::string_view> suitableTypes;
     for (auto& trait : traits){
-        if (HabSuit::wouldBeSuitable(trait.second->soilReqs, sharedSoil)){
+        if (HabSuit::wouldBeSuitable(trait.second->soilReqs, soil)){
             suitableTypes.push_back(trait.first);
             m_traits.insert({trait.first, trait.second});
         }
@@ -71,30 +70,27 @@ Community::Community(int capacity, int depth, const std::string& name,
     }
 }
 
-Community::Community(int capacity, int depth, const std::string& name, 
+Community::Community(std::weak_ptr<Soil> soil, 
         std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
-        const std::vector<Stratum>& voxel,
         const nlohmann::json& individuals):
-        m_illumination(m_individuals, voxel){
-    assert(capacity > 0 && depth > 0 && maxIndividuals > 0);
-    assert(name != "");
+        m_soil(soil){
+    assert(!soil.expired());
+    assert(maxIndividuals > 0);
     assert (traits.size() > 0);
     assert (initialSeeds >= 0);
-    m_soil = std::make_shared<Soil>(capacity, depth, name);
-    std::weak_ptr<Soil> sharedSoil = m_soil;
     assert(individuals.size() > 0 && individuals.size() <= maxIndividuals);
     for (auto it = individuals.begin(); it != individuals.end(); ++it){
         if (traits.find(it.key()) == traits.end()){
             throw std::invalid_argument("No traits found for individual " + it.key() +  " in json file");
         }
-        if (!traits.count(it.key()) || !HabSuit::wouldBeSuitable(traits.at(it.key())->soilReqs, sharedSoil)){
+        if (!traits.count(it.key()) || !HabSuit::wouldBeSuitable(traits.at(it.key())->soilReqs, m_soil)){
             throw std::invalid_argument("Individuals in json file are not suitable for the soil");
         } else {
             std::unique_ptr<Individual> ind = Individual::create(traits.at(it.key()), m_soil, it.value());
             assert(ind != nullptr);
             m_individuals.insert({it.key(), std::move(ind)});
             if (!m_seeds.count(it.key())) {
-                std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(traits.at(it.key()), 100 * m_soil->m_capacity);
+                std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(traits.at(it.key()), 100 * m_soil.lock()->m_capacity);
                 sp->increase(initialSeeds);
                 m_seeds.insert({it.key(), std::move(sp)});
             }
@@ -108,7 +104,7 @@ bool Community::createIndividualAndSeedPool(const Traits* traits, std::string_vi
     else {
         m_individuals.insert({name, std::move(ind)});
         if (!m_seeds.count(name)) {
-            std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(traits, 100 * m_soil->m_capacity);
+            std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(traits, 100 * m_soil.lock()->m_capacity);
             sp->increase(initialSeeds);
             m_seeds.insert({name, std::move(sp)});
         }
@@ -128,7 +124,7 @@ void Community::rainSeeds(const std::map<std::string_view, int>& seeds) {
         if (m_traits.find(name.first) == m_traits.end()) {//m_traits contains names of all suitable species
             continue;
         } else if (m_seeds.find(name.first) == m_seeds.end()){ //suitable but not yet present
-            int number = std::min(name.second, 100 * m_soil->m_capacity);
+            int number = std::min(name.second, 100 * m_soil.lock()->m_capacity);
             std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(m_traits.at(name.first), number);
             m_seeds.insert({name.first, std::move(sp)});
         }else{
@@ -161,14 +157,10 @@ float Community::getBiomass(std::string_view type) const{
                  std::make_pair(m_individuals.begin(), m_individuals.end()) : 
                  m_individuals.equal_range(type);
     for (auto i = range.first; i != range.second; ++i) {
-        biomass += i->second->getBiomass();
+        biomass += i->second->getBiomass(true);
     }
     return biomass;
 
-}
-
-void Community::provideResources(int light){
-    m_illumination.sendLightBeam(light);
 }
 
 std::map<std::string, int> Community::age(){
@@ -186,16 +178,27 @@ std::map<std::string, int> Community::age(){
     return seedsProduced;
 }
 
+
+
 void Community::recruit(){
-    for (auto it = m_seeds.begin(); it != m_seeds.end(); it++){
-        int germinants = it->second->age(0); //no disturbance yet
-        while (germinants>0) {
-            std::unique_ptr<Individual> ind = Individual::create(m_traits.at(it->first), m_soil);
-            if (ind == nullptr) break; //makes no sense to continue creating individuals, they will all fail anyway 
-            else {
-                m_individuals.insert({it->first, std::move(ind)});
-                germinants--;
-            }
+    std::vector<std::pair<std::string_view, SeedPool*>> seedPoolInRandomOrder;
+    for (auto& [seedType, seedPool] : m_seeds){
+        int germinantsToAdd = seedPool->age(0);
+        for (int i = 0; i < germinantsToAdd; i++) {
+            seedPoolInRandomOrder.emplace_back(seedType, seedPool.get());
         }
     }
+    std::shuffle(seedPoolInRandomOrder.begin(), seedPoolInRandomOrder.end(), RNGs::mersenne);
+
+   for (const auto& [germinantType, germinantPool] : seedPoolInRandomOrder){
+        std::unique_ptr<Individual> ind = Individual::create(m_traits.at(germinantType), m_soil);
+        if (ind == nullptr) continue;
+        m_individuals.insert({germinantType, std::move(ind)});
+    }
+}
+
+std::vector<std::weak_ptr<Individual>> Community::getIndividuals() const{
+    std::vector<std::weak_ptr <Individual>> out;
+    for (auto& [name, ind] : m_individuals){ out.push_back(ind);}
+    return out;
 }
