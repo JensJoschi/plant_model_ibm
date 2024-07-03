@@ -1,6 +1,6 @@
 # Version
 
-This readme concerns model version 1.1.0. Please make sure the documentation matches the version you would like to use. 
+This readme concerns model version 1.1.1. Please make sure the documentation matches the version you would like to use. 
 
 # Overview
 
@@ -264,7 +264,6 @@ Disturbance to add
 
 # 8. Implementation
 
->>>
 | concept | detail |
 | --- | --- |
 | Operating system | Portable to any common OS |
@@ -272,18 +271,38 @@ Disturbance to add
 | Precursors | FATE-HD, RFate; ECOLOPES PLANT MODEL; some code (data containers, inputs) shared with joint ECOLOPES models |
 
 
-Because this is work in progress, it currently only works on macOS and linux.
-
 ## Dependencies and requirements
 
-All dependencies are included in the /include folder (ECOLOPES joint model for data containers, nlohmann::json and easylogging). The model has no specific requirements to run (< 1 GB hard disc space, < 2GB RAM, any modern CPU), but compilation requires cmake and a c++20 compiler (it is tested llvm and MinGW's GNU compiler, but should also work on AppleClang). See USER_GUIDE.md for installation notes.
+All dependencies are included in the /include folder (ECOLOPES joint model for data containers, nlohmann::json and easylogging). The model has no specific requirements to run (< 1 GB hard disc space, < 2GB RAM, any modern CPU), but compilation requires cmake and a c++20 compiler (works on AppleClang 14.0 & 15.0, gcc 12.2, MinGW and msvc). See USER_GUIDE.md for installation notes.
 
 
 ## Implementation overview
 
-![UML] (doc/UML.jpg)
+![UML Diagram](<doc/UML.jpg>)
 
-## Ideas for the future 
+### Individuals and their composites  
+The core of the model is the Individual class. I use composition to allow easier editing of the code later, and separate the Individual to four biologically relevant functions: growth, PlantResource, habitatSuitability and EnvEffects (but this is not implemented yet). These classes define the logic of the model, while the data that makes up an instance of an individual (max age etc.) is kept separate. I use a type object/flyweight pattern to allow reading the data from a file; this design also ensures that data is shared rather than copied into each individual. To this end, each composite of the Individual has a pointer to a type object (LifeHistory, resourceAlloc, soilRequirements and Disturbance). The type objects are composites of the Traits class, and Traits instances are created by reading a json file. Only a limited number of Trait instances will be created (7 in the current example for test runs), and their data is then shared by all Individuals of the same type. Seeds are separate from the Individual but the structure is the same (SeedPool and its type object seedBiology), and their attributes are also part of the traits that make up a type/species. The type objects are fully encapsulated so that later editing of the logic of e.g. LifeHistory and Growth does not require changes throughout the code base. For this reason, the interaction among the Individual composites is also kept to a minimum.  
+Special consideration needs to be given to the biomass/surface area distribution. 1) The area at a specific height is the result of Growth and PlantResource, i.e., of an interaction. The Individual class handles the logic itself so that we do not need a separate class that takes input from two other composites. 2) In contrast to the other functionalities of an individual, input data does not only contain values, but also a behavior. I use an inheritance pattern to allow changing the calculation of area dependent of type. Currently, only rectangles are supported, but one may also inherit a LollipopShape later. For these reasons, the 5 functions of an individual (section 3/section 7) are represented by 5 type objects but only 4 composite classes of Individual.  
 
 
-*addition of other shapes* 
+### Voxel and its composites  
+Individuals are part of a community, and the community largely lives in a voxel. For the purpose of light calculation, we need to account for the fact that individuals sometimes have some material growing into neighbouring voxels, however. I used the following design to place the community in a landscape: 
+1.	The plantModel handles data input and allows running the model. It is composed of Voxels.  
+2.	The Voxel is composed of a soil, disturbance, a model to calculate current light, and a “home” community. It contains only delegating functions to mediate among its composites.  
+3.	The community contains the individuals that are rooted on this voxel’s soil, and it is responsible for their creation and deletion. Whether an individual can be created depends on soil, and the check is the responsibility of the HabSuit class. I use a factory function in which a soil pointer is delegated to a static function in Habsuit to decide whether or not to construct a new individual instance. If successful, the individual will be created, and its HabSuit keeps a weak pointer to soil, so that it is informed about any changes to the current soil. Plant resources do not have a pointer to Illumination, however. Illumination is a model that outputs a transitional state, and not a data class with consumable resources (see point 4).  
+Note: Biologically speaking, soil is a shared resource (each individual may independently deplete it), but computationally the individual does not own the resource and is not responsible for the deletion of the object. The pointer is hence a weak ptr, not a shared_ptr (one could also use dumb pointers, but they come with their own constraints). For similar reasons the EnvEffects class will also contain a weak pointer to the Disturbance class of voxels (both not implemented yet).  
+4.	Illumination is a model that can provide light to any plant material growing in the Voxel. The plant material is partially the surface area of the home community (but discounted by parts that grow into a neighboring cell), and partially surface area of plants from neighboring voxels that spill over to this Voxel. 
+When PlantModel creates the Voxels, it also provides pointers to the neighboring Illumination objects, giving Illumination access to its neighbors. Illumination is responsible for registering biomass of the home community, either in itself or in neighboring illumination objects. Simple 2D graphs are used for this purpose. Illumination thus contains pointers to individuals, paired with a number to indicate the amount of Individual falling into *this Illumination. The individuals, may have their home in this community or a neighboring community.
+Illumination can distribute light to any individual that is registered within it, but it does not store the current light conditions. In this model, we deal with light beams that cannot be captured or stored, so light is a transient variable that is passed over via functions.  
+5.	Illumination is sliced into strata, and lighting conditions are calculated separately for each stratum.  
+
+### Data inputs
+Data handling is copied from the ECOLOPES PLANT MODEL with only minor modifications.  
+1.	General configuration parameters are saved in GSP_PLANTS, which is derived from a GSP_BASE. The reason is that a separate animal model also derives its GSP_ANIMALS from base, and so does a soil model with GSP_SOIL. This ensures that all models have a few common parameters without doubling and potential for error (in particular, simulation time). Upon building plant model, the parameters are read from a json file.  
+2.	Species traits are also read from a file when building the plant model. The Traits class contains all parameters that make up a species, sorted by biologically relevant type objects (see section “Individuals and their composites” above)  
+3.	The class Data_Plants and its base contain 3-dimensional input data, such as shading and soil depth. There is also information which plants types are in principle allowed in each cell. The data is placed in a Landscape class, which is a container class that basically is a wrapper of a std::map. The keys are coordinate objects (simple structs of x,y,z, plus functions to read from file), while the values contain the actual data at the coordinate. Data may be simple ints or doubles, but could also be vectors or maps. In contrast to the vanilla std::map, the creation, deletion or change of keys is not allowed after construction, preventing corruption of Landscape objects that may cause nasty errors.  The class further contains functions for spatial operations (2D only at the moment). The data class is stored by plantModel, but all its content is immediately distributed to the Voxels upon model creation. There should be no need to store them in the future. Building the Data class requires a json file with the file path of each input (plus a reference to the GSP to know which files are required); the constructor will open and read each of the indicated files and store their data.  
+In total, three json files are required: one with general parameters, one with file paths to inputs, and one with species information. In practice the file paths and general parameters are often in the same file. 
+
+
+# 9 Ideas for the future 
+The definition of Traits is tricky, and the onus is left on the user. This is not very nice, so we need a useful set of defaults. The section “Sharing data through inheritance” in this book gives us an idea how to write “Growth”: “genericTree” and similar defaults into our inputs: https://gameprogrammingpatterns.com/type-object.html   

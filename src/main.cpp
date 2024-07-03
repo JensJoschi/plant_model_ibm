@@ -123,7 +123,7 @@ std::cout << "Plant model version " << VERSION << std::endl;
   nlohmann::json v {generalFunctions::readJsonFile(WD+input_file)};
 
     //FOR TESTING
-  nlohmann::json t {generalFunctions::readJsonFile(WD+"building2/onetree.json")};
+  nlohmann::json t {generalFunctions::readJsonFile(WD+"building2/plantSpecies.json")};
 
 
   PlantModel Plantmodel(g, v, t, "", fix_RNG);

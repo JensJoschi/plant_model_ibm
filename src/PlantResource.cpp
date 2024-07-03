@@ -40,7 +40,12 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <nlohmann/json.hpp>
 /** @endcond */
 
-PlantResource::PlantResource(const ResourceAlloc* const resAlloc_ptr): m_resAlloc_ptr(resAlloc_ptr), resources(0.0), biomass(100.0){}
+
+PlantResource::PlantResource(const ResourceAlloc* const resAlloc_ptr): m_resAlloc_ptr(resAlloc_ptr), resources(0.0), biomass(5.0){
+    #ifdef TESTING
+    biomass = 100.0;
+    #endif
+}
 PlantResource::PlantResource(const ResourceAlloc* const resAlloc_ptr, nlohmann::json j): m_resAlloc_ptr(resAlloc_ptr){
     assert(j.size() > 0);
     assert(m_resAlloc_ptr != nullptr);

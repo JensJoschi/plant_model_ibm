@@ -35,6 +35,10 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <nlohmann/json.hpp>
 /** @endcond */
 
+
+#ifdef max 
+    #undef max
+#endif
 PlantGrowth::PlantGrowth(const LifeHistory* const traits): m_lifehist_ptr(traits),           m_height(1.0), m_age(0){}
 PlantGrowth::PlantGrowth(const LifeHistory* const traits, nlohmann::json j): m_lifehist_ptr(traits){
     try{

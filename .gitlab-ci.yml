@@ -27,15 +27,15 @@ build-linux:
   script:
   - apt-get update --yes
   - apt-get install --yes cmake
-  - cmake -B build
+  - cmake -B build -DWITH_TESTS=ON
   - cmake --build build 
   #- g++ -o mock mockmain.cpp -Lout -lPlants_Linux_${VERSION} -Iinclude/plants -Iinclude/jointModel -Iinclude -std=c++20
-  # - cp out/Tests_Linux_${VERSION} tests/runtest
+  - cp out/Tests_Linux_${VERSION} tests/runtest
   - mv README.md out/README_${VERSION}.md
-  # - cd tests
-  # - ./runtest
-  # - cd ..
-  # - cp tests/tests.log out/testlog.log
+  - cd tests
+  - ./runtest
+  - cd ..
+  - cp tests/tests.log out/testlog.log
   artifacts:
     paths:
       - out
@@ -61,7 +61,8 @@ build-win:
       when: always
     - when: never
   tags: 
-    - windows
+    - saas-windows-medium-amd64
+    
   before_script:
 #    - choco install -y cmake #already installed
     - $env:Path += ';C:\Program Files\CMake\bin'
@@ -70,10 +71,29 @@ build-win:
   stage: build
   script:
     - cmake --help
-    - cmake -B build -G "MinGW Makefiles"
+    - cmake -B build -G "MinGW Makefiles" 
     - cmake --build build
   # '& "out/Tests_Windows_${VERSION}.exe" '
   #  - '& "out/Model_Windows_${VERSION}.exe" -f \tests\test.json'
+  artifacts:
+    paths:
+      - out
+  when: on_success
+
+build-win-msvc:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
+    - when: never
+  tags: 
+    - saas-windows-medium-amd64
+    
+  before_script:
+    - $env:Path += ';C:\Program Files\CMake\bin'
+  stage: build
+  script:
+    - cmake -B build
+    - cmake --build build
   artifacts:
     paths:
       - out

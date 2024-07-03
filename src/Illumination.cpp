@@ -30,7 +30,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "Illumination.h"
 #include "Voxel.h"
 #include "Individual.h"
-
+#ifdef min
+    #undef min
+#endif
 /** @cond */
 #include <vector>
 #include <map>
@@ -87,10 +89,18 @@ float Illumination::getPlantCover() const{
 //--PRIVATE FUNCTIONS--//
 
 void Illumination::addHereOrElsewhere(IndivArea_t individual, const Stratum& stratum){
-    // if (std::find(surfaceAreas[stratum].begin(), surfaceAreas[stratum].end(), individual)!= surfaceAreas[stratum].end()){
-    //     return; //this recursive function may loop over the neighbour's neighbours, thus returing back to cells
-    //     //already visited. In such cases, skip
-    // } //requires find_if
+    //this recursive function may loop over the neighbour's neighbours, thus returing back to cells.
+    //to prevent this, check that the individual is not already in the surfaceAreas
+    auto it = std::find_if(surfaceAreas[stratum].begin(), surfaceAreas[stratum].end(),[&individual](const IndivArea_t& elem) {
+            assert (!elem.first.expired());
+            assert (!individual.first.expired());
+            return elem.first.lock() == individual.first.lock();
+        }
+    );
+    if (it != surfaceAreas[stratum].end()){
+        return;
+    }
+
     if (individual.second <= stratum.area){
         this->surfaceAreas[stratum].emplace_back(individual);
     } else {
@@ -103,6 +113,8 @@ void Illumination::addHereOrElsewhere(IndivArea_t individual, const Stratum& str
         }
     }
 }
+
+
 void Illumination::choosePlants(const Stratum& stratum){
     float totalArea = 0.0f;
     auto& areaS = surfaceAreas[stratum];

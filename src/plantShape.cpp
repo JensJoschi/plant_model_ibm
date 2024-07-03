@@ -49,6 +49,7 @@ float PlantShape::getArea(float biomass) const{
 
 float PlantShape::getArea(float biomass, float height, float from, float to) const {
     assert(false && "Calling shape base class. This function should be implemented in derived classes");
+    return 0.0;
 }
 
 void PlantShape::check(){

@@ -44,6 +44,9 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <algorithm>
 /** @endcond */
 
+#ifdef min 
+    #undef min
+#endif
 
 Community::Community(std::weak_ptr<Soil> soil, 
         std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds):

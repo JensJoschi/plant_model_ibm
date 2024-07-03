@@ -27,7 +27,9 @@ If not, see <https://www.gnu.org/licenses/>. */
  // ----------------------------------------------------------------------------
 
 #include "SeedPool.h"
-
+#ifdef min 
+    #undef min
+#endif
 /** @cond */
 #include <cmath>
 /** @endcond */

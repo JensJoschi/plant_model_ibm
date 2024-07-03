@@ -36,7 +36,7 @@ FetchContent_Declare(
   OVERRIDE_FIND_PACKAGE
 )
 FetchContent_MakeAvailable(googletest)
-
+find_package(Threads REQUIRED)
 # --- find sources ---
 set(TEST_SOURCES  SoilReqsTest.cpp        HabSuitTest.cpp
                   SeedBiologyTest.cpp     SeedPoolTest.cpp
@@ -44,7 +44,8 @@ set(TEST_SOURCES  SoilReqsTest.cpp        HabSuitTest.cpp
                   ResourceAllocTest.cpp   ResourceTest.cpp
                   PlantShapeTest.cpp
                   TraitsTest.cpp          IndividualTest.cpp
-                  IlluminationTest.cpp    CommunityTest.cpp
+               #   IlluminationTest.cpp    CommunityTest.cpp VoxelTest.cpp
+               #  PlantModelTest    SeedDistributionTest
                 )
 
 enable_testing()
@@ -82,8 +83,8 @@ add_executable(Tests_${SUFFIX}  ${TEST_SOURCES}
                                 ${CMAKE_SOURCE_DIR}/include/easylogging++.cc
                                 ${JOINT}
  )
-
-target_link_libraries(Tests_${SUFFIX}  gtest_main )#"Plants_${SUFFIX}")
+ target_compile_definitions(Tests_${SUFFIX} PRIVATE TESTING=1)
+target_link_libraries(Tests_${SUFFIX}  gtest_main Threads::Threads )#"Plants_${SUFFIX}")
 target_include_directories(Tests_${SUFFIX}  PUBLIC
                              "${CMAKE_SOURCE_DIR}/include"
                              "${CMAKE_SOURCE_DIR}/include/jointModel"

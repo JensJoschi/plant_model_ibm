@@ -1,5 +1,3 @@
-Plants grow into neighbour, from there into their neighbours, i.e. back into original. This is not as intended and may cause infinite recursion.
-
 Unit tests are broken and need an update. Proper testing is needed to check that neighbouring growth is as expected. 
 
 Unit testing requires different output functions. Currently the biomass output for one cell sums ALL biomass of the individuals growing in the cell, including the stuff that grows into the neighbours. To repair, Individuals need to know of which type they are (Traits does not contain a string Name, so the Individuals cannot know) 

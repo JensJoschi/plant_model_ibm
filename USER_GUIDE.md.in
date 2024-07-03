@@ -12,9 +12,14 @@
 This file has been written by Jens Joschinski.
 
 # Installation notes and settings
+The plant model requires at least c++ 20 to compile. Supported compilers and OS:
+- AppleClang 14.0 & 15.0 on MacOS (Sonoma 14.5, intel i9 CPU)
+- gcc 12.2 on Linux (via GitLab CI)
+- MinGW’s GNU compiler for windows (14.1.0, MSYS2) on Windows 10, MinGW 12.2. on Windows (via GitLab CI)
+- msvc compiler for Visual Studio 17 (SDK 10.0) on Win 10 and GitLab CI
 
-The plant model requires at least c++ 20 to compile. It is guaranteed to compile on clang, and MinGW’s GNU compiler for windows (“gcc”). The program is best compiled with CMake, a CMakelists.txt is available (building with cmake . -G "MinGW Makefiles"   should help under windows). The repository on Gitlab contains compiled windows and linux executables: go to the Menu CI/CD->pipelines to find a download button for an up-to-date version. 
-
+For optimal compilation, it's recommended to use CMake, and a CMakelists.txt file is provided for convenience. The latest Linux executables can always be found in the repo, go to the Menu CI/CD->pipelines to find a download button for an up-to-date version. Windows executables are updated less frequently.
+By default, the unit tests are not compiled. To compile with unit tests, use the command "cmake . -DWITH_TESTS=on". A test executable for Linux can also be located in the GitLab CI's Linux pipeline; however, for Windows, the CI does not perform testing due to long compilation times and errors (works though locally on PC).
 If building from source, check the (potentially hidden) file ".gitlab-ci.yml" for commands on linux and win. 
 
 Full command line instructions to install all programs and compile on MacOS: 
@@ -24,11 +29,7 @@ Brew upgrade
 
 Brew install cmake 
 
-Brew install llvm 
-
-cd path/to/work_directory 
-
-cmake -B build -DCMAKE_CXX_COMPILER=/usr/local/cellar/llvm/16.0.4/bin/clang++   <--insert correct llvm vesion here (check in Finder)
+cmake -B build [-DWITH_TESTS=on]
 
 cmake --build build  
 
@@ -46,10 +47,9 @@ By default, the work directory is root/tests, where root is the work directory i
 
 To change default paths and file names, use:
 
-model.exe -w path/to/dir -f filename
+modelWindows[version].exe -w path/to/dir -f filename
 
-(see model.exe -v for more command line options)
-
+(see modelWindows[version] -v for more command line options)
 
 The subfolder /tests already contains a full example, including a test.json. The json files can be opened with any text editor, but opening with VSCode or Mozilla Firefox ensures that the files are displayed in a pretty format.
 
