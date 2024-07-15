@@ -37,6 +37,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 
 LifeHistory::LifeHistory(const nlohmann::json& traits) {
+    if(!traits.is_object()){
+        throw std::invalid_argument("LifeHistory json is broken or empty");}
     try {
         if (traits.at("MaturationTime").is_number_integer()) {
             MatAge = traits.at("MaturationTime").get<int>();

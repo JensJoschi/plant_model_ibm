@@ -31,7 +31,6 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "SeedPool.h"
 #include "Individual.h"
 #include "Soil.h"
-#include "Illumination.h"
 #include "rng.h"
 
 /** @cond */
@@ -74,42 +73,45 @@ Community::Community(std::weak_ptr<Soil> soil,
 }
 
 Community::Community(std::weak_ptr<Soil> soil, 
-        std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
+        std::map<std::string_view, const Traits*> traits, int initialSeeds,
         const nlohmann::json& individuals):
-        m_soil(soil){
+        m_traits(traits), m_soil(soil){
     assert(!soil.expired());
-    assert(maxIndividuals > 0);
     assert (traits.size() > 0);
     assert (initialSeeds >= 0);
-    assert(individuals.size() > 0 && individuals.size() <= maxIndividuals);
+    assert(individuals.size() > 0);
     for (auto it = individuals.begin(); it != individuals.end(); ++it){
-        if (traits.find(it.key()) == traits.end()){
-            throw std::invalid_argument("No traits found for individual " + it.key() +  " in json file");
+        //it.key() is not used; that is the ID of the individual
+        std::string speciesName = it.value().at("species").get<std::string>();
+        auto traitsIt = traits.find(speciesName);
+        if (traitsIt == traits.end()){
+            throw std::invalid_argument("No traits found for individual " + it.key() + "(" + speciesName +")" +  " in json file");
         }
-        if (!traits.count(it.key()) || !HabSuit::wouldBeSuitable(traits.at(it.key())->soilReqs, m_soil)){
+        if (!traits.count(speciesName) || !HabSuit::wouldBeSuitable(traitsIt->second->soilReqs, m_soil)){
             throw std::invalid_argument("Individuals in json file are not suitable for the soil");
         } else {
-            std::unique_ptr<Individual> ind = Individual::create(traits.at(it.key()), m_soil, it.value());
+            std::unique_ptr<Individual> ind = Individual::create(traitsIt->second, m_soil, it.value());
             assert(ind != nullptr);
-            m_individuals.insert({it.key(), std::move(ind)});
-            if (!m_seeds.count(it.key())) {
-                std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(traits.at(it.key()), 100 * m_soil.lock()->m_capacity);
+            m_individuals.insert({traitsIt->first, std::move(ind)}); //the string_view traitsIt->first is known to persist throughout model lifetime
+            //a view on speciesName on the other hand would become invalid at end of Loop.
+            if (!m_seeds.count(speciesName)) {
+                std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(traits.at(speciesName), 100 * m_soil.lock()->m_capacity);
                 sp->increase(initialSeeds);
-                m_seeds.insert({it.key(), std::move(sp)});
+                m_seeds.insert({traitsIt->first, std::move(sp)});
             }
         }
     }
 }
 
-bool Community::createIndividualAndSeedPool(const Traits* traits, std::string_view name, int initialSeeds){
-    std::unique_ptr<Individual> ind = Individual::create(traits, m_soil); 
+bool Community::createIndividualAndSeedPool(const Traits* traits, std::string_view speciesName, int initialSeeds){
+    std::unique_ptr<Individual> ind = Individual::create(traits, m_soil, std::string(speciesName)); 
     if (ind == nullptr) return false;
     else {
-        m_individuals.insert({name, std::move(ind)});
-        if (!m_seeds.count(name)) {
+        m_individuals.insert({speciesName, std::move(ind)});
+        if (!m_seeds.count(speciesName)) {
             std::unique_ptr<SeedPool> sp = std::make_unique<SeedPool>(traits, 100 * m_soil.lock()->m_capacity);
             sp->increase(initialSeeds);
-            m_seeds.insert({name, std::move(sp)});
+            m_seeds.insert({speciesName, std::move(sp)});
         }
         return true;
     }
@@ -194,7 +196,7 @@ void Community::recruit(){
     std::shuffle(seedPoolInRandomOrder.begin(), seedPoolInRandomOrder.end(), RNGs::mersenne);
 
    for (const auto& [germinantType, germinantPool] : seedPoolInRandomOrder){
-        std::unique_ptr<Individual> ind = Individual::create(m_traits.at(germinantType), m_soil);
+        std::unique_ptr<Individual> ind = Individual::create(m_traits.at(germinantType), m_soil, std::string{germinantType});
         if (ind == nullptr) continue;
         m_individuals.insert({germinantType, std::move(ind)});
     }

@@ -46,27 +46,29 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include <cmath>
 /** @endcond */
 
-Individual::Individual(const Traits* traits, std::weak_ptr<Soil> soil): 
+Individual::Individual(const Traits* traits, std::weak_ptr<Soil> soil, const std::string& species): 
     m_growth_ptr    (std::make_unique<PlantGrowth>  (traits->lifeHist)), 
     m_habSuit_ptr   (std::make_unique<HabSuit>      (traits->soilReqs, soil)), 
     m_resource_ptr  (std::make_unique<PlantResource>(traits->allocation)),
-    m_shape_ptr     (traits->shape){
+    m_shape_ptr     (traits->shape), m_species(species){
     assert(m_growth_ptr);
     assert(m_habSuit_ptr);
     assert(m_resource_ptr);
     assert(m_shape_ptr);
+    assert(m_species != "");
 }
 
 
 Individual::Individual(const Traits* traits, std::weak_ptr<Soil> soilref, nlohmann::json j):
-    m_growth_ptr    (std::make_unique<PlantGrowth>  (traits->lifeHist, j)), 
+    m_growth_ptr    (std::make_unique<PlantGrowth>  (traits->lifeHist, j.at("currGrowth"))), 
     m_habSuit_ptr   (std::make_unique<HabSuit>      (traits->soilReqs, soilref)), 
-    m_resource_ptr  (std::make_unique<PlantResource>(traits->allocation, j)),
-    m_shape_ptr     (traits->shape){
+    m_resource_ptr  (std::make_unique<PlantResource>(traits->allocation, j.at("currRes"))),
+    m_shape_ptr     (traits->shape), m_species(j.at("species").get<std::string>()){
     assert(m_growth_ptr);
     assert(m_habSuit_ptr);
     assert(m_resource_ptr);
     assert(m_shape_ptr);
+    assert(m_species != "");
 }
 
 

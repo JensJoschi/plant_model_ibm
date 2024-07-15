@@ -36,6 +36,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 
 
 SoilRequirements::SoilRequirements(const nlohmann::json& SoilReqTraits) {
+    if(!SoilReqTraits.is_object()){
+        throw std::invalid_argument("SoilRequirements json is broken or empty");}
     try {
         if (SoilReqTraits.at("minDepth").is_number_integer()) {
             minDepth = SoilReqTraits.at("minDepth").get<int>();

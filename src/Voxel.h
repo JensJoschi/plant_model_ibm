@@ -79,6 +79,7 @@ class Voxel{
         const nlohmann::json& individuals);
 
     //delegating functions: Illumination
+    void clearArea();
     void distributeArea();
     void sendLightBeam(int light);
     void addNeighbours(const std::vector<Voxel*>& neighbours);

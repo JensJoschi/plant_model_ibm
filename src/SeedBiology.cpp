@@ -35,6 +35,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 /** @endcond */
 
 SeedBiology::SeedBiology(const nlohmann::json& traits) {
+    if(!traits.is_object()){
+        throw std::invalid_argument("SeedBiology json is broken or empty");}
     try {
         dormancy = traits.at("Dormancy");
         germinationSuccess = traits.at("GerminationSuccess");

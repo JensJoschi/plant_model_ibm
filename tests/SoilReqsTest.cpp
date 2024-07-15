@@ -88,11 +88,11 @@ TEST_F(SoilRequirementsTest, InitializationWithValidTraits) {
 }
 
 TEST_F(SoilRequirementsTest, InitializationWithEmptyTraits) {
-    ASSERT_THROW(SoilRequirements sr(emptyTraits), nlohmann::json::exception);
+    EXPECT_ANY_THROW(SoilRequirements sr(emptyTraits));
 }
 
 TEST_F(SoilRequirementsTest, InitializationWithMissingTraits) {
-    ASSERT_THROW(SoilRequirements sr(missingTraits), nlohmann::json::exception);
+    EXPECT_THROW(SoilRequirements sr(missingTraits), nlohmann::json::exception);
 }
 
 TEST_F(SoilRequirementsTest, InitializationWithExcessTraits) {
@@ -100,17 +100,17 @@ TEST_F(SoilRequirementsTest, InitializationWithExcessTraits) {
 }
 
 TEST_F(SoilRequirementsTest, InitializationDepthFloat) {
-    ASSERT_THROW(SoilRequirements sr(wrongTypeDepth), std::runtime_error);
+    EXPECT_THROW(SoilRequirements sr(wrongTypeDepth), std::runtime_error);
 }
 
 TEST_F(SoilRequirementsTest, InitializationWithWrongTypeSoil) {
-    ASSERT_THROW(SoilRequirements sr(wrongTypeSoil), nlohmann::json::exception);
+    EXPECT_THROW(SoilRequirements sr(wrongTypeSoil), nlohmann::json::exception);
 }
 
 TEST_F(SoilRequirementsTest, InitializationWithEmptySoilTraits) {
-    ASSERT_THROW(SoilRequirements sr(emptySoilTraits), nlohmann::json::exception);
+    EXPECT_THROW(SoilRequirements sr(emptySoilTraits), nlohmann::json::exception);
 }
 
 TEST_F(SoilRequirementsTest, InitializationWithInvalidTraits) {
-    ASSERT_THROW(SoilRequirements sr(invalidTraits), std::invalid_argument);
+    EXPECT_THROW(SoilRequirements sr(invalidTraits), std::invalid_argument);
 }

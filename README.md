@@ -1,6 +1,6 @@
 # Version
 
-This readme concerns model version 1.1.1. Please make sure the documentation matches the version you would like to use. 
+This readme concerns model version 1.1.2. Please make sure the documentation matches the version you would like to use. 
 
 # Overview
 

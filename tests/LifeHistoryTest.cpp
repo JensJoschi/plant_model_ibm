@@ -93,7 +93,7 @@ TEST_F(LifeHistoryTest, ValidTraits) {
     ASSERT_NO_THROW(LifeHistory l(validTraits));
 }
 TEST_F(LifeHistoryTest, EmptyTraits) {
-    ASSERT_THROW(LifeHistory l(emptyTraits), nlohmann::json::exception);
+    EXPECT_ANY_THROW(LifeHistory l(emptyTraits));
 }
 TEST_F(LifeHistoryTest, MissingTraits) {
     ASSERT_THROW(LifeHistory l(missingTraits), nlohmann::json::exception);

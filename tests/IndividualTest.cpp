@@ -66,7 +66,7 @@ class IndividualTest : public ::testing::Test {
         {"LifeSpan", 20},
         {"MaxHeight", 8},
 
-        {"density", 2.0}
+        {"density", 2.0},
 
     };
     traits = new Traits(j);
@@ -79,7 +79,7 @@ class IndividualTest : public ::testing::Test {
   }
 
   void SetUp() override { 
-    i = Individual::create(traits, soil);
+    i = Individual::create(traits, soil, std::string{"testSpecies"});
   }
 };
 
@@ -94,63 +94,158 @@ TEST_F(IndividualTest, builds){
     EXPECT_TRUE(i->m_shape_ptr);
     EXPECT_FALSE(i == nullptr);
     soil->m_name = "clay";
-    std::unique_ptr<Individual> i2 = Individual::create(traits,soil);
+    std::unique_ptr<Individual> i2 = Individual::create(traits,soil,std::string{"testSpecies"});
     EXPECT_TRUE(i2 == nullptr);
     soil->m_name = "sand";
+    EXPECT_EQ(i->m_species, "testSpecies");
 }
 
 TEST_F(IndividualTest, buildsWithJson){
   nlohmann::json correctVariables = {
+    {"currGrowth",{
       {"height", 3.2},
-      {"age", 4},
-      {"resources", 9999.0},
-      {"biomass", 200.0}};
+      {"age", 4}
+      }
+    },
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", 200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json heightMissing = {
-      {"age", 4},
-      {"resources", 100.0},
-      {"biomass", 100.0}};
+    {"currGrowth",{
+      {"age", 4}
+      }},
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", 200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json ageMissing = {
+    {"currGrowth",{
       {"height", 3.2},
-      {"resources", 100.0},
-      {"biomass", 100.0}};
+      }},
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", 200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json resourcesMissing = {
+    {"currGrowth",{
       {"height", 3.2},
-      {"age", 4},
-      {"biomass", 100.0}};
+      {"age", 4}
+      }},
+    {"currRes",{
+      {"biomass", 200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json biomassMissing = {
+    {"currGrowth",{
       {"height", 3.2},
-      {"age", 4},
-      {"resources", 100.0}};
+      {"age", 4}
+      }},
+    {"currRes",{
+      {"resources",  9999.0},
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json wrongType = {
+    {"currGrowth",{
       {"height", "3.2"},
-      {"age", 4},
-      {"resources", 100.0},
-      {"biomass", 100.0}};
+      {"age", 4}
+      }},
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", 200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json negativeHeight = {
+    {"currGrowth",{
       {"height", -3.2},
-      {"age", 4},
-      {"resources", 100.0},
-      {"biomass", 100.0}};
+      {"age", 4}
+      }},
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", 200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json negativeAge = {
+    {"currGrowth",{
       {"height", 3.2},
-      {"age", -4},
-      {"resources", 100.0},
-      {"biomass", 100.0}};
+      {"age", -4}
+      }},
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", 200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json negativeResources = {
+    {"currGrowth",{
       {"height", 3.2},
-      {"age", 4},
-      {"resources", -100.0},
-      {"biomass", 100.0}};
+      {"age", 4}
+      }},
+    {"currRes",{
+      {"resources",  -9999.0},
+      {"biomass", 200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json negativeBiomass = {
+    {"currGrowth",{
       {"height", 3.2},
-      {"age", 4},
-      {"resources", 100.0},
-      {"biomass", -100.0}};
+      {"age", 4}
+      }},
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", -200.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   nlohmann::json tooMuchBiomass = {
+    {"currGrowth",{
       {"height", 3.2},
-      {"age", 4},
-      {"resources", 100.0},
-      {"biomass", 1001.0}};
+      {"age", 4}
+      }},
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", 1001.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
+    nlohmann::json LifehistMissing = {
+    {"currRes",{
+      {"resources",  9999.0},
+      {"biomass", 1001.0}
+      }
+    },
+    {"species", "testSpecies"}
+    };
+    nlohmann::json resAllocMissing = {
+    {"currGrowth",{
+      {"height", 3.2},
+      {"age", 4}
+      }
+    },
+    {"species", "testSpecies"}
+    };
   EXPECT_NO_THROW(Individual::create(traits, soil, correctVariables));
   std::unique_ptr<Individual> customIndividual = Individual::create(traits, soil, correctVariables);
     EXPECT_EQ(customIndividual->getArea(0,10), 100.0); //biomass / density
@@ -168,6 +263,8 @@ TEST_F(IndividualTest, buildsWithJson){
   ASSERT_ANY_THROW(Individual::create(traits, soil, negativeResources));
   ASSERT_ANY_THROW(Individual::create(traits, soil, negativeBiomass));
   ASSERT_ANY_THROW(Individual::create(traits, soil, tooMuchBiomass));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, LifehistMissing));
+  ASSERT_ANY_THROW(Individual::create(traits, soil, resAllocMissing));
 }
 
 TEST_F(IndividualTest, age){

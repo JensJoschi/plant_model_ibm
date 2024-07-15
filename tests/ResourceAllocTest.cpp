@@ -165,7 +165,7 @@ TEST_F(ResAllocTest, ValidTraits) {
     ASSERT_NO_THROW(ResourceAlloc r(validTraits));
 }
 TEST_F(ResAllocTest, EmptyTraits) {
-    ASSERT_THROW(ResourceAlloc r(emptyTraits), nlohmann::json::exception);
+    EXPECT_ANY_THROW(ResourceAlloc r(emptyTraits));
 }
 TEST_F(ResAllocTest, MissingTraits) {
     ASSERT_THROW(ResourceAlloc r(missingTraits), nlohmann::json::exception);

@@ -1,8 +1,5 @@
-Unit tests are broken and need an update. Proper testing is needed to check that neighbouring growth is as expected. 
 
-Unit testing requires different output functions. Currently the biomass output for one cell sums ALL biomass of the individuals growing in the cell, including the stuff that grows into the neighbours. To repair, Individuals need to know of which type they are (Traits does not contain a string Name, so the Individuals cannot know) 
-
-proper randomization using rng.h is missing
+Individuals know their species identity, but do not have a unique ID yet ("Hans" , or "#238942"). Having this, and also assigning unique ids to new() individuals would simplify testing
 
 traits file is hardcoded in main, needs to be written into json
 
@@ -13,3 +10,5 @@ build community with proper json: {soil: {...}, voxel: {...}, startPop: {...}}
 add regional model
 
 seedMass attribute missing
+
+some unlikely results occur on linux, requiring disabling 3 tests. To check if this is truly due to RNG only.

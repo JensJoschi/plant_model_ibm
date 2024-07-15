@@ -105,7 +105,7 @@ TEST_F(SeedBiologyTest, ValidTraits) {
 }
 
 TEST_F(SeedBiologyTest, EmptyTraits) {
-    ASSERT_THROW(SeedBiology sb(emptyTraits), nlohmann::json::exception);
+    EXPECT_ANY_THROW(SeedBiology sb(emptyTraits));
 }
 
 TEST_F(SeedBiologyTest, MissingTraits) {

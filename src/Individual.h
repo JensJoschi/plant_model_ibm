@@ -105,8 +105,8 @@ class Individual{
        * \param traits life history, resource allocation, disturbance and soil traits
        * \param soil soil on which Individual shall live
        */
-   static std::unique_ptr<Individual> create(const Traits* traits, std::weak_ptr<Soil> soilref){
-      return HabSuit::wouldBeSuitable(traits->soilReqs, soilref) ? std::unique_ptr<Individual>(new Individual(traits, soilref)) : nullptr;
+   static std::unique_ptr<Individual> create(const Traits* traits, std::weak_ptr<Soil> soilref, const std::string& species){
+      return HabSuit::wouldBeSuitable(traits->soilReqs, soilref) ? std::unique_ptr<Individual>(new Individual(traits, soilref, species)) : nullptr;
    }
 
       /**
@@ -126,7 +126,7 @@ class Individual{
        * \details Individuals need to be created through Individual::create, which only constructs
        * Individual if soil is suitable.
        */
-   Individual(const Traits* traits, std::weak_ptr<Soil> soilref);
+   Individual(const Traits* traits, std::weak_ptr<Soil> soilref, const std::string& species);
    
          /**
          * \brief constructor with exact state
@@ -169,6 +169,7 @@ class Individual{
    float getBiomass(bool excludeGerminants = false) const;
 
    private:
+   const std::string m_species;
    std::unique_ptr<PlantResource> m_resource_ptr;
    std::unique_ptr<PlantGrowth> m_growth_ptr;
    std::unique_ptr<HabSuit> m_habSuit_ptr;

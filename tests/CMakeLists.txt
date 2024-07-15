@@ -44,8 +44,11 @@ set(TEST_SOURCES  SoilReqsTest.cpp        HabSuitTest.cpp
                   ResourceAllocTest.cpp   ResourceTest.cpp
                   PlantShapeTest.cpp
                   TraitsTest.cpp          IndividualTest.cpp
-               #   IlluminationTest.cpp    CommunityTest.cpp VoxelTest.cpp
-               #  PlantModelTest    SeedDistributionTest
+                  CommunityTest.cpp
+                  IlluminationTest.cpp
+                  #VoxelTest.cpp
+                 PlantModelTest           NeighbourTest.cpp
+                 #SeedDistributionTest
                 )
 
 enable_testing()

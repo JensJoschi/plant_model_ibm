@@ -65,8 +65,10 @@ struct Stratum{
  * Contains all variables and functions to calculate the light that reaches individuals Plants.
  * The voxel is stratified; light beams that hit the voxel at an 
  * angle of 90 degrees first hit the uppermost strata and plants therein. Any light that is not
- * absorbed by the plants in the uppermost strata is passed on to the next strata, and so on.
- * The remaining light leaving a stratum is diffused and homogenized over the full area of the next stratum. This means that
+ * absorbed by the plants in the uppermost strata is passed on to the next strata, and so on. 
+ * Some percentage of incoming light will not hit any plant but instead bypass the stratum to be consumed by next stratum (except for lowest stratum). 
+ * The percentage is determined by the diffusion parameter.
+ * The remaining light leaving a stratum is homogenized over the full area of the next stratum. This means that
  * the plant shades itself partially but not completely. Example:
  * If a plant covers 2/3 of the uppermost stratum's area, and 1/3 of the area in the next stratum, it receives 66% of the light
  * in the upper stratum. The remaining third of the light gets passed on to the next stratum. There, the plant receives  
@@ -86,6 +88,12 @@ class Illumination{
     typedef std::pair<std::weak_ptr<Individual>, float> IndivArea_t;
     public:
     Illumination(const std::vector<Stratum>& strata, int lightDistributionFactor, float diffusion);
+
+    /**
+     * \brief remove all registered biomass
+     * \details remove all references to individuals. Usually called on all cells prior to distributeIndividuals()
+     */
+    void clearIndividuals();
 
     /**
      * \brief distributes individuals to this and neighbouring voxels
@@ -108,10 +116,14 @@ class Illumination{
 
     /**
      * \brief Get plant surface area
-     * \details returns total plant surface of any material in this voxel (including spillover from neighbours)
+     * \details returns total plant surface of any material in this voxel (including spillover from neighbours).
+     * Does not return material from recently died plants if includeDead is false. Reason: A timestep in the plant model 
+     * first attributes light, including to neighbouring cells, then ages the plants. Calling getPlantCover after a time step
+     * could cause the voxel to appear empty, even though it was not at the beginning of the time step.
      * @return float 
      */
-    float getPlantCover() const;
+    float getPlantCover(bool includeDead = true) const;
+
 
     private:
     const std::vector<Stratum> strata; /**<contains information about the stratification (number and size of each stratum, shading by buildings)*/

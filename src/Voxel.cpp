@@ -52,14 +52,18 @@ Voxel::Voxel(int capacity, int depth, const std::string& name,
 
 Voxel::~Voxel(){}
 
-Voxel::Voxel(int capacity, int depth, const std::string& name, 
-    std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
-    const std::vector<Stratum>& voxel,int lightDistributionFactor,float diffusion,
-    const nlohmann::json& individuals):
-    m_illumination(voxel, lightDistributionFactor, diffusion),
-    m_soil(std::make_shared<Soil>(capacity, depth, name)),
-    m_community(m_soil, traits, maxIndividuals, initialSeeds, individuals){}
+// Voxel::Voxel(int capacity, int depth, const std::string& name, 
+//     std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
+//     const std::vector<Stratum>& voxel,int lightDistributionFactor,float diffusion,
+//     const nlohmann::json& individuals):
+//     m_illumination(voxel, lightDistributionFactor, diffusion),
+//     m_soil(std::make_shared<Soil>(capacity, depth, name)),
+//     m_community(m_soil, traits, maxIndividuals, initialSeeds, individuals){}
 
+void Voxel::clearArea(){
+    m_illumination.clearIndividuals();
+
+}
 void Voxel::distributeArea(){
     m_illumination.distributeIndividuals (m_community);
     }

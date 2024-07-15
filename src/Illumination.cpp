@@ -30,6 +30,7 @@ If not, see <https://www.gnu.org/licenses/>. */
 #include "Illumination.h"
 #include "Voxel.h"
 #include "Individual.h"
+#include "rng.h"
 #ifdef min
     #undef min
 #endif
@@ -46,11 +47,18 @@ Illumination::Illumination( const std::vector<Stratum>& strata, int lightDistrib
     }
 
 void Illumination::distributeIndividuals(Community& comm){
-    std::vector<std::weak_ptr<Individual>> i = comm.getIndividuals(); 
+    //individual areas will be added to surfaceAreas. This is a good time to clean up surfaceAreas, as some neighbours may have died,
+    //but still exist here
+    for (auto& [stratum, individuals] : surfaceAreas){
+        individuals.erase(std::remove_if(individuals.begin(), individuals.end(),
+                 [](const IndivArea_t& i) { return i.first.expired(); }),
+                individuals.end());
+    }
+    std::vector<std::weak_ptr<Individual>> i = comm.getIndividuals(); //these , on the other hand, should not be expired!
     for (auto& stratum : strata){
         for (auto& ind : i){
+            assert(!ind.expired());
             std::shared_ptr<Individual> currIndividual = ind.lock();
-            assert(currIndividual);
             float plantArea = currIndividual->getArea(stratum.from, stratum.to);
             if (plantArea>0.0f){
                 IndivArea_t indArea = {currIndividual, plantArea};
@@ -62,11 +70,9 @@ void Illumination::distributeIndividuals(Community& comm){
 
 void Illumination::sendLightBeam(int light){
     assert(light >= 0);
-    int bypassing = std::round(light * diffusion);
-    light -= bypassing;
     for (int i = strata.size()-1; i >= 0; --i){
         choosePlants(strata[i]);
-        light = distributeLightToIndividuals(light + std::round(static_cast<float>(bypassing)/strata.size()), strata[i]);
+        light = distributeLightToIndividuals(light, strata[i]);
     }
 }
 
@@ -76,14 +82,20 @@ void Illumination::addNeighbours(const std::vector<Illumination*>& n_illumin){
     }
 }
 
-float Illumination::getPlantCover() const{
+float Illumination::getPlantCover(bool includeDead) const{
     float totalArea = 0.0f;
     for (auto& [stratum, individuals] : surfaceAreas){
         for (auto& [individual, area] : individuals){
-            if (!individual.expired())  totalArea += area;
+            if (includeDead || !individual.expired())  totalArea += area;
         }
     }
     return totalArea;
+}
+
+void Illumination::clearIndividuals(){
+    for (auto& [stratum, individuals] : surfaceAreas){
+        individuals.clear();
+    }
 }
 
 //--PRIVATE FUNCTIONS--//
@@ -116,11 +128,13 @@ void Illumination::addHereOrElsewhere(IndivArea_t individual, const Stratum& str
 
 
 void Illumination::choosePlants(const Stratum& stratum){
+    if (!surfaceAreas.count(stratum)) return;
     float totalArea = 0.0f;
-    auto& areaS = surfaceAreas[stratum];
-    areaS.erase(std::remove_if(areaS.begin(), areaS.end(),
+    surfaceAreas[stratum].erase(std::remove_if(surfaceAreas[stratum].begin(), surfaceAreas[stratum].end(),
                  [](const IndivArea_t& i) { return i.first.expired(); }),
-                areaS.end());
+                surfaceAreas[stratum].end());
+    auto& areaS = surfaceAreas[stratum];
+
     for (auto& i : areaS){
         assert(i.second >= 0.0);
         totalArea += i.second;
@@ -128,8 +142,8 @@ void Illumination::choosePlants(const Stratum& stratum){
     float reduceBy = (totalArea - stratum.area)/lightDistributionFactor;
     float tolerance = 0.001f; //to deal with floating point precision errors
     while ((totalArea - stratum.area) > tolerance){
-        int index = rand() % areaS.size(); 
-        //use proper RNG here instead
+        std::uniform_int_distribution<> distrib(0, areaS.size() - 1);
+        int index = distrib(RNGs::mersenne);
         auto chosen = std::next(areaS.begin(), index);
         assert (chosen->second >= 0.0f && !chosen->first.expired());
         float area = chosen->second;
@@ -156,6 +170,7 @@ int Illumination::distributeLightToIndividuals(int light, const Stratum& stratum
     if (totalArea == 0.0f) return light;
 
     float amountThatHitsPlants = std::min (light * (totalArea/stratum.area), static_cast<float> (light));
+    if (stratum.from != 0) amountThatHitsPlants = amountThatHitsPlants * (1.0-diffusion);
     assert(amountThatHitsPlants <= light);
  
     for (auto& [individual, area] : surfaceAreas[stratum]){

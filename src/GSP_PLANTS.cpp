@@ -119,6 +119,8 @@ void GSP_PLANTS::addSpecificParams(const nlohmann::json& j){
   catch(nlohmann::json::out_of_range) { LOG(WARNING) << "json::SeedRain not found. Set to 0"; seedRain = 0;}
   catch(nlohmann::json::type_error)   { LOG(FATAL) << "json::SeedRain not integer.";}
   catch(nlohmann::json::exception& e) { LOG(FATAL) << "json::SeedRain error: " << e.what();}
+
+  doesDisturbance = false;
 }
 
 

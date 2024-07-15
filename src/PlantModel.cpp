@@ -162,11 +162,22 @@ void PlantModel::TPlusOne(){
 	if (m_settings.seedRain > 0) m_seeds.addSeeds(m_settings.seedRain);
 
 	LOG(DEBUG) << "--Succession";
+	for (auto cell:m_cells){cell.second->clearArea();}
+
 	for (auto cell: m_cells){//this seems like an ideal place for parallelization.
 		cell.second->rainSeeds(m_seeds.getSeeds(cell.first));
 		cell.second->distributeArea();
 		cell.second->sendLightBeam(m_voxelData.light.at(cell.first));
-		cell.second->age(); //returns seeds
+	}
+	//light calculations are affected by indviduals of neighbour cells (spillover of biomass). 
+	//killing individuals while looping through cells causes headaches with expired ptrs, so better do aging in seperate loop.
+	for (auto cell:m_cells){
+		std::map<std::string, int> newSeeds = cell.second->age();
+	if ( m_settings.doesDispersal) {
+		for (auto it = newSeeds.begin(); it != newSeeds.end(); ++it){
+			m_seeds.addSeeds(it->second, it->first);
+		}
+	}
 	}
 
 	if ( m_settings.doesDispersal) {

@@ -59,7 +59,9 @@ If not, see <https://www.gnu.org/licenses/>. */
  * The community lives on a soil - it has a max capacity and (in the future) may be depleted
  * */
 class Community{
-    friend class CommunityTest_rainSeeds_Test; //typical workflow of community is rainseeds() => age() => getBiomass of adult individuals; 
+    friend class CommunityTest_rainSeeds_Test; 
+    friend class CommunityTest_germRate_Test;
+    //typical workflow of community is rainseeds() => age() => getBiomass of adult individuals; 
     //private access to SeedPool makes it easier to test that rainseeds provides the correct inputs.
 
     public:
@@ -73,7 +75,7 @@ class Community{
      * if no suitable individuals are found. 
      * The seed pools of each suitable type have a capacity of 100 * soil::capacity seeds each (soil::capacity is the capacity 
      * for individuals, but it is assumed that many more seeds than individuals can be stored), and are initially filled with 
-     * maxSeeds seeds (unless this exceeds SeedPool::capacity).
+     * initialSeeds seeds (unless this exceeds SeedPool::capacity).
      * Soil is - biologically speaking - a shared resource, i.e., all individuals have access and may modify/deplete the soil.
      * \note community and the individuals have a weak_ptr to soil, as they are not responsible for the lifetime or memory 
      * allocation (biological resource sharing does not imply shared responsibility for memory management). Only the Voxel 
@@ -89,11 +91,29 @@ class Community{
     /**
      * \brief json-based community constructor
      * \details see other constructor for more details.
-     * This constructor additionally contains a json with all neccessary information to create an individual
+     * This constructor additionally contains a json with all neccessary information to create the individuals
      * (e.g., age, biomass, but not life span or resource allocation stratgies)
+     * expected json format: 
+     * {"Hans": {
+     *      "currGrowth": {
+                "height": 3.2,
+                "age": 4
+            },
+            "currRes":{
+                "resources":  9999.0,
+                "biomass", 200.0
+            },
+            "species": "LoliumPerenne"
+            },
+        "John":{[...], 
+            "species": "LoliumPerenne"},
+        },
+        "Jane"{[...], "species": "bellisPerennis"}
+        }
+    The species names are important, but the individual IDs ("Hans" etc) are dropped. 
      */
     Community(std::weak_ptr<Soil> soil,
-        std::map<std::string_view, const Traits*> traits, int maxIndividuals, int initialSeeds,
+        std::map<std::string_view, const Traits*> traits, int initialSeeds,
         const nlohmann::json& individuals);
     
     /**

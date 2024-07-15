@@ -35,6 +35,8 @@ If not, see <https://www.gnu.org/licenses/>. */
 /** @endcond */
 
 ResourceAlloc::ResourceAlloc(const nlohmann::json& traits) {
+    if(!traits.is_object()){
+        throw std::invalid_argument("Resource alloc json is broken or empty");}
     try {
         conversionEfficiency = traits.at("conversionEfficiency");
         maintenanceCosts = traits.at("maintenanceCosts");

@@ -45,143 +45,208 @@ If not, see <https://www.gnu.org/licenses/>. */
 /** @endcond */
 
 class CommunityTest : public ::testing::Test {
-    protected:
-    std::unique_ptr<Community> c;
-    static const Traits* traits;
-    static const std::vector<Stratum>* strata;
-    
-    static void SetUpTestSuite() { //creates shared trait Definitions for all tests
-       nlohmann::json j = {
-        {"minDepth", 10},
-        {"acceptedSoils", {{"sand", true}, {"clay", false}}},
-        {"size", 1},
+	protected:
+	std::unique_ptr<Community> c;
+	static const Traits* traits;
+	static nlohmann::json individuals;
+	std::shared_ptr<Soil> soil;	
 
-        {"conversionEfficiency", 1.0},
-        {"maintenanceCosts", 0.1},
-        {"seedAllocation", 0.01},
-        {"biomassAllocation", 0.5},
-        {"maxBiomass", 500},
+	static void SetUpTestSuite() { //create species definnitions and 3 individuals
+		nlohmann::json specTraits = {
+			{"minDepth", 10},
+			{"acceptedSoils", {{"sand", true}, {"clay", false}}},
+			{"size", 1},
 
-        {"Dormancy", false},
-        {"GerminationSuccess", 0.1},
-        {"MortalityDormant", 0.05},
-        {"DormancyBreakRate", 0.8},
+			{"conversionEfficiency", 1.0},
+			{"maintenanceCosts", 0.1},
+			{"seedAllocation", 0.01},
+			{"biomassAllocation", 0.5},
+			{"maxBiomass", 500},
 
-        {"MaturationTime", 10},
-        {"LifeSpan", 20},
-        {"MaxHeight", 8},
+			{"Dormancy", false},
+			{"GerminationSuccess", 0.1},
+			{"MortalityDormant", 0.05},
+			{"DormancyBreakRate", 0.8},
 
-        {"density", 2.0}
+			{"MaturationTime", 10},
+			{"LifeSpan", 20},
+			{"MaxHeight", 8},
 
-    };
-    traits = new Traits(j);
-    Stratum s1{0, 2, 100};
-    Stratum s2{2, 4, 100};
-    Stratum s3{4, 6, 100};
-    strata = new std::vector<Stratum>{s1, s2, s3};
+			{"density", 2.0},
+			{"name", "species"}
+		};
+		traits = new Traits(specTraits);
+		nlohmann::json oneIndividual = {
+			{"currGrowth",{
+				{"height", 3.2},
+				{"age", 4}
+			}},
+			{"currRes",{
+				{"resources",  9999.0},
+				{"biomass", 200.0}
+				}
+			},
+			{"species", "species"}
+		};
+		individuals = {
+			{"Hans", oneIndividual},
+			{"John", oneIndividual},
+		};
+		oneIndividual["species"] = "anotherSpecies";
+		individuals["Jill"] = oneIndividual;
+	
+	}
 
-    }
+	static void TearDownTestSuite() {
+		delete traits;
+		traits = nullptr;
+	}
 
-  static void TearDownTestSuite() {
-    delete traits;
-    traits = nullptr;
-  }
+	void SetUp() override{
+		soil = std::make_shared<Soil>(10, 10, "sand");
+		std::map<std::string_view, const Traits*> traitlist;
+		traitlist["species"] = traits;
+		traitlist["anotherSpecies"] = traits;
+		c = std::make_unique<Community>(soil, traitlist, 10, individuals);
+	}
+
+	void TearDown() override{
+		c.reset();
+	}
 };
 
 const Traits* CommunityTest::traits = nullptr;
-const std::vector<Stratum>* CommunityTest::strata = nullptr;
+nlohmann::json CommunityTest::individuals = nlohmann::json::array();
 
 TEST_F(CommunityTest, builds){
-    std::map<std::string_view, const Traits*> traitlist;
-    traitlist["species"] = traits;
-
-    c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100, *strata, 1, 0.1);
-    ASSERT_TRUE(c != nullptr);
-    c.reset();
+		ASSERT_TRUE(c != nullptr);
+		ASSERT_EQ(c->getCount("species"), 2);
 }
 
-TEST_F(CommunityTest, buildsWithJson){
-  nlohmann::json correctVariables = {
-      {"height", 3.2},
-      {"age", 4},
-      {"resources", 9999.0},
-      {"biomass", 200.0}};
-  nlohmann::json j = {
-        {"species", correctVariables},
-    };
-
-    std::map<std::string_view, const Traits*> traitlist;
-    traitlist["species"] = traits;
-    c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100, *strata,1,0.1, j);
-    ASSERT_TRUE(c != nullptr);
-    c.reset();
-    // j["unknownSpecies"] = correctVariables;
-    // EXPECT_THROW(c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100, *strata, j), std::invalid_argument);
+TEST_F(CommunityTest, buildsWithoutJson){
+		std::map<std::string_view, const Traits*> traitlist;
+		traitlist["species"] = traits;
+		traitlist["anotherSpecies"] = traits;
+		c.reset();
+		c = std::make_unique<Community>(soil, traitlist, 10, 100);
+		ASSERT_TRUE(c != nullptr);
 }
 
-// TEST_F(CommunityTest, getCount){
-//   std::map<std::string_view, const Traits*> traitlist;
-//   traitlist["species"] = traits;
-//   traitlist["anotherSpecies"] = traits;
-//   c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100);
+TEST_F(CommunityTest, getCount){
+		ASSERT_EQ(c->getCount(), 3);
+		ASSERT_EQ(c->getCount("species"), 2);
+		ASSERT_EQ(c->getCount("anotherSpecies"), 1);
+		ASSERT_EQ(c->getCount("something else"), 0);
+}
 
-//   ASSERT_TRUE(c->getCount() == 10);
-//   ASSERT_TRUE(c->getCount("species") + c->getCount("anotherSpecies") == 10);
-//   //ASSERT_TRUE(c->getCount("species") == 4); //requires fixed RNG
-//   //ASSERT_TRUE(c->getCount("anotherSpecies") == 6);
-//   ASSERT_TRUE(c->getCount("something else") == 0);
-// }
+TEST_F(CommunityTest, startingConditions){
+		std::map<std::string_view, const Traits*> traitlist;
+		traitlist["species"] = traits;
+		c.reset();
 
-// TEST_F(CommunityTest, startingConditions){
-//     std::map<std::string_view, const Traits*> traitlist;
-//     traitlist["species"] = traits;
-//     c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100);
-//     ASSERT_TRUE(c->getCount("species") == 10);
-//     c = std::make_unique<Community>(3, 10 , "sand", traitlist, 10, 100);
-//     ASSERT_TRUE(c->getCount("species") == 3);
-//     c = std::make_unique<Community>(10, 10 , "sand", traitlist, 2, 100);
-//     ASSERT_TRUE(c->getCount("species") == 2);
-//     c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 0);
-//     ASSERT_TRUE(c->getCount("species") == 10);
+		c = std::make_unique<Community>(soil, traitlist, 10, 100);
+		ASSERT_TRUE(c->getCount("species") == 10);
+		c.reset();
+		c = std::make_unique<Community>(soil, traitlist, 2, 100);
+		ASSERT_TRUE(c->getCount("species") == 2);
+		c.reset();
+		c = std::make_unique<Community>(soil, traitlist, 10, 0);
+		ASSERT_TRUE(c->getCount("species") == 10);
+		c.reset();
 
-//     c = std::make_unique<Community>(10, 10 , "clay", traitlist, 10, 100);
-//     ASSERT_TRUE(c->getCount("species") == 0);
+		std::shared_ptr<Soil> s2 = std::make_shared<Soil>(3, 10, "sand");
+		c = std::make_unique<Community>(s2, traitlist, 10, 100);
+		ASSERT_TRUE(c->getCount("species") == 3);
 
-//     //assertion failures:
-//     // c = std::make_unique<Community>(10, 10 , "foo", traitlist, 10, 100);
-//     //    std::map<std::string_view, const Traits*> empty;
-//     //  c = std::make_unique<Community>(10, 10 , "sand", empty, 10, 100); 
-// }
+		std::shared_ptr<Soil> s3 = std::make_shared<Soil>(10, 10, "clay");
+		c = std::make_unique<Community>(s3, traitlist, 10, 100);
+		ASSERT_TRUE(c->getCount("species") == 0);
+
+		//assertion failures:
+		// c = std::make_unique<Community>(10, 10 , "foo", traitlist, 10, 100);
+		// std::map<std::string_view, const Traits*> empty;
+		// c = std::make_unique<Community>(10, 10 , "sand", empty, 10, 100); 
+}
 
 
-// TEST_F(CommunityTest, rainSeeds){
-//     std::map<std::string_view, const Traits*> traitlist;
-//     traitlist["species"] = traits;
-//     traitlist["anotherSpecies"] = traits;
-//     c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100);
-//     int ageResult1 = c->m_seeds.at("species")->age(0);
-//     EXPECT_EQ(ageResult1, 10); //10% germination rate according to traits
-//     int ageResult2 = c->m_seeds.at("anotherSpecies")->age(0);
-//     EXPECT_EQ(ageResult2, 10); 
-// //actual test:
-//     c.reset();
-//     c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100);
-//     std::map<std::string_view, int> seeds;
-//     seeds["species"] = 100;
-//     c->rainSeeds(seeds);
-//     int ageResult3 = c->m_seeds.at("species")->age(0);
-//     EXPECT_EQ(ageResult3, 20);
-//     int ageResult4 = c->m_seeds.at("anotherSpecies")->age(0);
-//     EXPECT_EQ(ageResult4, ageResult2);
-//     seeds["unrecognized Species"] = 3;
-//     EXPECT_THROW(c->rainSeeds(seeds), std::out_of_range);
-// }
+TEST_F(CommunityTest, germRate){ //compare with rainSeeds
+		int ageResult1 = c->m_seeds.at("species")->age(0);
+		EXPECT_EQ(ageResult1, 1); //10 initial seeds, 10% germination rate
+		int ageResult2 = c->m_seeds.at("anotherSpecies")->age(0);
+		EXPECT_EQ(ageResult2, 1); 
+}
+
+TEST_F(CommunityTest, rainSeeds){ //compare with germRate
+		std::map<std::string_view, int> seeds;
+		seeds["species"] = 100;
+		c->rainSeeds(seeds);
+		int ageResult3 = c->m_seeds.at("species")->age(0);
+		EXPECT_EQ(ageResult3, 11);
+		int ageResult4 = c->m_seeds.at("anotherSpecies")->age(0);
+		EXPECT_EQ(ageResult4, 1);
+		seeds["unrecognized Species"] = 3;
+		EXPECT_NO_THROW(c->rainSeeds(seeds)); //simply ignored
+}
+
+TEST_F(CommunityTest, age){
+	nlohmann::json oldIndiviudal = {
+		{"currGrowth",{
+			{"height", 3.2},
+			{"age", 20}
+		}},
+		{"currRes",{{"resources",  9999.0},{"biomass", 200.0}}},
+		{"species", "species"}
+		};
+		nlohmann::json richIndividual = {
+			{"currGrowth",{{"height", 3.2},{"age", 5}}},
+			{"currRes",{
+				{"resources",  10000.0},
+				{"biomass", 200.0}
+				}
+			},{"species", "species"}
+		};
+		nlohmann::json poorIndividual = {
+			{"currGrowth",{{"height", 3.2},{"age", 5}}},
+			{"currRes",{
+				{"resources",  1.0},
+				{"biomass", 200.0}
+				}
+			},{"species", "species"}
+		};
+		nlohmann::json i = {
+			{"old", oldIndiviudal},
+			{"rich", richIndividual},
+			{"poor", poorIndividual}
+		};
+		c.reset();
+		std::map<std::string_view, const Traits*> traitlist;
+		traitlist["species"] = traits;
+		traitlist["anotherSpecies"] = traits;
+		c = std::make_unique<Community>(soil, traitlist, 0, i);
+
+		std::map<std::string, int> seeds = c->age();
+		std::vector<std::weak_ptr<Individual>> res =  c->getIndividuals();
+		ASSERT_EQ(res.size(),1); //old and poor died
+		ASSERT_EQ(seeds.size(), 1);
+		ASSERT_EQ(seeds.at("species"), 99); //(10000 - (200 * 10% maintenance costs)) * 0.01
+		std::map<std::string_view, int> newSeeds;
+		newSeeds["species"] = 20;
+		c->rainSeeds(newSeeds);
+		c->age();
+		res = c->getIndividuals();
+		ASSERT_EQ(res.size(), 3); //10% germination rate = 2
+		newSeeds["species"] = 10000;
+		c->rainSeeds(newSeeds);
+		c->age();
+		res = c->getIndividuals();
+		ASSERT_EQ(res.size(), 10); //max capacity
+}
 
 // TEST_F(CommunityTest, provideLight){
 //     std::map<std::string_view, const Traits*> traitlist;
 //     traitlist["species"] = traits;
 //     traitlist["anotherSpecies"] = traits;
-//     c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100);
+//     // c = std::make_unique<Community>(10, 10 , "sand", traitlist, 10, 100);
 //     int result = c->provideResources(0, 10, 100, 1000);
 //     EXPECT_EQ(result, 50); //area of each individual is height*biomass/density = 1*100/2 = 50; so they cover half the illumArea
 //     result = c->provideResources(0, 10, 100, 40, false);
