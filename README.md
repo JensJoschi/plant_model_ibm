@@ -1,3 +1,6 @@
+# Note
+This repository is mirrored from gitlab (https://gitlab.com/JensJoschinski/plant-model-ibm) and only serves as backup/reference. CI pipelines, Issues and markdown may not work as intended. 
+
 # Version
 
 This readme concerns model version 1.1.2. Please make sure the documentation matches the version you would like to use. 
