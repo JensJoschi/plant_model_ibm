@@ -1,5 +1,14 @@
-# Note
-This repository is mirrored from gitlab (https://gitlab.com/JensJoschinski/plant-model-ibm) and only serves as backup/reference. CI pipelines, Issues and markdown may not work as intended. 
+# Note for reviewers
+The model contained within this repo was meant for academic research and reflects typical academic constraints. Yet, it incorporates a basic test, build and CI system that is untypical in ecological research.
+The code is no longer maintained and shared here only as reference of past work. A link to a (industrial R&D) successor will be shared here once the code is publicly available. 
+
+The following constraints were not limiting in a research environment, but would be more critical in an industrial tool:
+| problem | explanation | solution |
+| --- |---|---|
+| extensive use of std::maps |  keeps legacy interface for interoperability | std::vector | 
+| serializes whole voxel model into JSON for interop | helped data analysis and easier sharing across teams | memory-level interop |
+| usage of weak_ptr in hot loops | safety (expiry checks) was more important than brute performance | raw ptr / indexing |
+| low test coverage, messy CI and CMake scripts | these will not win beauty prices. Also, the repo is mirrored from gitlab (https://gitlab.com/JensJoschinski/plant-model-ibm), so CI pipelines will not work as intended | proper build system; unit, integration, manual tests, validation | 
 
 # Version
 
